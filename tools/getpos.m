@@ -35,7 +35,7 @@ function [pos,unit]=getpos(h,fmt,href,opt)
 % 
 %   See also SETPOS, SET, GET.
 
-%   Author: Jérôme Briot, Matlab 6.1.0.450 (R12.1)
+%   Author: JÃ©rÃ´me Briot, Matlab 6.1.0.450 (R12.1)
 %   Contact: dutmatlab@yahoo.fr
 %   Revision: 1.0 (12-Feb-2007)
 %             1.1 (14-Feb-2007) Third input argument HREF added.
@@ -46,7 +46,9 @@ function [pos,unit]=getpos(h,fmt,href,opt)
 %
 
 % Check the number of input arguments
-error(nargchk(1,4, nargin));
+
+narginchk(1,4);
+
 
 % Check if H is a graphics object handle
 if ~ishandle(h)
@@ -157,7 +159,7 @@ for n=1:numel(M)
         % Get the current "Position" vector of H
         temp=get(h,'position');
         % Get the current "Position" vector of HREF
-        if ~href % HREF is the Root object (no 'Position' property)
+        if strcmp(get(href, 'type'), 'root') % HREF is the Root object (no 'Position' property)
             temp_href=get(href,'screensize'); %%% Should be safe here !
         else temp_href=get(href,'position');
         end
