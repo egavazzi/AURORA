@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of e_N2a3sup</title>
+  <meta name="keywords" content="e_N2a3sup">
+  <meta name="description" content="Xs = e_N2a3sup(E)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>e_N2a3sup
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Xs = e_N2a3sup(E)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function Xs = e_N2a3sup(Ep) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Xs = e_N2a3sup(E)
+ 
+ e_N2a3sup - electron excitation cross section (m^2)
+ E electron energy (eV)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Xs = e_N2a3sup(Ep)</a>
+0002 <span class="comment">% Xs = e_N2a3sup(E)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% e_N2a3sup - electron excitation cross section (m^2)</span>
+0005 <span class="comment">% E electron energy (eV)</span>
+0006 
+0007 E = [7  8 9   10 13   15   17 20 30 50];
+0008 s = [.2 2 4.5 15 17.6 20.5 22 15  6  3.8]*1e-22;<span class="comment">%-18;</span>
+0009 
+0010 
+0011 
+0012 <span class="keyword">for</span> ie=1:length(Ep),
+0013   <span class="keyword">if</span> Ep(ie) &gt; 6.17 &amp; Ep(ie) &lt; 11.096,
+0014     Xs(ie)=(1-6.17/Ep(ie))*exp(-48.28302-501.0230*log(Ep(ie))+635.6719*log(Ep(ie))^2-264.7979*log(Ep(ie))^3+36.53586*log(Ep(ie))^4);
+0015   <span class="keyword">elseif</span> Ep(ie) &gt;= 11.096 &amp; Ep(ie) &lt; 17.05,
+0016     Xs(ie)=exp(4550.309-6733.425*log(Ep(ie))+3697.708*log(Ep(ie))^2-900.7303*log(Ep(ie))^3+82.11416*log(Ep(ie))^4);
+0017   <span class="keyword">elseif</span> Ep(ie) &gt;= 17.05 &amp; Ep(ie) &lt; 100.0,
+0018     Xs(ie)=exp(-142.1066+124.6773*log(Ep(ie))-55.47813*log(Ep(ie))^2+10.80510*log(Ep(ie))^3-0.7832104*log(Ep(ie))^4);
+0019   <span class="keyword">elseif</span> Ep(ie) &gt;=100,
+0020     Xs(ie)=9.608389e-13/Ep(ie)^3;
+0021   <span class="keyword">else</span>
+0022     Xs(ie)=0;
+0023   <span class="keyword">end</span>
+0024 <span class="keyword">end</span>
+0025 
+0026 XsItikawa = exp([interp1(E,log(s),Ep(Ep&lt;E(end)),<span class="string">'pchip'</span>) interp1(log(E),log(s),log(Ep(Ep&gt;=E(end))),<span class="string">'linear'</span>,<span class="string">'extrap'</span>)] );
+0027 I = find(~isfinite(XsItikawa));
+0028 XsItikawa(I) = 0;
+0029 
+0030 Xs = [XsItikawa(Ep&lt;=25),Xs(Ep&gt;25)/1e4];
+0031 inans = find(Ep&lt;6.1688);
+0032 Xs(inans) = 0;</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of O2_e_2nd_dist</title>
+  <meta name="keywords" content="O2_e_2nd_dist">
+  <meta name="description" content="O2_e_2nd_dist - 2nd:ary electron energy spectra ionisation of O2.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>O2_e_2nd_dist
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>O2_e_2nd_dist - 2nd:ary electron energy spectra ionisation of O2.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function Xs = O2_e_2nd_dist(Es,E0in,Eionization,s_or_c) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> O2_e_2nd_dist - 2nd:ary electron energy spectra ionisation of O2.
+
+ Calling:
+  Xs = O2_e_2nd_dist(Es,E0in)
+ Input:
+  Es   - energy of secondar electrons (eV), double array [1 x nEs]
+  E0in - energy of primary electrons (eV), double scalar
+  Eionization - ionization threshold (eV), double scalar so that
+         we can properly calculate the energy-distribution of
+         degrading electrons due to ionization to excited O2+ and
+         dissociative ionizations
+  s_or_c - spectra of secondary electrons or cascading electrons
+ Output:
+  Xs - spectra of secondary electrons, double array [1 x nEs]
+ 
+ NOTE: Unnormalized! So that the user have to calculate the total
+ ionization by normalizing Xs by its sum and scale with the
+ ionizing cross-section, the N2 density and the electron flux.
+ 
+ Equation from Ittikawa et al. 1989
+ 
+ See also: <a href="N2_e_2nd_dist.html" class="code" title="function Xs = N2_e_2nd_dist(Es,E0in,Eionization,s_or_c)">N2_e_2nd_dist</a>, <a href="O_e_2nd_dist.html" class="code" title="function Xs = O_e_2nd_dist(Es,E0in,Eionization,s_or_c)">O_e_2nd_dist</a></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/setup4etrptd10streams.html" class="code" title="">setup4etrptd10streams</a>	% Set-up script for Examples in time-dependent electron transport</li><li><a href="../../AURORA/sup-scripts/Loop_finalRun_PnL_flickering10beams.html" class="code" title="">Loop_finalRun_PnL_flickering10beams</a>	% Batch-processing-script for FAB-flickering aurora</li><li><a href="../../AURORA/sup-scripts/Loop_first_example_AURORA.html" class="code" title="">Loop_first_example_AURORA</a>	% Example-script for using AURORA the time-dependent electron-transport code</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Xs = O2_e_2nd_dist(Es,E0in,Eionization,s_or_c)</a>
+0002 <span class="comment">% O2_e_2nd_dist - 2nd:ary electron energy spectra ionisation of O2.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Calling:</span>
+0005 <span class="comment">%  Xs = O2_e_2nd_dist(Es,E0in)</span>
+0006 <span class="comment">% Input:</span>
+0007 <span class="comment">%  Es   - energy of secondar electrons (eV), double array [1 x nEs]</span>
+0008 <span class="comment">%  E0in - energy of primary electrons (eV), double scalar</span>
+0009 <span class="comment">%  Eionization - ionization threshold (eV), double scalar so that</span>
+0010 <span class="comment">%         we can properly calculate the energy-distribution of</span>
+0011 <span class="comment">%         degrading electrons due to ionization to excited O2+ and</span>
+0012 <span class="comment">%         dissociative ionizations</span>
+0013 <span class="comment">%  s_or_c - spectra of secondary electrons or cascading electrons</span>
+0014 <span class="comment">% Output:</span>
+0015 <span class="comment">%  Xs - spectra of secondary electrons, double array [1 x nEs]</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% NOTE: Unnormalized! So that the user have to calculate the total</span>
+0018 <span class="comment">% ionization by normalizing Xs by its sum and scale with the</span>
+0019 <span class="comment">% ionizing cross-section, the N2 density and the electron flux.</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% Equation from Ittikawa et al. 1989</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% See also: N2_e_2nd_dist, O_e_2nd_dist</span>
+0024 
+0025 <span class="keyword">persistent</span> Q E4Q Eionizations
+0026 
+0027 <span class="keyword">if</span> nargin ~= 4
+0028   error(<span class="string">'Wrong number of input arguments'</span>)
+0029 <span class="keyword">end</span>
+0030 
+0031 <span class="keyword">if</span> isempty(Q)
+0032   <span class="keyword">try</span>
+0033     load CascadingSpecO2ionization.mat Q E4Q Eionizations
+0034   <span class="keyword">end</span>
+0035 <span class="keyword">end</span>
+0036 
+0037 E_hat = 15.2;
+0038 <span class="keyword">if</span> isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel(E4Q))))<span class="comment">%~all(E4Q(1:numel(Es))==Es)</span>
+0039   Eionizations = [12.072
+0040                   16.1
+0041                   16.9
+0042                   18.2
+0043                   18.9
+0044                   32.51];
+0045   Q = zeros(numel(Es),numel(Es),numel(Eionization));
+0046   E4Q = Es;
+0047   dE = diff(Es);dE = dE([1:<span class="keyword">end</span>,end]);
+0048   disp(<span class="string">'Pre-calculating all energy-degradations for e - O2-ionizing collisions.'</span>)
+0049   disp(<span class="string">'This will take a bit of time.'</span>)
+0050   disp([<span class="string">'Starting at: '</span>,datestr(now,<span class="string">'HH:MM:SS'</span>)])
+0051   <span class="keyword">for</span> i3 = numel(Eionizations):-1:1,
+0052     iLim = find(Es&gt;Eionizations(i3),1,<span class="string">'first'</span>);
+0053     <span class="keyword">for</span> i2 = iLim:numel(Es),
+0054       iHalf = find(Es&lt;(Es(i2)-Eionizations(i3))/2,1,<span class="string">'last'</span>);
+0055       <span class="keyword">for</span> i1 = iHalf:(i2-1),
+0056         Eprime = [Es(i2),Es(i2)+dE(i2)];
+0057         Edeg = [Es(i1),Es(i1)+dE(i1)];
+0058         <span class="comment">%funH = @(E1,E2) heaviside(E2-Eionizations(i3)-E1)./((E2-Eionizations(i3)-E1).^2+E_hat^2);</span>
+0059         fun = @(E1,E2) 1./((E2-Eionizations(i3)-E1).^2+E_hat^2);
+0060         <span class="comment">% fun = @(x,y) interp2(E1,E2,f,x,y);</span>
+0061         Emin = @(E) max(Eprime(1),E+Eionizations(i3));           
+0062         <span class="comment">% Emin = @(E) max(Eprime(1),E+Eworks(i3));</span>
+0063         Edegmax = min(Es(i1)+dE(i1),Es(i2)+dE(i2)-Eionizations(i3));
+0064         <span class="keyword">if</span> Edegmax &gt; Es(i1)
+0065           <span class="comment">% Edges(i1) = {Emin,Edegmax};</span>
+0066           Q(i2,i1,i3) = integral2(fun,Es(i1),Edegmax,Emin,Eprime(end));
+0067          <span class="comment">% Q2(i2,i1,i3) = integral2(funH,Es(i1),Edegmax,Emin,Eprime(end));</span>
+0068         <span class="keyword">end</span>
+0069       <span class="keyword">end</span>
+0070     <span class="keyword">end</span>
+0071     disp([<span class="string">'Done with level '</span>,num2str(i3),<span class="string">' at: '</span>,datestr(now,<span class="string">'HH:MM:SS'</span>)])
+0072   <span class="keyword">end</span>
+0073   save CascadingSpecO2ionization.mat Q E4Q Eionizations
+0074 <span class="keyword">end</span>
+0075 <span class="comment">% save Q_both_O2.mat Q Q2</span>
+0076 <span class="keyword">if</span> isempty(Eionization)
+0077   Eionization = 12.072;
+0078 <span class="keyword">end</span>
+0079 
+0080 <span class="keyword">if</span> strcmp(s_or_c,<span class="string">'s'</span>) <span class="comment">% Secondary spectra</span>
+0081   
+0082   Xs = 1./( E_hat^2 + Es.^2 ).*( Es &lt; ( E0in - Eionization )/2 );
+0083   
+0084 <span class="keyword">else</span> <span class="comment">% Cascading spectra</span>
+0085   
+0086   [DE,iLevel] = min(abs(Eionization-Eionizations));
+0087   [DE2,iPrimary] = min(abs(E4Q-E0in));
+0088   Xs = Q(iPrimary,1:numel(Es),iLevel);
+0089   
+0090 <span class="keyword">end</span>
+0091 
+0092 <span class="comment">%% Below here there be trash and garbage, only comments/BG 20190408</span>
+0093 <span class="comment">%% Equation and parameters from M.H. Rees [1989]</span>
+0094 <span class="comment">%Ebar = 17.4; %(eV) Shape parameter</span>
+0095 <span class="comment">%E_I = 12.2; % (eV) Ionization energy</span>
+0096 <span class="comment">%</span>
+0097 <span class="comment">%Xs = (1+Es/Ebar).^(-2.1)./tanh((E0in-E_I)/(2*Ebar))/Ebar;</span>
+0098 <span class="comment">%Xs(Es&gt;E0in/2) = 0;</span>
+0099 <span class="comment">%Xs(~isfinite(Xs)) = 0;</span>
+0100 
+0101 <span class="comment">% $$$</span>
+0102 <span class="comment">% $$$</span>
+0103 <span class="comment">% $$$ for i2 = iLim:numel(E),</span>
+0104 <span class="comment">% $$$   iHalf = find(E&lt;(E(i2)-12.75)/2,1,'last');</span>
+0105 <span class="comment">% $$$   for i1 = iHalf:(i2+1),</span>
+0106 <span class="comment">% $$$     Eprime = linspace(E(i2),E(i2)+dE(i2),10);</span>
+0107 <span class="comment">% $$$     Efine = linspace(E(i1),E(i1)+dE(i1),10);</span>
+0108 <span class="comment">% $$$     [E1,E2] = meshgrid(Efine,Eprime);</span>
+0109 <span class="comment">% $$$     f = @(E1,E2) heaviside(E2-12.75-E1)./((E2-12.75-E1).^2+15^2);</span>
+0110 <span class="comment">% $$$     F = f(E1,E2);</span>
+0111 <span class="comment">% $$$     Q(i1,i2) = trapz(E2(:,1),trapz(E1(1,:),F,2));</span>
+0112 <span class="comment">% $$$   end</span>
+0113 <span class="comment">% $$$   if rem(i2,10) == 0</span>
+0114 <span class="comment">% $$$     disp(sprintf('%d: %s',i2,datestr(now,'HH:MM:SS')))</span>
+0115 <span class="comment">% $$$   end</span>
+0116 <span class="comment">% $$$ end</span>
+0117 <span class="comment">% $$$ if isempty(Q)</span>
+0118 <span class="comment">% $$$   load CascadingSpecO2ionization.mat Q Eall Eworks</span>
+0119 <span class="comment">% $$$   Eworks = [12.072</span>
+0120 <span class="comment">% $$$             16.1</span>
+0121 <span class="comment">% $$$             16.9</span>
+0122 <span class="comment">% $$$             18.2</span>
+0123 <span class="comment">% $$$             18.9</span>
+0124 <span class="comment">% $$$             32.51];</span>
+0125 <span class="comment">% $$$ end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

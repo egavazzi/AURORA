@@ -1,0 +1,241 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of factorize1</title>
+  <meta name="keywords" content="factorize1">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html AURORA --><!-- ../menu.html tools --><!-- menu.html Factorize -->
+<h1>factorize1
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="factorize1.html" class="code" title="">factorize1</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../AURORA/tools/Factorize/Test/test_disp.html" class="code" title="function test_disp">test_disp</a>	TEST_DISP test the display method of the factorize object</li><li><a href="../../../AURORA/tools/Factorize/Test/test_errors.html" class="code" title="function test_errors">test_errors</a>	TEST_ERRORS tests error handling for the factorize object methods</li><li><a href="../../../AURORA/tools/Factorize/Test/test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a>	TEST_FACTORIZE test the accuracy of the factorization object</li><li><a href="../../../AURORA/tools/Factorize/Test/test_performance.html" class="code" title="function err = test_performance">test_performance</a>	TEST_PERFORMANCE compare performance of factorization/solve methods.</li><li><a href="factorize1.html" class="code" title="">factorize1</a>	</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function F = factorize1 (A)</a></li><li><a href="#_sub2" class="code">function x = mldivide (F,b)</a></li><li><a href="#_sub3" class="code">function x = mrdivide (b,F)</a></li><li><a href="#_sub4" class="code">function disp (F)</a></li><li><a href="#_sub5" class="code">function F = inverse (F)</a></li><li><a href="#_sub6" class="code">function x = mtimes (y,z)</a></li><li><a href="#_sub7" class="code">function S = double (F)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 classdef <a href="factorize1.html" class="code" title="">factorize1</a>
+0002 <span class="comment">%FACTORIZE1: a simple and easy-to-read version of factorize.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% &quot;Don't let that inv go past your eyes; to solve that system, factorize!&quot;</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% FACTORIZE1 is a simple object-oriented method for solving linear systems</span>
+0007 <span class="comment">% of equations that allows for MATLAB expressions that look like they use</span>
+0008 <span class="comment">% the mathematical inverse, but which use a matrix factorization instead.</span>
+0009 <span class="comment">% Many mathematical formulas are written as the inverse of a matrix</span>
+0010 <span class="comment">% multiplied by another matrix.  For example, you might see the Schur</span>
+0011 <span class="comment">% complement written mathematically as S=A-B*D^(-1)*C.  Don't be tempted to</span>
+0012 <span class="comment">% write S=A-B*inv(D)*C in MATLAB, which is slow and (worse yet) can be very</span>
+0013 <span class="comment">% inaccurate.  You should write S=A-B*(D\C) instead, but this is not as</span>
+0014 <span class="comment">% clear as the A-B*inv(D)*C expression.  With the FACTORIZE object and the</span>
+0015 <span class="comment">% inverse m-file that uses it, you can write S=A-B*inverse(D)*C, and MATLAB</span>
+0016 <span class="comment">% will do the right thing for you by computing S=A-B*(D\C) and without</span>
+0017 <span class="comment">% actually computing the inverse.</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% You should use the FACTORIZE object for production use, not this one.</span>
+0020 <span class="comment">% The simple FACTORIZE1 object is meant as an educational tool.  Its &quot;help&quot;</span>
+0021 <span class="comment">% documentation is long and the code is short, while at the same time</span>
+0022 <span class="comment">% sacrificing very little performance as compared to FACTORIZE.  FACTORIZE</span>
+0023 <span class="comment">% is faster and has more features (it can handle rectangular matrices, it</span>
+0024 <span class="comment">% operates on sparse matrices more efficiently, and it can use Cholesky</span>
+0025 <span class="comment">% factorization).</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% Methods in the FACTORIZE1 class:</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%       F = factorize1(A)   % computes L,U and P so that A=P'*L*U</span>
+0030 <span class="comment">%       S = inverse(F)      % efficient factorized representation of inv(A)</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%       % Four equivalent ways to do x=A\b, instead of x=inv(A)*b:</span>
+0033 <span class="comment">%       x = mldivide(F,b)</span>
+0034 <span class="comment">%       x = F\b ;</span>
+0035 <span class="comment">%       x = mtimes(S,b)</span>
+0036 <span class="comment">%       x = S*b</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">%       % Four equivalent ways to do x=b/A, instead of x=b*inv(A):</span>
+0039 <span class="comment">%       x = mrdivide(b,F)</span>
+0040 <span class="comment">%       x = b/F</span>
+0041 <span class="comment">%       x = mtimes(b,S)</span>
+0042 <span class="comment">%       x = b*S</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">%       disp(F)             % displays the factors</span>
+0045 <span class="comment">%</span>
+0046 <span class="comment">%       % Since mathematically F=A=P'*L*U, these just multiply A itself:</span>
+0047 <span class="comment">%       x = mtimes(F,b)     % x=A*b</span>
+0048 <span class="comment">%       x = F*b             % x=A*b</span>
+0049 <span class="comment">%       x = mtimes(b,F)     % x=b*A</span>
+0050 <span class="comment">%       x = b*F             % x=b*A</span>
+0051 <span class="comment">%</span>
+0052 <span class="comment">%       C = double(F)       % computes C=inv(A).  &quot;Never&quot; do it!</span>
+0053 <span class="comment">%</span>
+0054 <span class="comment">% Methods in the FACTORIZE class are the same as above except that</span>
+0055 <span class="comment">% &quot;factorize1&quot; is replaced with &quot;factorize&quot;, and the following additional</span>
+0056 <span class="comment">% methods are added:</span>
+0057 <span class="comment">%</span>
+0058 <span class="comment">%       c = S(:,1) ;        % returns the 1st column of inv(A)</span>
+0059 <span class="comment">%       [m n] = size(F) ;   % returns the size of F or S</span>
+0060 <span class="comment">%</span>
+0061 <span class="comment">% S=inverse(F) simply flags S as the factorization of the inverse of A,</span>
+0062 <span class="comment">% without actually computing the inverse.  Then x=S*b solves a linear</span>
+0063 <span class="comment">% system using forward and back subsitution, rather than multiplying by the</span>
+0064 <span class="comment">% inverse.</span>
+0065 <span class="comment">%</span>
+0066 <span class="comment">% Suppose you want to solve two linear systems, A*x=b and A*y=c.  Do not be</span>
+0067 <span class="comment">% tempted to compute the inverse.  You can factorize the matrix (LU,</span>
+0068 <span class="comment">% Cholesky, or QR, depending on the matrix), and then use the factors</span>
+0069 <span class="comment">% twice, but it can be hard to remember all the different formulas.  You</span>
+0070 <span class="comment">% can do x=A\b and y=A\c, but this requires A to be factorized twice.</span>
+0071 <span class="comment">% Instead, with the inverse function defined as S=inverse(factorize(F)),</span>
+0072 <span class="comment">% you can use Method 1 instead.</span>
+0073 <span class="comment">%</span>
+0074 <span class="comment">% Method 1, fast and accurate:</span>
+0075 <span class="comment">%</span>
+0076 <span class="comment">%       S = inverse(A) ;                % factorize A, so that P*A=L*U</span>
+0077 <span class="comment">%       x = S*b ;                       % solve A*x=b for x</span>
+0078 <span class="comment">%       y = S*c ;                       % solve A*y=c for y</span>
+0079 <span class="comment">%</span>
+0080 <span class="comment">% Method 2 is equivalent to Method 1:</span>
+0081 <span class="comment">%</span>
+0082 <span class="comment">%       F = factorize1(A) ;             % factorize A, so that P*A=L*U</span>
+0083 <span class="comment">%       x = F\b ;                       % solve A*x=b for x</span>
+0084 <span class="comment">%       y = F\c ;                       % solve A*y=c for y</span>
+0085 <span class="comment">%</span>
+0086 <span class="comment">% Method 3 is the same, but hard to remember and synatically ugly:</span>
+0087 <span class="comment">%</span>
+0088 <span class="comment">%       [L,U,p] = lu(A,'vector') ;      % factorize A(:,p) = L*U</span>
+0089 <span class="comment">%       x = U \ (L \ (b (p,:)) ;        % solve A*x=b for x</span>
+0090 <span class="comment">%       y = U \ (L \ (c (p,:)) ;        % solve A*x=b for c</span>
+0091 <span class="comment">%</span>
+0092 <span class="comment">% Method 4 is accurate and simple, but it's slower than the methods above:</span>
+0093 <span class="comment">%</span>
+0094 <span class="comment">%       x = A\b ;                       % solve A*x=b for x</span>
+0095 <span class="comment">%       y = A\c ;                       % solve A*y=c for y</span>
+0096 <span class="comment">%</span>
+0097 <span class="comment">% Never use Method 5 (both slow and inaccurate):</span>
+0098 <span class="comment">%</span>
+0099 <span class="comment">%       S = inv(A) ;                    % compute the inverse of A (ack!)</span>
+0100 <span class="comment">%       x = S*b ;                       % solve A*x=b for x</span>
+0101 <span class="comment">%       y = S*c ;                       % solve A*y=c for y</span>
+0102 <span class="comment">%</span>
+0103 <span class="comment">% Example</span>
+0104 <span class="comment">%</span>
+0105 <span class="comment">%       F = factorize1 (A) ; x = F\b ;  % factorize once, and reuse it</span>
+0106 <span class="comment">%       x = inverse(A)*b ;              % solve A*x=b using a factorization</span>
+0107 <span class="comment">%</span>
+0108 <span class="comment">% See also mldivide, mrdivide, mtimes, inverse, factorize</span>
+0109 <span class="comment">% Do not see inv!</span>
+0110 
+0111 <span class="comment">% Copyright 2009, Timothy A. Davis, University of Florida</span>
+0112 
+0113 properties (SetAccess = protected)
+0114     <span class="comment">% the data in the factorize1 object, A(p,:) = L*U.</span>
+0115     A, L, U, p, is_inverse = false ;
+0116 <span class="keyword">end</span>
+0117 
+0118 methods
+0119 
+0120     <span class="keyword">function</span> F = <a href="factorize1.html" class="code" title="">factorize1</a> (A)
+0121         <span class="comment">% constructor: computes a factorization of A</span>
+0122         [m n] = size (A) ;
+0123         assert (ndims (A) == 2 &amp;&amp; m == n, <span class="string">'Matrix must be square and 2D.'</span>);
+0124         F.A = A ;
+0125         [F.L F.U F.p] = lu (A, <span class="string">'vector'</span>) ;  <span class="comment">% gives A(p,:) = L*U</span>
+0126         assert (nnz (diag (F.U)) == n, <span class="string">'Matrix is rank deficient.'</span>) ;
+0127     <span class="keyword">end</span>
+0128 
+0129     <span class="keyword">function</span> x = <a href="#_sub2" class="code" title="subfunction x = mldivide (F,b)">mldivide</a> (F,b)
+0130         <span class="comment">% mldivide: x = A\b using the factorization of A</span>
+0131         <span class="keyword">if</span> (F.is_inverse)
+0132             x = F.A * b ;       <span class="comment">% x = inverse(A)\b is just A*b</span>
+0133         <span class="keyword">else</span>
+0134             x = F.U \ (F.L \ b (F.p,:)) ;
+0135         <span class="keyword">end</span>
+0136     <span class="keyword">end</span>
+0137 
+0138     <span class="keyword">function</span> x = <a href="#_sub3" class="code" title="subfunction x = mrdivide (b,F)">mrdivide</a> (b,F)
+0139         <span class="comment">% mrdivide: x = b/A using the factorization of A</span>
+0140         <span class="keyword">if</span> (F.is_inverse)
+0141             x = b * F.A ;       <span class="comment">% x = b/inverse(A) is just b*A</span>
+0142         <span class="keyword">else</span>
+0143             x = (b / F.U) / F.L ;
+0144             x (:,F.p) = x ;
+0145         <span class="keyword">end</span>
+0146     <span class="keyword">end</span>
+0147 
+0148     <span class="keyword">function</span> <a href="#_sub4" class="code" title="subfunction disp (F)">disp</a> (F)
+0149         <span class="comment">% disp: displays F</span>
+0150         fprintf (<span class="string">'  A: \n'</span>) ; <a href="#_sub4" class="code" title="subfunction disp (F)">disp</a> (F.A) ;
+0151         fprintf (<span class="string">'  L: \n'</span>) ; <a href="#_sub4" class="code" title="subfunction disp (F)">disp</a> (F.L) ;
+0152         fprintf (<span class="string">'  U: \n'</span>) ; <a href="#_sub4" class="code" title="subfunction disp (F)">disp</a> (F.U) ;
+0153         fprintf (<span class="string">'  p: \n'</span>) ; <a href="#_sub4" class="code" title="subfunction disp (F)">disp</a> (F.p) ;
+0154         fprintf (<span class="string">'  is_inverse: %d\n'</span>, F.is_inverse) ;
+0155         fprintf (<span class="string">'  LU factorization: A(p,:) = L*U\n'</span>) ;
+0156     <span class="keyword">end</span>
+0157 
+0158     <span class="keyword">function</span> F = <a href="#_sub5" class="code" title="subfunction F = inverse (F)">inverse</a> (F)
+0159         <span class="comment">% inverse: &quot;inverts&quot; F by flagging it as factorization of inv(A)</span>
+0160         F.is_inverse = ~(F.is_inverse) ;
+0161     <span class="keyword">end</span>
+0162 
+0163     <span class="keyword">function</span> x = <a href="#_sub6" class="code" title="subfunction x = mtimes (y,z)">mtimes</a> (y,z)
+0164         <span class="comment">% mtimes: A*b, inv(A)*b, b*A, or b*inv(A), without computing inv(A)</span>
+0165         <span class="keyword">if</span> (isa (y, <span class="string">'factorize1'</span>))
+0166             <span class="keyword">if</span> (y.is_inverse)
+0167                 F = y ;                 <span class="comment">% x = inv(A)*b via x = A\b</span>
+0168                 b = z ;
+0169                 x = F.U \ (F.L \ b (F.p,:)) ;
+0170             <span class="keyword">else</span>
+0171                 x = y.A * z ;           <span class="comment">% x = A*b</span>
+0172             <span class="keyword">end</span>
+0173         <span class="keyword">else</span>
+0174             <span class="keyword">if</span> (z.is_inverse)
+0175                 F = z ;                 <span class="comment">% x = b*inv(A) via x = b/A</span>
+0176                 b = y ;
+0177                 x = (b / F.U) / F.L ;
+0178                 x (:,F.p) = x ;
+0179             <span class="keyword">else</span>
+0180                 x = y * z.A ;           <span class="comment">% x = b*A</span>
+0181             <span class="keyword">end</span>
+0182         <span class="keyword">end</span>
+0183     <span class="keyword">end</span>
+0184 
+0185     <span class="keyword">function</span> S = <a href="#_sub7" class="code" title="subfunction S = double (F)">double</a> (F)
+0186         <span class="comment">% double: returns the factorization as a single matrix, A or inv(A)</span>
+0187         <span class="keyword">if</span> (F.is_inverse)
+0188             <span class="comment">% ack!  The explicit inverse has been requested...</span>
+0189             S = <a href="#_sub2" class="code" title="subfunction x = mldivide (F,b)">mldivide</a> (F, eye (size (F.A,1))) ;
+0190         <span class="keyword">else</span>
+0191             <span class="comment">% F represents the factorization of A (not its inverse), so</span>
+0192             <span class="comment">% just return A itself.</span>
+0193             S = F.A ;
+0194         <span class="keyword">end</span>
+0195     <span class="keyword">end</span>
+0196 <span class="keyword">end</span>
+0197 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Fig_PnL_VEMCEM</title>
+  <meta name="keywords" content="Fig_PnL_VEMCEM">
+  <meta name="description" content="% Reproduce Volume and column emission plot of Peticolas and Lummerzheim">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Plotting -->
+<h1>Fig_PnL_VEMCEM
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>% Reproduce Volume and column emission plot of Peticolas and Lummerzheim</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% Reproduce Volume and column emission plot of Peticolas and Lummerzheim
+ This script reproduces the Volume and column emissions plot in
+ Figures 3 in Peticolas and Lummerzheim (2000), with fluxes
+ from AURORA. This script requires the results from a 0.7 s long
+ integration of 5 Hz square-wave modulated FAB from 4000 km. This
+ is generated with one of the parameter-sets in
+ Loop_finalRun_PnL_flickering10beams.m, that will be automatically
+ saved in a directory named PnLs-05-4000-3keV-0-10</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>	COLORBAR_LABELED - colorbar with label for range linear or log</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%% Reproduce Volume and column emission plot of Peticolas and Lummerzheim</span>
+0002 <span class="comment">% This script reproduces the Volume and column emissions plot in</span>
+0003 <span class="comment">% Figures 3 in Peticolas and Lummerzheim (2000), with fluxes</span>
+0004 <span class="comment">% from AURORA. This script requires the results from a 0.7 s long</span>
+0005 <span class="comment">% integration of 5 Hz square-wave modulated FAB from 4000 km. This</span>
+0006 <span class="comment">% is generated with one of the parameter-sets in</span>
+0007 <span class="comment">% Loop_finalRun_PnL_flickering10beams.m, that will be automatically</span>
+0008 <span class="comment">% saved in a directory named PnLs-05-4000-3keV-0-10</span>
+0009 
+0010 
+0011 cd PnLs-05-4000-3keV-FA
+0012 
+0013 load Qzt_all_L.mat
+0014 load I_lambda_of_t.mat
+0015 t_PnL = t;
+0016 cd ..
+0017 figure(<span class="string">'position'</span>,[517 398 723 576])
+0018 subplot(2,1,2)
+0019 plot(t_PnL,I_4278/1e10,<span class="string">'linewidth'</span>,2)
+0020 set(gca,<span class="string">'fontsize'</span>,12)
+0021 xlabel(<span class="string">'time (s)'</span>,<span class="string">'fontsize'</span>,15)
+0022 ylabel(<span class="string">'Intensity (R)'</span>,<span class="string">'fontsize'</span>,15)
+0023 MAP4278 = (max(I_4278) - min(I_4278(end/2:end)))/max(I_4278);
+0024 tstr = sprintf(<span class="string">'4278 A Column Emission Rate: %3.1f%% modulation'</span>,MAP4278*100);
+0025 title(tstr,<span class="string">'fontsize'</span>,16)
+0026 set(gca,<span class="string">'box'</span>,<span class="string">'off'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>)
+0027 subplot(2,1,1)
+0028 pcolor(t_PnL,h_atm/1e3,Q4278),shading flat
+0029 set(gca,<span class="string">'fontsize'</span>,12)
+0030 axis([0 0.7 100 250])
+0031 set(gca,<span class="string">'box'</span>,<span class="string">'off'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>,<span class="string">'xticklabel'</span>,<span class="string">''</span>)
+0032 cblh1 = <a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>(<span class="string">'Emission Rate(m^{-3}s^{-1})'</span>,<span class="string">'linear'</span>,<span class="string">'fontsize'</span>,14);
+0033 
+0034 set(cblh1,<span class="string">'position'</span>,get(cblh1,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0035 set(cblh1,<span class="string">'position'</span>,get(cblh1,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0036 title(<span class="string">'4278 A Volume Emission Rate'</span>,<span class="string">'fontsize'</span>,16)
+0037 ylabel(<span class="string">'Height (km)'</span>,<span class="string">'fontsize'</span>,15)
+0038 
+0039 delete(cblh1)
+0040 cblh1 = <a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>(<span class="string">'Emission Rate(m^{-3}s^{-1})'</span>,<span class="string">'linear'</span>,<span class="string">'fontsize'</span>,14);
+0041 set(cblh1,<span class="string">'position'</span>,get(cblh1,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0042 set(cblh1,<span class="string">'position'</span>,get(cblh1,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0043 <span class="comment">%  print -depsc2 -painters ../Figures/PnL-fig_VEMCEM-01.eps</span>
+0044 
+0045 
+0046 <span class="comment">%   Copyright � 2019 Bjorn Gustavsson, &lt;bjorn.gustavsson@irf.se&gt;</span>
+0047 <span class="comment">%   This is free software, licensed under GNU GPL version 2 or later</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

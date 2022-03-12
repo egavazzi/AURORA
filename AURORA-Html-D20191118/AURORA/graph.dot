@@ -1,0 +1,12 @@
+/* Created by mdot for Matlab */
+digraph m2html {
+
+  Contents [URL="Contents.html"];
+  add_AURORA [URL="add_AURORA.html"];
+  add_aeronomy [URL="add_aeronomy.html"];
+  dEds_ee [URL="dEds_ee.html"];
+  dEdt_ee [URL="dEdt_ee.html"];
+  m2html4AURORA2htmldoc [URL="m2html4AURORA2htmldoc.html"];
+  m2html4_AURORA_2htmldoc [URL="m2html4_AURORA_2htmldoc.html"];
+  setup4etrptd10streams [URL="setup4etrptd10streams.html"];
+}

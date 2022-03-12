@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of factorization_dense_qrt</title>
+  <meta name="keywords" content="factorization_dense_qrt">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html AURORA --><!-- ../menu.html tools --><!-- menu.html Factorize -->
+<h1>factorization_dense_qrt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="factorization_dense_qrt.html" class="code" title="">factorization_dense_qrt</a>	</li><li><a href="factorization_generic.html" class="code" title="">factorization_generic</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="factorization_dense_qrt.html" class="code" title="">factorization_dense_qrt</a>	</li><li><a href="factorize.html" class="code" title="function F = factorize (A,try_chol)">factorize</a>	FACTORIZE an object-oriented method for solving linear systems</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function F = factorization_dense_qrt (A)</a></li><li><a href="#_sub2" class="code">function disp (F)</a></li><li><a href="#_sub3" class="code">function x = mldivide_subclass (F,b)</a></li><li><a href="#_sub4" class="code">function x = mrdivide_subclass (b,F)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 classdef <a href="factorization_dense_qrt.html" class="code" title="">factorization_dense_qrt</a> &lt; <a href="factorization_generic.html" class="code" title="">factorization_generic</a>
+0002 <span class="comment">%FACTORIZATION_DENSE_QRT dense economy QR of A': A' = Q*R</span>
+0003 
+0004 <span class="comment">% Copyright 2009, Timothy A. Davis, University of Florida</span>
+0005 
+0006     methods
+0007 
+0008         <span class="keyword">function</span> F = <a href="factorization_dense_qrt.html" class="code" title="">factorization_dense_qrt</a> (A)
+0009             <span class="comment">%FACTORIZATION_DENSE_QRT dense economy QR: A' = Q*R</span>
+0010             m = size (A,1) ;
+0011             [F.Q R] = qr (A',0) ;
+0012             assert (nnz (diag (R)) == m, <span class="string">'Matrix is rank deficient.'</span>) ;
+0013             F.R = R ;
+0014             F.A = A ;
+0015         <span class="keyword">end</span>
+0016 
+0017         <span class="keyword">function</span> <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F)
+0018             <span class="comment">%DISP displays a dense economy QR factorization: A' = Q*R</span>
+0019             fprintf (<span class="string">'  dense economy QR factorization: A'' = Q*R\n'</span>) ;
+0020             fprintf (<span class="string">'  A:\n'</span>) ; <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F.A) ;
+0021             fprintf (<span class="string">'  Q:\n'</span>) ; <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F.Q) ;
+0022             fprintf (<span class="string">'  R:\n'</span>) ; <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F.R) ;
+0023             fprintf (<span class="string">'  is_inverse: %d\n'</span>, F.is_inverse) ;
+0024         <span class="keyword">end</span>
+0025 
+0026         <span class="keyword">function</span> x = <a href="#_sub3" class="code" title="subfunction x = mldivide_subclass (F,b)">mldivide_subclass</a> (F,b)
+0027             <span class="comment">%MLDIVIDE_SUBCLASS x = A\b using a dense QR factorization of A'</span>
+0028             <span class="comment">% minimum 2-norm solution of an underdetermined system</span>
+0029             <span class="keyword">if</span> (issparse (b))
+0030                 b = full (b) ;
+0031             <span class="keyword">end</span>
+0032             opUT.UT = true ;
+0033             opUT.TRANSA = true ;
+0034             x = F.Q * linsolve (F.R, b, opUT) ;
+0035         <span class="keyword">end</span>
+0036 
+0037         <span class="keyword">function</span> x = <a href="#_sub4" class="code" title="subfunction x = mrdivide_subclass (b,F)">mrdivide_subclass</a> (b,F)
+0038             <span class="comment">%MRDIVIDE_SUBCLASS x = b/A using dense QR of A'</span>
+0039             <span class="comment">% least-squares solution of a dense overdetermined problem</span>
+0040             <span class="comment">% x = (R \ (Q' * b'))'</span>
+0041             bT = b' ;
+0042             <span class="keyword">if</span> (issparse (bT))
+0043                 bT = full (bT) ;
+0044             <span class="keyword">end</span>
+0045             opU.UT = true ;
+0046             x = linsolve (F.R, F.Q' * bT, opU)' ;
+0047         <span class="keyword">end</span>
+0048     <span class="keyword">end</span>
+0049 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

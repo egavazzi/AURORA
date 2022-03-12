@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of plot_pars_n_pars</title>
+  <meta name="keywords" content="plot_pars_n_pars">
+  <meta name="description" content="1     2        3     4         5    6      7    8    9   10   11,   12,">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html tools -->
+<h1>plot_pars_n_pars
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>1     2        3     4         5    6      7    8    9   10   11,   12,</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function ph = plot_pars_n_pars(pars_of_ItMm,Yvals,idx2plot,idx4x,idx4Yvals,stdY,axlims,tstr,xstr,ystr,ftsz,dispP,lstl,clrs) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">                                         1     2        3     4         5    6      7    8    9   10   11,   12,
+ PLOT_PARS_N_PARS -</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/sup-scripts/combine_n_extract_I_dt_Mm5.html" class="code" title="function [All_I_lambda,It_Mm] = combine_n_extract_I_dt_Mm5(root_dir,RunDirs)">combine_n_extract_I_dt_Mm5</a>	% Collect all optical emissions and the input parameters</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function ph = plot_pars_n_pars(pars_of_ItMm,Yvals,idx2plot,idx4x,idx4Yvals,stdY,axlims,tstr,xstr,ystr,ftsz,dispP,lstl,clrs)</a>
+0002 <span class="comment">%                                         1     2        3     4         5    6      7    8    9   10   11,   12,</span>
+0003 <span class="comment">% PLOT_PARS_N_PARS -</span>
+0004 <span class="comment">%</span>
+0005 
+0006 <span class="comment">%% ARGIN-checking section</span>
+0007 <span class="keyword">if</span> nargin &lt; 5
+0008   error(<span class="string">'Too few input arguments'</span>)
+0009 <span class="keyword">end</span>
+0010 <span class="keyword">if</span> nargin &lt; 6 || isempty(stdY)
+0011   plot_w_plot = 1;
+0012   <span class="comment">% plot_w_errorbar = 0;</span>
+0013 <span class="keyword">else</span>
+0014   <span class="comment">% plot_w_errorbar = 1;</span>
+0015   plot_w_plot = 0;
+0016 <span class="keyword">end</span>
+0017 <span class="keyword">if</span> nargin &lt; 7 || isempty(axlims)
+0018   axlims = [];
+0019 <span class="keyword">end</span>
+0020 <span class="keyword">if</span> nargin &lt; 8 || isempty(tstr)
+0021   tstr = <span class="string">''</span>;
+0022 <span class="keyword">end</span>
+0023 <span class="keyword">if</span> nargin &lt; 9 || isempty(xstr)
+0024   xstr = <span class="string">''</span>;
+0025 <span class="keyword">end</span>
+0026 <span class="keyword">if</span> nargin &lt; 10 || isempty(ystr)
+0027   ystr = <span class="string">''</span>;
+0028 <span class="keyword">end</span>
+0029 <span class="keyword">if</span> nargin &lt; 11 || isempty(ftsz)
+0030   ftsz = 14;
+0031 <span class="keyword">end</span>
+0032 <span class="keyword">if</span> nargin &lt; 12 || isempty(dispP)
+0033   dispP = 0;
+0034 <span class="keyword">end</span>
+0035 <span class="keyword">if</span> nargin &lt; 13 || isempty(lstl)
+0036   lstl = <span class="string">'.-'</span>;
+0037 <span class="keyword">end</span>
+0038 <span class="keyword">if</span> nargin &lt; 13 || isempty(clrs)
+0039   clrs{1} = <span class="string">'r'</span>;
+0040 <span class="keyword">end</span>
+0041 
+0042 <span class="comment">% keyboard</span>
+0043 
+0044 [~,idx4p] = sort(pars_of_ItMm(idx2plot,idx4x));
+0045 <span class="keyword">if</span> plot_w_plot
+0046   PH = plot(pars_of_ItMm(idx2plot(idx4p),idx4x),<span class="keyword">...</span>
+0047             Yvals(idx2plot(idx4p),idx4Yvals),<span class="keyword">...</span>
+0048             lstl,<span class="string">'linewidth'</span>,2,<span class="string">'markersize'</span>,18);
+0049 <span class="keyword">else</span>
+0050   PH = errorbar(repmat(pars_of_ItMm(idx2plot(idx4p),idx4x),size(idx4Yvals)),<span class="keyword">...</span>
+0051                 Yvals(idx2plot(idx4p),idx4Yvals),<span class="keyword">...</span>
+0052                 stdY(idx2plot(idx4p),idx4Yvals),<span class="keyword">...</span>
+0053                 lstl,<span class="string">'linewidth'</span>,2,<span class="string">'markersize'</span>,18);
+0054   <span class="comment">%disp('Error-bars')</span>
+0055 <span class="keyword">end</span>
+0056 <span class="keyword">if</span> ~isempty(tstr)
+0057   title(tstr,<span class="string">'fontsize'</span>,ftsz)
+0058 <span class="keyword">end</span>
+0059 <span class="keyword">if</span> ~isempty(axlims)
+0060   axis(axlims)
+0061 <span class="keyword">end</span>
+0062 <span class="keyword">if</span> ~isempty(ystr)
+0063   ylabel(ystr,<span class="string">'fontsize'</span>,ftsz)
+0064 <span class="keyword">end</span>
+0065 <span class="keyword">if</span> ~isempty(xstr)
+0066   xlabel(xstr,<span class="string">'fontsize'</span>,ftsz)
+0067 <span class="keyword">end</span>
+0068 <span class="keyword">for</span> iP = 1:numel(PH)
+0069   set(PH(iP),<span class="string">'color'</span>,clrs{min(iP,end)})
+0070 <span class="keyword">end</span>
+0071 grid on
+0072 <span class="keyword">if</span> dispP ~= 0
+0073   disp(tstr)
+0074   disp(xstr)
+0075   disp(pars_of_ItMm(idx2plot(idx4p),:))
+0076   disp(ystr)
+0077   disp(Yvals(idx2plot(idx4p),:))
+0078   <span class="keyword">if</span> dispP == -1
+0079     disp(<span class="string">'push any button'</span>)
+0080     pause
+0081   <span class="keyword">else</span>
+0082     pause(dispP)
+0083   <span class="keyword">end</span>
+0084 <span class="keyword">end</span>
+0085 
+0086 <span class="keyword">if</span> nargout
+0087   ph = PH;
+0088 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

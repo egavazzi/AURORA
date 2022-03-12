@@ -1,0 +1,10 @@
+% Braching ratios for electron-ionization to various states of O2^+,
+% data from Appendix 4, p 271, table A4.1, Physics and Chemistry of
+% the Upper Atmosphere, M. H Rees 1989. 
+% 
+% E(eV) Fraction State
+  12.1   0.17   % X^2Pi_g
+  16.1   0.37   % a^4Pi_u
+  16.9   0.22   % A^2Pi_u
+  18.2   0.15   % b^4S^-_u
+  23.0   0.09   % ^4S, ^2S_s

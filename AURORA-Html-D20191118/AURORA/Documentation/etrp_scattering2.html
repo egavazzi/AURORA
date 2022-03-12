@@ -1,0 +1,248 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of etrp_scattering2</title>
+  <meta name="keywords" content="etrp_scattering2">
+  <meta name="description" content="% Script illustrating (elastic) scattering">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Documentation -->
+<h1>etrp_scattering2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>% Script illustrating (elastic) scattering</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% Script illustrating (elastic) scattering
+  For electron transport collisions lead to change in propagation
+  velocity of electrons, for ellastic scattering direction of
+  propagation is modified (for inelastic scattering also the speed
+  since kinetic energy is lost to excitation/ionization). This
+  script illustrates how the angular change of
+  propagation-direction leads to change of pitch-angle</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/tools/Geometry/r_arc.html" class="code" title="function r_a = r_arc(e1,e2,r0,r)">r_arc</a>	R_ARC -</li><li><a href="../../AURORA/tools/Geometry/rot_around_v.html" class="code" title="function R = rot_around_v(e_rot,phi)">rot_around_v</a>	ROT_AROUND_V - matrix for rotation PHI radians around E_ROT</li><li><a href="../../AURORA/tools/cline.html" class="code" title="function h_out = cline(x,y,z,c,cmap,crange)">cline</a>	CLINE - plots a 3D curve (x,y,z) encoded with scalar color data (c)</li><li><a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>	COLORBAR_LABELED - colorbar with label for range linear or log</li><li><a href="../../AURORA/utilities/v_of_E.html" class="code" title="function v = v_of_E(E)">v_of_E</a>	v_of_E - convert electron energy (eV) to velocity (m/s)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%% Script illustrating (elastic) scattering</span>
+0002 <span class="comment">%  For electron transport collisions lead to change in propagation</span>
+0003 <span class="comment">%  velocity of electrons, for ellastic scattering direction of</span>
+0004 <span class="comment">%  propagation is modified (for inelastic scattering also the speed</span>
+0005 <span class="comment">%  since kinetic energy is lost to excitation/ionization). This</span>
+0006 <span class="comment">%  script illustrates how the angular change of</span>
+0007 <span class="comment">%  propagation-direction leads to change of pitch-angle</span>
+0008 
+0009 <span class="comment">%%  Physical constants</span>
+0010 m_e     = 9.1093835611e-31;       <span class="comment">% electron rest mass [kg]</span>
+0011 q_e     = 1.602176620898e-19;     <span class="comment">% elementary charge [C]</span>
+0012 
+0013 <span class="comment">%% Magnetic field and electron gyro-frequency</span>
+0014 <span class="comment">%  of typical ionospheric strength</span>
+0015 B = 5e-5; <span class="comment">% T</span>
+0016 w_e = w_e_gyro(B); <span class="comment">% electron angular gyro-frequency (rad/s)</span>
+0017 f = w_e/2/pi;      <span class="comment">% (Hertz)</span>
+0018 T = 1/f;           <span class="comment">% gyro-period (s)</span>
+0019 
+0020 <span class="comment">%% Initial electron speed and gyro-radius:</span>
+0021 <span class="comment">% For illustrating purposes we can chose an electron with 10 eV</span>
+0022 <span class="comment">% energy</span>
+0023 v1 = <a href="../../AURORA/utilities/v_of_E.html" class="code" title="function v = v_of_E(E)">v_of_E</a>(10); <span class="comment">% m/s</span>
+0024 r_g = v1/w_e;   <span class="comment">% m</span>
+0025 
+0026 <span class="comment">%% Initial pitch-angle and velocity-vector</span>
+0027 <span class="comment">% Any initial pitch-angle will do, a reasonably large pitch-angle</span>
+0028 <span class="comment">% makes the illustration clear</span>
+0029 theta = 80/180*pi;
+0030 v0 = v1*[sin(theta),0,-cos(theta)];
+0031 
+0032 <span class="comment">%% Scattering angle</span>
+0033 psi = -25/180*pi;
+0034 
+0035 <span class="comment">%% Pitch-angle discretization into finite number of streams:</span>
+0036 <span class="keyword">if</span> ~exist(<span class="string">'mu_lims'</span>,<span class="string">'var'</span>)
+0037   mu_lims = -1:(1/4):1;
+0038 <span class="keyword">end</span>
+0039 <span class="comment">%% Particle trajectory:</span>
+0040 <span class="comment">%  calculated with the Boris-mover scheme</span>
+0041 rv = ode_boris_mover([0:250]/100*T,[0,r_g,1,v0],q_e,m_e,[0 0 0]',B*[0 0 1]',w_e);
+0042 
+0043 <span class="comment">%% Velocity-vector to plot, suitable scaling to magnitude similar to</span>
+0044 <span class="comment">% gyro-radius</span>
+0045 v2p = rv(4:6,end)/norm(v0)/3;
+0046 <span class="comment">%% Velocity-change due to scattering</span>
+0047 vp = (<a href="../../AURORA/tools/Geometry/rot_around_v.html" class="code" title="function R = rot_around_v(e_rot,phi)">rot_around_v</a>([0 0 1],psi)*v2p);
+0048 <span class="keyword">for</span> i1 = 1:360,
+0049   v4psi(i1,:) =  (<a href="../../AURORA/tools/Geometry/rot_around_v.html" class="code" title="function R = rot_around_v(e_rot,phi)">rot_around_v</a>(v2p/norm(v2p),i1/180*pi)*vp);
+0050 <span class="keyword">end</span>
+0051 mu = v4psi(:,3)/norm(vp);
+0052 subplot(1,3,1)
+0053 plot3(rv(1,:),rv(2,:),rv(3,:),<span class="string">'k'</span>,<span class="string">'linewidth'</span>,2)
+0054 hold on
+0055 plot3(rv(1,end),rv(2,end),rv(3,end),<span class="string">'g.'</span>,<span class="string">'markersize'</span>,22)
+0056 arrow(rv(1:3,end)',rv(1:3,end)'+v2p',<span class="string">'width'</span>,1)
+0057 arrow(rv(1:3,end)',rv(1:3,end)'+vp',<span class="keyword">...</span>
+0058       <span class="string">'edgecolor'</span>,<span class="string">'m'</span>,<span class="string">'facecolor'</span>,<span class="string">'m'</span>,<span class="string">'width'</span>,1)
+0059 
+0060 R_arc = <a href="../../AURORA/tools/Geometry/r_arc.html" class="code" title="function r_a = r_arc(e1,e2,r0,r)">r_arc</a>(v2p',vp',rv(1:3,end),0.2);
+0061 plot3(R_arc(:,1),R_arc(:,2),R_arc(:,3),<span class="string">'k'</span>)
+0062 axis equal
+0063 xt = -0.3;
+0064 yt = -0.1;
+0065 zt = 0.4; 
+0066 text(xt,yt,zt,<span class="string">'\psi'</span>,<span class="string">'fontsize'</span>,14)
+0067 axis([-0.34038      0.20     -0.46021 0.2 0.13198 1])
+0068 
+0069 subplot(1,3,2)
+0070 plot3(rv(1,:),rv(2,:),rv(3,:),<span class="string">'k'</span>,<span class="string">'linewidth'</span>,2)
+0071 hold on
+0072 plot3(rv(1,end),rv(2,end),rv(3,end),<span class="string">'g.'</span>,<span class="string">'markersize'</span>,22)
+0073 arrow(rv(1:3,end)',rv(1:3,end)'+v2p',<span class="string">'width'</span>,1)
+0074 arrow(rv(1:3,end)',rv(1:3,end)'+vp',<span class="keyword">...</span>
+0075       <span class="string">'edgecolor'</span>,<span class="string">'m'</span>,<span class="string">'facecolor'</span>,<span class="string">'m'</span>,<span class="string">'width'</span>,1)
+0076 hcl = <a href="../../AURORA/tools/cline.html" class="code" title="function h_out = cline(x,y,z,c,cmap,crange)">cline</a>(rv(1,end)+v4psi(:,1),<span class="keyword">...</span>
+0077             rv(2,end)+v4psi(:,2),<span class="keyword">...</span>
+0078             rv(3,end)+v4psi(:,3),<span class="keyword">...</span>
+0079             mu,jet,[-1,1]);
+0080 axis equal
+0081 <a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>(<span class="string">'\mu'</span>)
+0082 axis([-0.34038      0.20     -0.46021 0.2 0.13198 1])
+0083 
+0084 subplot(1,3,3)
+0085 hcl2 = <a href="../../AURORA/tools/cline.html" class="code" title="function h_out = cline(x,y,z,c,cmap,crange)">cline</a>(v4psi(:,1)./sum(v4psi.^2,2).^.5,<span class="keyword">...</span>
+0086              v4psi(:,2)./sum(v4psi.^2,2).^.5,<span class="keyword">...</span>
+0087              v4psi(:,3)./sum(v4psi.^2,2).^.5,<span class="keyword">...</span>
+0088              mu,jet,[-1,1]);
+0089 view(90,0)
+0090 hold on
+0091 
+0092 plot3([0,v2p(1)'/norm(v2p)],<span class="keyword">...</span>
+0093       [0,v2p(2)'/norm(v2p)],<span class="keyword">...</span>
+0094       [0,v2p(3)'/norm(v2p)],<span class="keyword">...</span>
+0095       <span class="string">'k+'</span>)
+0096 
+0097 view(90,0)
+0098 <span class="comment">% axis equal</span>
+0099 plot3([-1 1],[-1 1],mu_lims'*[1 1],<span class="string">'k'</span>)
+0100 mu_centres = mu_lims(1:end-1)/2 + mu_lims(2:end)/2;
+0101 <span class="keyword">for</span> i1 = numel(mu_centres):-1:1
+0102   mu_names{i1} = sprintf(<span class="string">'u_%d'</span>,i1);
+0103 <span class="keyword">end</span>
+0104 axis equal
+0105 <span class="comment">% $$$ set(gca,...</span>
+0106 <span class="comment">% $$$     'xtick',[],...</span>
+0107 <span class="comment">% $$$     'ytick',[],...</span>
+0108 <span class="comment">% $$$     'ztick',mu_centres,...</span>
+0109 <span class="comment">% $$$     'zticklabel',{'u_1','u_2','u_3','u_4','u_5','u_6','u_7','u_8'})</span>
+0110 set(gca,<span class="keyword">...</span>
+0111     <span class="string">'xtick'</span>,[],<span class="keyword">...</span>
+0112     <span class="string">'ytick'</span>,[],<span class="keyword">...</span>
+0113     <span class="string">'ztick'</span>,mu_centres,<span class="keyword">...</span>
+0114     <span class="string">'zticklabel'</span>,mu_names)
+0115 axis([-1 1 -1 1 -1 1])
+0116 drawnow
+0117 
+0118 qwe1 = mfilename(<span class="string">'fullpath'</span>);
+0119 [qweA,qweB,qweC] = fileparts(qwe1);
+0120 
+0121 print(<span class="string">'-depsc2'</span>,<span class="string">'-painters'</span>,fullfile(qweA,<span class="string">'e-scattering-geometry-01.eps'</span>));
+0122 subplot(1,3,1)
+0123 grid on
+0124 subplot(1,3,2)
+0125 grid on
+0126 print(<span class="string">'-depsc2'</span>,<span class="string">'-painters'</span>,fullfile(qweA,<span class="string">'e-scattering-geometry-02.eps'</span>));
+0127 
+0128 vaz = -65.5;
+0129 vel =  16;
+0130 subplot(1,3,1)
+0131 view(vaz,vel);
+0132 subplot(1,3,2)
+0133 view(vaz,vel);
+0134 print(<span class="string">'-depsc2'</span>,<span class="string">'-painters'</span>,fullfile(qweA,<span class="string">'e-scattering-geometry-04.eps'</span>));
+0135 subplot(1,3,1)
+0136 grid off
+0137 subplot(1,3,2)
+0138 grid off
+0139 print(<span class="string">'-depsc2'</span>,<span class="string">'-painters'</span>,fullfile(qweA,<span class="string">'e-scattering-geometry-03.eps'</span>));
+0140 
+0141 <span class="comment">%%</span>
+0142 vaz = -37.5;
+0143 vel =  30;
+0144 
+0145 v_0fcn = @(phi,theta)[cos(phi)*sin(theta),sin(phi)*sin(theta),cos(theta)];
+0146 [X,Y,Z] = sphere(181);
+0147 mu_sphere = Z;
+0148 <span class="keyword">for</span> i1 = 2:9,
+0149   mu_sphere(mu_sphere(:)&lt;mu_lims(i1)) = i1;
+0150 <span class="keyword">end</span>
+0151 
+0152 psi = 31/180*pi;
+0153 v00 = 1.15*v_0fcn(-142*pi/180,160*pi/180);
+0154 clf
+0155 subplot(1,2,1)
+0156 surf(X,Y,Z,mu_sphere-1),shading flat
+0157 view(vaz,-vel/2)                          
+0158 hold on
+0159 v2p = v00/norm(v00);
+0160 rot_e = cross(v00/norm(v00),[0 -1 0]);
+0161 rot_e = rot_e/norm(rot_e);            
+0162 vp = (<a href="../../AURORA/tools/Geometry/rot_around_v.html" class="code" title="function R = rot_around_v(e_rot,phi)">rot_around_v</a>(rot_e,psi)*v2p')';
+0163 R_arc = <a href="../../AURORA/tools/Geometry/r_arc.html" class="code" title="function r_a = r_arc(e1,e2,r0,r)">r_arc</a>(v2p,vp,[0 0 0]',1);
+0164 arrow([0 0 0],v00,<span class="string">'edgecolor'</span>,<span class="string">'k'</span>)         
+0165 axis([-1 1 -1 1 -1 1]*1.1)
+0166 plot3(R_arc(:,1),R_arc(:,2),R_arc(:,3),<span class="string">'k'</span>)
+0167 <span class="keyword">for</span> i1 = 1:360,
+0168   v4psi(i1,:) =  (<a href="../../AURORA/tools/Geometry/rot_around_v.html" class="code" title="function R = rot_around_v(e_rot,phi)">rot_around_v</a>(v2p/norm(v2p),i1/180*pi)*vp');
+0169 <span class="keyword">end</span>
+0170 plot3(v4psi(:,1),v4psi(:,2),v4psi(:,3),<span class="string">'k-'</span>,<span class="string">'linewidth'</span>,2) 
+0171 caxis([0.5 8.5])
+0172 arrow([0 0 1.3],[0 0 -1.2],<span class="string">'edgecolor'</span>,<span class="string">'m'</span>,<span class="string">'width'</span>,2)
+0173 
+0174 v00 = 1.15*v_0fcn(-142*pi/180,131*pi/180);
+0175 colorbar
+0176 caxis([0.5 8.5])
+0177 text(-.8,-1.05,-1,<span class="string">'\psi'</span>,<span class="string">'fontsize'</span>,14)
+0178 
+0179 subplot(1,2,2)
+0180 surf(X,Y,Z,mu_sphere-1),shading flat
+0181 view(vaz,-vel/2)                          
+0182 hold on
+0183 v2p = v00/norm(v00);
+0184 rot_e = cross(v00/norm(v00),[0 -1 0]);
+0185 rot_e = rot_e/norm(rot_e);            
+0186 vp = (<a href="../../AURORA/tools/Geometry/rot_around_v.html" class="code" title="function R = rot_around_v(e_rot,phi)">rot_around_v</a>(rot_e,psi)*v2p')';
+0187 R_arc = <a href="../../AURORA/tools/Geometry/r_arc.html" class="code" title="function r_a = r_arc(e1,e2,r0,r)">r_arc</a>(v2p,vp,[0 0 0]',1);
+0188 arrow([0 0 0],v00,<span class="string">'edgecolor'</span>,<span class="string">'k'</span>)         
+0189 axis([-1 1 -1 1 -1 1]*1.1)
+0190 plot3(R_arc(:,1),R_arc(:,2),R_arc(:,3),<span class="string">'k'</span>)
+0191 <span class="keyword">for</span> i1 = 1:360,
+0192   v4psi(i1,:) =  (<a href="../../AURORA/tools/Geometry/rot_around_v.html" class="code" title="function R = rot_around_v(e_rot,phi)">rot_around_v</a>(v2p/norm(v2p),i1/180*pi)*vp');
+0193 <span class="keyword">end</span>
+0194 plot3(v4psi(:,1),v4psi(:,2),v4psi(:,3),<span class="string">'k-'</span>,<span class="string">'linewidth'</span>,2) 
+0195 caxis([0.5 8.5])
+0196 arrow([0 0 1.3],[0 0 -1.2],<span class="string">'edgecolor'</span>,<span class="string">'m'</span>,<span class="string">'width'</span>,2)
+0197 
+0198 colorbar
+0199 caxis([0.5 8.5])
+0200 text(-.8,-1.05,-.75,<span class="string">'\psi'</span>,<span class="string">'fontsize'</span>,14)</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

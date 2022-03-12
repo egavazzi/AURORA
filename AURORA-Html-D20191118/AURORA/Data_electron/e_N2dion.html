@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of e_N2dion</title>
+  <meta name="keywords" content="e_N2dion">
+  <meta name="description" content="Xs = e_N2dion(E)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>e_N2dion
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Xs = e_N2dion(E)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function cross_section = e_N2dion(Ep) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Xs = e_N2dion(E)
+ 
+ e_N2dion - dissociative ionization cross section (m^2)
+ E electron energy (eV)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function cross_section = e_N2dion(Ep)</a>
+0002 <span class="comment">% Xs = e_N2dion(E)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% e_N2dion - dissociative ionization cross section (m^2)</span>
+0005 <span class="comment">% E electron energy (eV)</span>
+0006 
+0007 <span class="comment">% $$$ E = [30  40   50  60  70  80  90 100 110 120 140 160 180 200 250 300];</span>
+0008 <span class="comment">% $$$ s = [0.16 0.97 2.5 3.9 4.6 5.0 5.2 5.4 5.5 5.5 5.2 4.8 4.6 4.4 3.9 3.4]*1e-21;%-17;</span>
+0009 <span class="comment">% $$$</span>
+0010 <span class="comment">% $$$</span>
+0011 <span class="comment">% $$$ Xs = exp([interp1(E,log(s),Ep(Ep&lt;E(end)),'pcip') interp1(log(E),log(s),log(Ep(Ep&gt;=E(end))),'linear','extrap')] );</span>
+0012 <span class="comment">% $$$ I = find(~isfinite(Xs));</span>
+0013 <span class="comment">% $$$ Xs(I) = 0;</span>
+0014 <span class="comment">% $$$</span>
+0015 <span class="comment">% $$$ Xs = Xs;</span>
+0016 <span class="comment">% $$$</span>
+0017 <span class="comment">% $$$ inans = find(Ep&lt;25);</span>
+0018 <span class="comment">% $$$ Xs(inans) = 0;</span>
+0019 
+0020 <span class="keyword">for</span> iE = numel(Ep):-1:1,
+0021   <span class="keyword">if</span> Ep(iE) &gt; 24.00 &amp; Ep(iE) &lt; 42.82,
+0022     cross_section(iE) = (1-24.00/Ep(iE))*exp(2066.673-2216.257*log(Ep(iE))+870.8756*log(Ep(iE))^2-151.3981*log(Ep(iE))^3+9.830359*log(Ep(iE))^4);
+0023   <span class="keyword">elseif</span> Ep(iE) &gt;= 42.82 &amp; Ep(iE) &lt; 600,
+0024     cross_section(iE) = exp(-159.5311+90.55610*log(Ep(iE))-25.06691*log(Ep(iE))^2+3.076254*log(Ep(iE))^3-0.1420719*log(Ep(iE))^4);
+0025   <span class="keyword">elseif</span> Ep(iE) &gt;= 600,
+0026     cross_section(iE) = 3.526978e-15*log(0.0275*Ep(iE))/Ep(iE);
+0027   <span class="keyword">else</span>
+0028     cross_section(iE) = 0;
+0029   <span class="keyword">end</span>
+0030 <span class="keyword">end</span>
+0031 
+0032 cross_section = cross_section*1e-4;</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

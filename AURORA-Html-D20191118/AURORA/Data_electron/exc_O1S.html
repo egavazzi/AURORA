@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of exc_O1S</title>
+  <meta name="keywords" content="exc_O1S">
+  <meta name="description" content="EXC_O1S - O1S excitation cross section">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>exc_O1S
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>EXC_O1S - O1S excitation cross section</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function X_o1s = exc_O1S(E) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> EXC_O1S - O1S excitation cross section
+   
+ Calling:
+  Xs = exc_O1S(E)
+ Input:
+  E - electron energy (eV), double array [1 x nE]
+ Output:
+  Xs - excitation cross section (m^2), double array [1 x nE]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/utilities/Ie_zE2Qz.html" class="code" title="function ThatWentOK = Ie_zE2Qz(nN2,nO2,nO,h_atm)">Ie_zE2Qz</a>	IE_ZE2Q_Z - Calculate the volume emission/excitation rates</li><li><a href="../../AURORA/utilities/Ie_ztE2Q_zt.html" class="code" title="function ThatWentOK = Ie_ztE2Q_zt(nN2,nO2,nO,h_atm)">Ie_ztE2Q_zt</a>	IE_ZTE2Q_ZT - Calculate the volume emission/excitation rates</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function X_o1s = exc_O1S(E)</a>
+0002 <span class="comment">% EXC_O1S - O1S excitation cross section</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Calling:</span>
+0005 <span class="comment">%  Xs = exc_O1S(E)</span>
+0006 <span class="comment">% Input:</span>
+0007 <span class="comment">%  E - electron energy (eV), double array [1 x nE]</span>
+0008 <span class="comment">% Output:</span>
+0009 <span class="comment">%  Xs - excitation cross section (m^2), double array [1 x nE]</span>
+0010 
+0011 <span class="comment">%  Copyright � Bjorn Gustavsson 20110527, bjorn.gustavsson@uit.no</span>
+0012 <span class="comment">%  This is free software, licensed under GNU GPL version 2 or later</span>
+0013 
+0014 xs_o1s = [.1 .6 2.72 3.35 3.19 1.31]*1e-18*1e-4;
+0015 E_o1s = [4.19 5 7 10 20 30];
+0016 X_o1s = exp(interp1(log(E_o1s),log(xs_o1s),log(E),<span class="string">'linear'</span>,<span class="string">'extrap'</span>));
+0017 i = find(~isfinite(X_o1s));
+0018 X_o1s(E&lt;4.19) = 0;
+0019 X_o1s(i) = 0;</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

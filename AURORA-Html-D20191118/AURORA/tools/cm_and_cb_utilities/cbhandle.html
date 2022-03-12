@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cbhandle</title>
+  <meta name="keywords" content="cbhandle">
+  <meta name="description" content="CBHANDLE   Gets the handle of current colorbar or its peer axes.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html AURORA --><!-- ../menu.html tools --><!-- menu.html cm_and_cb_utilities -->
+<h1>cbhandle
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CBHANDLE   Gets the handle of current colorbar or its peer axes.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function CBH = cbhandle(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">CBHANDLE   Gets the handle of current colorbar or its peer axes.
+
+   SYNTAX:
+     CBH = cbhandle;
+     CBH = cbhandle(H,...);
+     CBH = cbhandle(...,'force');
+     CBH = cbhandle(...,'unhide');
+     PAH = cbhandle(...,'peer');
+
+   INPUTS:
+     'force'  - Forces to create colorbars when not found.
+     'unhide' - Looks even in hidden handles.
+     'peer'   - Looks for its peer axes handle instead.
+     H        - Colorbars, axes, figures or uipanels handles to look for
+                colorbars or its peer handles.
+                DEFAULT: gca (current axes)
+
+   OUTPUTS:
+     CBH - Colorbar or its peer axes handle(s).
+
+   DESCRIPTION:
+     By default, colorbars are hidden objects. This function searches for
+     them basically by its 'axes' type and 'Colorbar' tag.
+
+   SEE ALSO:
+     COLORBAR
+     and
+     <a href="cbunits.html" class="code" title="function CBH = cbunits(varargin)">CBUNITS</a>, <a href="cblabel.html" class="code" title="function CBLH = cblabel(varargin)">CBLABEL</a>, <a href="cbfreeze.html" class="code" title="function CBH = cbfreeze(varargin)">CBFREEZE</a> by Carlos Vargas
+     at http://www.mathworks.com/matlabcentral/fileexchange
+
+
+   ---
+   MFILE:   <a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>.m
+   VERSION: 2.0 (Jun 05, 2014) (&lt;a href=&quot;matlab:web('http://www.mathworks.com/matlabcentral/fileexchange/authors/11258')&quot;&gt;download&lt;/a&gt;)
+   MATLAB:  8.2.0.701 (R2013b)
+   AUTHOR:  Carlos Adrian Vargas Aguilera (MEXICO)
+   CONTACT: nubeobscura@hotmail.com</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="cbfit.html" class="code" title="function CBH = cbfit(varargin)">cbfit</a>	CBFIT   Changes COLORMAP and CAXIS to fit between colorbar's ticks.</li><li><a href="cbfreeze.html" class="code" title="function CBH = cbfreeze(varargin)">cbfreeze</a>	CBFREEZE   Freezes the colormap of a colorbar.</li><li><a href="cblabel.html" class="code" title="function CBLH = cblabel(varargin)">cblabel</a>	CBLABEL   Adds a label to the colorbar.</li><li><a href="cbunits.html" class="code" title="function CBH = cbunits(varargin)">cbunits</a>	CBUNITS   Adds units (and ISU prefixes) to the colorbar ticklabels.</li><li><a href="cmfit.html" class="code" title="function [CMAP,CLIM,WIDTH,REF,LEVELS] = cmfit(CMAP,CLIM,WIDTH,REF,CENTER,varargin)">cmfit</a>	CMFIT   Sets the COLORMAP and CAXIS to specific color bands.</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function CBH = cbhandle(varargin)</a>
+0002 <span class="comment">%CBHANDLE   Gets the handle of current colorbar or its peer axes.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%   SYNTAX:</span>
+0005 <span class="comment">%     CBH = cbhandle;</span>
+0006 <span class="comment">%     CBH = cbhandle(H,...);</span>
+0007 <span class="comment">%     CBH = cbhandle(...,'force');</span>
+0008 <span class="comment">%     CBH = cbhandle(...,'unhide');</span>
+0009 <span class="comment">%     PAH = cbhandle(...,'peer');</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%   INPUTS:</span>
+0012 <span class="comment">%     'force'  - Forces to create colorbars when not found.</span>
+0013 <span class="comment">%     'unhide' - Looks even in hidden handles.</span>
+0014 <span class="comment">%     'peer'   - Looks for its peer axes handle instead.</span>
+0015 <span class="comment">%     H        - Colorbars, axes, figures or uipanels handles to look for</span>
+0016 <span class="comment">%                colorbars or its peer handles.</span>
+0017 <span class="comment">%                DEFAULT: gca (current axes)</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%   OUTPUTS:</span>
+0020 <span class="comment">%     CBH - Colorbar or its peer axes handle(s).</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%   DESCRIPTION:</span>
+0023 <span class="comment">%     By default, colorbars are hidden objects. This function searches for</span>
+0024 <span class="comment">%     them basically by its 'axes' type and 'Colorbar' tag.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%   SEE ALSO:</span>
+0027 <span class="comment">%     COLORBAR</span>
+0028 <span class="comment">%     and</span>
+0029 <span class="comment">%     CBUNITS, CBLABEL, CBFREEZE by Carlos Vargas</span>
+0030 <span class="comment">%     at http://www.mathworks.com/matlabcentral/fileexchange</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   ---</span>
+0034 <span class="comment">%   MFILE:   cbhandle.m</span>
+0035 <span class="comment">%   VERSION: 2.0 (Jun 05, 2014) (&lt;a href=&quot;matlab:web('http://www.mathworks.com/matlabcentral/fileexchange/authors/11258')&quot;&gt;download&lt;/a&gt;)</span>
+0036 <span class="comment">%   MATLAB:  8.2.0.701 (R2013b)</span>
+0037 <span class="comment">%   AUTHOR:  Carlos Adrian Vargas Aguilera (MEXICO)</span>
+0038 <span class="comment">%   CONTACT: nubeobscura@hotmail.com</span>
+0039 
+0040 <span class="comment">%   REVISIONS:</span>
+0041 <span class="comment">%   1.0      Released. (Jun 08, 2009)</span>
+0042 <span class="comment">%   1.1      Fixed bug with colorbar handle input. (Aug 20, 2009)</span>
+0043 <span class="comment">%   2.0      Rewritten code. New 'create', 'force', 'unhide' and 'peer'</span>
+0044 <span class="comment">%            optional inputs. Changed application data to 'cbfreeze'. (Jun</span>
+0045 <span class="comment">%            05, 2014)</span>
+0046 
+0047 <span class="comment">%   DISCLAIMER:</span>
+0048 <span class="comment">%   cbhandle.m is provided &quot;as is&quot; without warranty of any kind, under the</span>
+0049 <span class="comment">%   revised BSD license.</span>
+0050 
+0051 <span class="comment">%   Copyright (c) 2009-2014 Carlos Adrian Vargas Aguilera</span>
+0052 
+0053 
+0054 <span class="comment">% INPUTS CHECK-IN</span>
+0055 <span class="comment">% -------------------------------------------------------------------------</span>
+0056 
+0057 <span class="comment">% Parameters:</span>
+0058 appName = <span class="string">'cbfreeze'</span>;
+0059 
+0060 <span class="comment">% Sets default:</span>
+0061 H      = get(get(0,<span class="string">'CurrentFigure'</span>),<span class="string">'CurrentAxes'</span>);
+0062 FORCE  = false;
+0063 UNHIDE = false;
+0064 PEER   = false;
+0065 
+0066 <span class="comment">% Checks inputs/outputs:</span>
+0067 assert(nargin&lt;=5,<span class="string">'CAVARGAS:cbhandle:IncorrectInputsNumber'</span>,<span class="keyword">...</span>
+0068     <span class="string">'At most 5 inputs are allowed.'</span>)
+0069 assert(nargout&lt;=1,<span class="string">'CAVARGAS:cbhandle:IncorrectOutputsNumber'</span>,<span class="keyword">...</span>
+0070     <span class="string">'Only 1 output is allowed.'</span>)
+0071 
+0072 <span class="comment">% Gets H:</span>
+0073 <span class="keyword">if</span> nargin &amp;&amp; ~isempty(varargin{1}) &amp;&amp; <span class="keyword">...</span>
+0074         all(reshape(ishandle(varargin{1}),[],1))
+0075     H = varargin{1};
+0076     varargin(1) = [];
+0077 <span class="keyword">end</span>
+0078 
+0079 <span class="comment">% Gets UNHIDE:</span>
+0080 <span class="keyword">while</span> ~isempty(varargin)
+0081     <span class="keyword">if</span> isempty(varargin) || isempty(varargin{1}) || ~ischar(varargin{1})<span class="keyword">...</span>
+0082             || (numel(varargin{1})~=size(varargin{1},2))
+0083         varargin(1) = [];
+0084         <span class="keyword">continue</span>
+0085     <span class="keyword">end</span>
+0086     
+0087     <span class="keyword">switch</span> lower(varargin{1})
+0088         <span class="keyword">case</span> {<span class="string">'force'</span>,<span class="string">'forc'</span>,<span class="string">'for'</span>,<span class="string">'fo'</span>,<span class="string">'f'</span>}
+0089             FORCE  = true;
+0090         <span class="keyword">case</span> {<span class="string">'unhide'</span>,<span class="string">'unhid'</span>,<span class="string">'unhi'</span>,<span class="string">'unh'</span>,<span class="string">'un'</span>,<span class="string">'u'</span>}
+0091             UNHIDE = true;
+0092         <span class="keyword">case</span> {<span class="string">'peer'</span>,<span class="string">'pee'</span>,<span class="string">'pe'</span>,<span class="string">'p'</span>}
+0093             PEER   = true;
+0094     <span class="keyword">end</span>
+0095     varargin(1) = [];
+0096 <span class="keyword">end</span>
+0097 
+0098 <span class="comment">% -------------------------------------------------------------------------</span>
+0099 <span class="comment">% MAIN</span>
+0100 <span class="comment">% -------------------------------------------------------------------------</span>
+0101 
+0102 <span class="comment">% Show hidden handles:</span>
+0103 <span class="keyword">if</span> UNHIDE
+0104     UNHIDE = strcmp(get(0,<span class="string">'ShowHiddenHandles'</span>),<span class="string">'off'</span>);
+0105     set(0,<span class="string">'ShowHiddenHandles'</span>,<span class="string">'on'</span>)
+0106 <span class="keyword">end</span>
+0107 
+0108 <span class="comment">% Forces colormaps</span>
+0109 <span class="keyword">if</span> isempty(H) &amp;&amp; FORCE
+0110     H = gca;
+0111 <span class="keyword">end</span>
+0112 H = H(:);
+0113 nH = length(H);
+0114 
+0115 <span class="comment">% Checks H type:</span>
+0116 newH = [];
+0117 <span class="keyword">for</span> cH = 1:nH
+0118     <span class="keyword">switch</span> get(H(cH),<span class="string">'type'</span>)
+0119         
+0120         <span class="keyword">case</span> {<span class="string">'figure'</span>,<span class="string">'uipanel'</span>}
+0121             <span class="comment">% Changes parents to its children axes</span>
+0122             haxes = findobj(H(cH), <span class="string">'-depth'</span>,1, <span class="string">'Type'</span>,<span class="string">'Axes'</span>, <span class="keyword">...</span>
+0123                 <span class="string">'-not'</span>, <span class="string">'Tag'</span>,<span class="string">'legend'</span>);
+0124             <span class="keyword">if</span> isempty(haxes) &amp;&amp; FORCE
+0125                 haxes = axes(<span class="string">'Parent'</span>,H(cH));
+0126             <span class="keyword">end</span>
+0127             newH = [newH; haxes(:)];
+0128             
+0129         <span class="keyword">case</span> <span class="string">'axes'</span>
+0130             <span class="comment">% Continues</span>
+0131             newH = [newH; H(cH)];
+0132     <span class="keyword">end</span>
+0133     
+0134 <span class="keyword">end</span>
+0135 H  = newH;
+0136 nH = length(H);
+0137 
+0138 <span class="comment">% Looks for CBH on axes:</span>
+0139 CBH = NaN(size(H));
+0140 <span class="keyword">for</span> cH = 1:nH
+0141     
+0142     <span class="comment">% If its peer axes then one of the following is not empty:</span>
+0143     hin  = double(getappdata(H(cH),<span class="string">'LegendColorbarInnerList'</span>));
+0144     hout = double(getappdata(H(cH),<span class="string">'LegendColorbarOuterList'</span>));
+0145     
+0146     <span class="keyword">if</span> ~isempty([hin hout]) &amp;&amp; any(ishandle([hin hout]))
+0147         <span class="comment">% Peer axes:</span>
+0148 
+0149         <span class="keyword">if</span> ~PEER
+0150             <span class="keyword">if</span> ishandle(hin)
+0151                 CBH(cH) = hin;
+0152             <span class="keyword">else</span>
+0153                 CBH(cH) = hout;
+0154             <span class="keyword">end</span>
+0155         <span class="keyword">else</span>
+0156             CBH(cH) = H(cH);
+0157         <span class="keyword">end</span>
+0158         
+0159     <span class="keyword">else</span>
+0160         <span class="comment">% Not peer axes:</span>
+0161         
+0162         <span class="keyword">if</span> isappdata(H(cH),appName)
+0163             <span class="comment">% CBFREEZE axes:</span>
+0164             
+0165             appdata = getappdata(H(cH),appName);
+0166             <span class="keyword">if</span> ~PEER
+0167                 CBH(cH) = double(appdata.cbHandle);
+0168             <span class="keyword">else</span>
+0169                 CBH(cH) = double(appdata.peerHandle);
+0170             <span class="keyword">end</span>
+0171             
+0172         <span class="keyword">elseif</span> strcmp(get(H(cH),<span class="string">'Tag'</span>),<span class="string">'Colorbar'</span>)
+0173             <span class="comment">% Colorbar axes:</span>
+0174             
+0175             <span class="keyword">if</span> ~PEER
+0176                 
+0177                 <span class="comment">% Saves its handle:</span>
+0178                 CBH(cH) = H(cH);
+0179                 
+0180             <span class="keyword">else</span>
+0181                 
+0182                 <span class="comment">% Looks for its peer axes:</span>
+0183                 peer = findobj(ancestor(H(cH),{<span class="string">'figure'</span>,<span class="string">'uipanel'</span>}), <span class="keyword">...</span>
+0184                     <span class="string">'-depth'</span>,1, <span class="string">'Type'</span>,<span class="string">'Axes'</span>, <span class="keyword">...</span>
+0185                     <span class="string">'-not'</span>, <span class="string">'Tag'</span>,<span class="string">'Colorbar'</span>, <span class="string">'-not'</span>, <span class="string">'Tag'</span>,<span class="string">'legend'</span>);
+0186                 <span class="keyword">for</span> l = 1:length(peer)
+0187                     hin  = double(getappdata(peer(l), <span class="keyword">...</span>
+0188                         <span class="string">'LegendColorbarInnerList'</span>));
+0189                     hout = double(getappdata(peer(l), <span class="keyword">...</span>
+0190                         <span class="string">'LegendColorbarOuterList'</span>));
+0191                     <span class="keyword">if</span> any(H(cH)==[hin hout])
+0192                         CBH(cH) = peer(l);
+0193                         <span class="keyword">break</span>
+0194                     <span class="keyword">end</span>
+0195                 <span class="keyword">end</span>
+0196                 
+0197             <span class="keyword">end</span>
+0198             
+0199         <span class="keyword">else</span>
+0200             <span class="comment">% Just some normal axes:</span>
+0201             
+0202             <span class="keyword">if</span> FORCE
+0203                 temp = colorbar(<span class="string">'Peer'</span>,H(cH));
+0204                 <span class="keyword">if</span> ~PEER
+0205                     CBH(cH) = temp;
+0206                 <span class="keyword">else</span>
+0207                     CBH(cH) = H(cH);
+0208                 <span class="keyword">end</span>
+0209             <span class="keyword">end</span>
+0210         <span class="keyword">end</span>
+0211             
+0212     <span class="keyword">end</span>
+0213     
+0214 <span class="keyword">end</span>
+0215 
+0216 <span class="comment">% Hidden:</span>
+0217 <span class="keyword">if</span> UNHIDE
+0218     set(0,<span class="string">'ShowHiddenHandles'</span>,<span class="string">'off'</span>)
+0219 <span class="keyword">end</span>
+0220 
+0221 <span class="comment">% Clears output:</span>
+0222 CBH(~ishandle(CBH)) = [];
+0223 
+0224 
+0225 <span class="keyword">end</span>
+0226 
+0227 <span class="comment">% [EOF] CBHANDLE.M by Carlos A. Vargas A.</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

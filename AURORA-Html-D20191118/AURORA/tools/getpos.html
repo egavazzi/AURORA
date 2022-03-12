@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of getpos</title>
+  <meta name="keywords" content="getpos">
+  <meta name="description" content="GETPOS Get graphics object position in a flexible way.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html tools -->
+<h1>getpos
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>GETPOS Get graphics object position in a flexible way.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [pos,unit]=getpos(h,fmt,href,opt) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> GETPOS Get graphics object position in a flexible way.
+   GETPOS(H,FMT) gets the position property of graphics object 
+   with handle H, according to FMT that can be expressed using different
+   units. H must have a &quot;Position&quot; property.
+
+   FMT is a char array containing four &quot;%2c&quot; strings separated by colon or
+   space. The two characters specify the unit as :
+
+           px  for Pixels
+           nz  for Normalized
+           in  for Inches
+           cm  for Centimeters
+           pt  for Points
+           ch  for Characters
+
+   If FMT is only one format string from the above list, all returned values are
+   expressed using this unit.
+
+   Any string value of FMT can be replaced by a single '#' to not retrieve the
+   corresponding value. The returned value is NaN except if the optional last 
+   argument OPT is set to &quot;compact&quot; in GETPOS(H,FMT,[HREF],OPT).
+
+   Note that GETPOS(H) works as get(H,'Position') and return the position 
+   vector in the current unit of the graphics object H.
+
+   GETPOS(H,FMT,HREF,['compact']) gets the position of the graphics object H according 
+   to FMT, but using the position of the graphics object HREF as reference instead 
+   of the parent of H. HREF must be a valid handle and must have a &quot;Position&quot; 
+   property (except for the Root object). Returned values may be negative or 0.
+
+   [POS,UNIT]=GETPOS(H,...) returns an additional output argument UNIT that 
+   contained the unit list of the output vector position POS. It may be safer 
+   when different units are used.
+ 
+   See also SETPOS, SET, GET.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="legendflex.html" class="code" title="function varargout = legendflex(varargin)">legendflex</a>	LEGENDFLEX Creates a more flexible legend</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [pos,unit]=getpos(h,fmt,href,opt)</a>
+0002 <span class="comment">% GETPOS Get graphics object position in a flexible way.</span>
+0003 <span class="comment">%   GETPOS(H,FMT) gets the position property of graphics object</span>
+0004 <span class="comment">%   with handle H, according to FMT that can be expressed using different</span>
+0005 <span class="comment">%   units. H must have a &quot;Position&quot; property.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%   FMT is a char array containing four &quot;%2c&quot; strings separated by colon or</span>
+0008 <span class="comment">%   space. The two characters specify the unit as :</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%           px  for Pixels</span>
+0011 <span class="comment">%           nz  for Normalized</span>
+0012 <span class="comment">%           in  for Inches</span>
+0013 <span class="comment">%           cm  for Centimeters</span>
+0014 <span class="comment">%           pt  for Points</span>
+0015 <span class="comment">%           ch  for Characters</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">%   If FMT is only one format string from the above list, all returned values are</span>
+0018 <span class="comment">%   expressed using this unit.</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%   Any string value of FMT can be replaced by a single '#' to not retrieve the</span>
+0021 <span class="comment">%   corresponding value. The returned value is NaN except if the optional last</span>
+0022 <span class="comment">%   argument OPT is set to &quot;compact&quot; in GETPOS(H,FMT,[HREF],OPT).</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%   Note that GETPOS(H) works as get(H,'Position') and return the position</span>
+0025 <span class="comment">%   vector in the current unit of the graphics object H.</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%   GETPOS(H,FMT,HREF,['compact']) gets the position of the graphics object H according</span>
+0028 <span class="comment">%   to FMT, but using the position of the graphics object HREF as reference instead</span>
+0029 <span class="comment">%   of the parent of H. HREF must be a valid handle and must have a &quot;Position&quot;</span>
+0030 <span class="comment">%   property (except for the Root object). Returned values may be negative or 0.</span>
+0031 <span class="comment">%</span>
+0032 <span class="comment">%   [POS,UNIT]=GETPOS(H,...) returns an additional output argument UNIT that</span>
+0033 <span class="comment">%   contained the unit list of the output vector position POS. It may be safer</span>
+0034 <span class="comment">%   when different units are used.</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%   See also SETPOS, SET, GET.</span>
+0037 
+0038 <span class="comment">%   Author: J��e Briot, Matlab 6.1.0.450 (R12.1)</span>
+0039 <span class="comment">%   Contact: dutmatlab@yahoo.fr</span>
+0040 <span class="comment">%   Revision: 1.0 (12-Feb-2007)</span>
+0041 <span class="comment">%             1.1 (14-Feb-2007) Third input argument HREF added.</span>
+0042 <span class="comment">%                               Minor corrections in the help section.</span>
+0043 <span class="comment">%             1.2 (21-Feb-2007) Bug fixed if HREF is the Root object</span>
+0044 <span class="comment">%                               Examples removed from the help section</span>
+0045 <span class="comment">%   Comments:</span>
+0046 <span class="comment">%</span>
+0047 
+0048 <span class="comment">% Check the number of input arguments</span>
+0049 error(nargchk(1,4, nargin));
+0050 
+0051 <span class="comment">% Check if H is a graphics object handle</span>
+0052 <span class="keyword">if</span> ~ishandle(h)
+0053     error(<span class="string">'First argument must be a graphic object handle'</span>);
+0054 <span class="keyword">end</span>
+0055 
+0056 <span class="comment">% Store the current unit of the graphics object H</span>
+0057 current_unit=get(h,<span class="string">'units'</span>);
+0058 
+0059 <span class="comment">% Init variables</span>
+0060 unit={current_unit current_unit current_unit current_unit};
+0061 pos=[nan nan nan nan];
+0062 
+0063 <span class="comment">% If FMT input argument is not specified, works as GET(H,'Position')</span>
+0064 <span class="keyword">if</span> nargin==1
+0065     pos=get(h,<span class="string">'position'</span>);
+0066     <span class="keyword">return</span>
+0067 <span class="keyword">end</span>
+0068 
+0069 <span class="comment">% Check if FMT is a char string</span>
+0070 <span class="keyword">if</span> ~ischar(fmt)
+0071     error(<span class="string">'Second argument must be a string in GETPOS(H,FMT)'</span>)
+0072 <span class="keyword">end</span>  
+0073 
+0074 <span class="keyword">if</span> nargin==2 <span class="comment">% GETPOS(H,FMT)</span>
+0075     
+0076     href=get(h,<span class="string">'parent'</span>);
+0077     opt=<span class="string">'full'</span>;
+0078     
+0079 <span class="keyword">elseif</span> nargin==3
+0080     
+0081     <span class="keyword">if</span> ishandle(href) <span class="comment">% GETPOS(H,FMT,HREF)</span>
+0082         
+0083         opt=<span class="string">'full'</span>;
+0084         
+0085     <span class="keyword">elseif</span> strcmpi(href,<span class="string">'compact'</span>) <span class="comment">% GETPOS(H,FMT,&quot;compact&quot;)</span>
+0086         
+0087         href=get(h,<span class="string">'parent'</span>);
+0088         opt=<span class="string">'compact'</span>;
+0089         
+0090     <span class="keyword">else</span> <span class="comment">% GETPOS(H,FMT,???)</span>
+0091         error(<span class="string">'Wrong third argument in GETPOS(H,FMT,???). Must be a valid handle or &quot;compact&quot;'</span>);
+0092         
+0093     <span class="keyword">end</span>
+0094     
+0095 <span class="keyword">elseif</span> nargin==4 <span class="comment">% GETPOS(H,FMT,HREF,OPT)</span>
+0096     
+0097     <span class="keyword">if</span> ~ishandle(href) 
+0098         error(<span class="string">'Third argument must be a valid handle in GETPOS(H,FMT,HREF,OPT)'</span>);
+0099     <span class="keyword">end</span>
+0100         
+0101     <span class="keyword">if</span> ~strcmpi(opt,<span class="string">'compact'</span>) 
+0102         error(<span class="string">'Last argument must be &quot;compact&quot; in GETPOS(H,FMT,HREF,OPT)'</span>); 
+0103     <span class="keyword">end</span>
+0104     
+0105 <span class="keyword">end</span>
+0106 
+0107 flag_href=0;
+0108 <span class="comment">% Don't use HREF position if it is the parent of H</span>
+0109 <span class="keyword">if</span> href~=get(h,<span class="string">'parent'</span>)
+0110     href=h;
+0111     flag_href=1;
+0112 <span class="keyword">end</span>
+0113 
+0114 <span class="comment">% Store the current unit of the reference object HREF</span>
+0115 current_ref_unit=get(href,<span class="string">'units'</span>);
+0116 
+0117 <span class="comment">% Extract 4 char strings from FMT</span>
+0118 M=strread(fmt,<span class="string">'%s'</span>,<span class="string">'delimiter'</span>,<span class="string">' ,'</span>);
+0119 
+0120 <span class="comment">% Only one FMT requested for output</span>
+0121 <span class="keyword">if</span> numel(M)==1
+0122     [M{2:4}]=deal(M{1});    
+0123 <span class="keyword">end</span>
+0124 
+0125 <span class="comment">% List available units</span>
+0126 available_units={<span class="string">'inches'</span> <span class="string">'centimeters'</span> <span class="string">'normalized'</span> <span class="string">'points'</span> <span class="string">'pixels'</span> <span class="string">'characters'</span>};
+0127 
+0128 <span class="comment">% Decode elements of FMT</span>
+0129 <span class="keyword">for</span> n=1:numel(M) 
+0130     
+0131     <span class="comment">% If FMT(n) is not a &quot;#&quot;</span>
+0132     <span class="keyword">if</span> ~strcmp(M{n},<span class="string">'#'</span>)
+0133         
+0134         <span class="comment">% Check if the units paramter is valid</span>
+0135         idx=strcmpi(M{n},{<span class="string">'in'</span> <span class="string">'cm'</span> <span class="string">'nz'</span> <span class="string">'pt'</span> <span class="string">'px'</span> <span class="string">'ch'</span>});
+0136         
+0137         <span class="keyword">if</span> ~any(idx)
+0138             error(<span class="string">'Units must be one of &quot;in&quot;, &quot;cm&quot;, &quot;nz&quot;, &quot;pt&quot;, &quot;px&quot; or &quot;ch&quot;'</span>)
+0139         <span class="keyword">end</span>
+0140         
+0141         unit{n}=available_units{idx}; <span class="comment">% Set the units to one from the list</span>
+0142             
+0143     <span class="keyword">end</span>
+0144     
+0145 <span class="keyword">end</span>
+0146 
+0147 <span class="comment">% Get position of H using decoded FMT</span>
+0148 <span class="keyword">for</span> n=1:numel(M)    
+0149 
+0150     <span class="comment">% If FMT(n) is not a &quot;#&quot; =&gt; get the value</span>
+0151     <span class="keyword">if</span> ~strcmp(M{n},<span class="string">'#'</span>)
+0152        
+0153         <span class="comment">% Modify the &quot;Units&quot; property of H</span>
+0154         set(h,<span class="string">'units'</span>,unit{n});
+0155         <span class="comment">% Modify the &quot;Units&quot; property of HREF</span>
+0156         set(href,<span class="string">'units'</span>,unit{n});
+0157         <span class="comment">% Get the current &quot;Position&quot; vector of H</span>
+0158         temp=get(h,<span class="string">'position'</span>);
+0159         <span class="comment">% Get the current &quot;Position&quot; vector of HREF</span>
+0160         <span class="keyword">if</span> ~href <span class="comment">% HREF is the Root object (no 'Position' property)</span>
+0161             temp_href=get(href,<span class="string">'screensize'</span>); <span class="comment">%%% Should be safe here !</span>
+0162         <span class="keyword">else</span> temp_href=get(href,<span class="string">'position'</span>);
+0163         <span class="keyword">end</span>
+0164         <span class="comment">% Get and store the specified field from the &quot;Position&quot; vector</span>
+0165         <span class="comment">% If HREF is specified and is not the parent of H, flag_href=1 else flag_href=0</span>
+0166         pos(n)=temp(n)-temp_href(n)*flag_href;
+0167         
+0168     <span class="keyword">end</span>
+0169     
+0170 <span class="keyword">end</span>
+0171 
+0172 <span class="comment">% Check for compact output format</span>
+0173 <span class="keyword">if</span> strcmpi(opt,<span class="string">'compact'</span>)
+0174     pos(isnan(pos))=[];
+0175 <span class="keyword">end</span>
+0176 
+0177 <span class="comment">% Restore the unit of the graphics object H</span>
+0178 set(h,<span class="string">'units'</span>,current_unit);
+0179 <span class="comment">% Restore the unit of the reference object HREF</span>
+0180 set(href,<span class="string">'units'</span>,current_ref_unit);</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

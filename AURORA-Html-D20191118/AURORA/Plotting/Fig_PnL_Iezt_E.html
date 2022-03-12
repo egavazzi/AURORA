@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Fig_PnL_Iezt_E</title>
+  <meta name="keywords" content="Fig_PnL_Iezt_E">
+  <meta name="description" content="% Script generating t-z plots of differential electron-fluxes">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Plotting -->
+<h1>Fig_PnL_Iezt_E
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>% Script generating t-z plots of differential electron-fluxes</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% Script generating t-z plots of differential electron-fluxes</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="plot_IeztE_3DtzofE.html" class="code" title="function H = plot_IeztE_3DtzofE(t,h_atm,E,Ie_ztE,dE,BeamSA,cx_lims,spp, theta_strs,idx_E)">plot_IeztE_3DtzofE</a>	plot_IeztE_3DtzofE - animation of time-varying electron flux</li><li><a href="../../AURORA/utilities/Ie_ztE_loader.html" class="code" title="function [t,h_atm,E,mu_lims,IeZTE,mu_scatterings] = Ie_ztE_loader(data_paths,ops)">Ie_ztE_loader</a>	Ie_ztE_loader reads flickering-aurora data from the</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%% Script generating t-z plots of differential electron-fluxes</span>
+0002 
+0003 
+0004 <span class="keyword">try</span>
+0005   [t_PnL,h_atm,E,mu_lims,IeZTE,mu_scatterings] = <a href="../../AURORA/utilities/Ie_ztE_loader.html" class="code" title="function [t,h_atm,E,mu_lims,IeZTE,mu_scatterings] = Ie_ztE_loader(data_paths,ops)">Ie_ztE_loader</a>({<span class="string">'PnLs-05-4000-3keV-0-10'</span>});
+0006 <span class="keyword">catch</span>
+0007   [t_PnL,h_atm,E,mu_lims,IeZTE,mu_scatterings] = <a href="../../AURORA/utilities/Ie_ztE_loader.html" class="code" title="function [t,h_atm,E,mu_lims,IeZTE,mu_scatterings] = Ie_ztE_loader(data_paths,ops)">Ie_ztE_loader</a>({<span class="string">'PnLs-05-4000-3keV-FA'</span>});
+0008 <span class="keyword">end</span>
+0009 
+0010 dE = diff(E);dE(end+1) = dE(end);
+0011 BeamW = 2*pi*mu_scatterings{3};
+0012 
+0013 <span class="keyword">for</span> i1 = numel(BeamW):-1:1,
+0014   theta_str{i1} = sprintf(<span class="string">'%3.1f - %3.1f'</span>,<span class="keyword">...</span>
+0015                           180-180/pi*acos(mu_lims(i1)),<span class="keyword">...</span>
+0016                           180-180/pi*acos(mu_lims(i1+1)));
+0017 <span class="keyword">end</span>
+0018 
+0019 theta_strs'
+0020 
+0021 spp = [2*ones(numel(c_o_mu),1),5*ones(numel(c_o_mu),1),[(1:5)';(10:-1:6)']];
+0022 
+0023 [dE90,iE90] = min(abs(E-90))    
+0024 [dE100,iE100] = min(abs(E-100))  
+0025 [dE500,iE500] = min(abs(E-500))  
+0026 [dE1000,iE1000] = min(abs(E-1000))
+0027 [dE2000,iE2000] = min(abs(E-2000))
+0028 
+0029 E([iE90,iE100,iE500,iE1000,iE2000])
+0030 
+0031 figure(<span class="string">'position'</span>,[692, 556, 997, 418])
+0032 <a href="plot_IeztE_3DtzofE.html" class="code" title="function H = plot_IeztE_3DtzofE(t,h_atm,E,Ie_ztE,dE,BeamSA,cx_lims,spp, theta_strs,idx_E)">plot_IeztE_3DtzofE</a>(t_PnL,h_atm/1e3,E,IeZTE,dE,BeamW*2*pi,[6.5 12],spp, theta_strs,iE100);
+0033 figure(<span class="string">'position'</span>,[692, 556, 997, 418])
+0034 <a href="plot_IeztE_3DtzofE.html" class="code" title="function H = plot_IeztE_3DtzofE(t,h_atm,E,Ie_ztE,dE,BeamSA,cx_lims,spp, theta_strs,idx_E)">plot_IeztE_3DtzofE</a>(t_PnL,h_atm/1e3,E,IeZTE,dE,BeamW*2*pi,[6.5 12],spp, theta_strs,iE90); 
+0035 figure(<span class="string">'position'</span>,[692, 556, 997, 418])
+0036 <a href="plot_IeztE_3DtzofE.html" class="code" title="function H = plot_IeztE_3DtzofE(t,h_atm,E,Ie_ztE,dE,BeamSA,cx_lims,spp, theta_strs,idx_E)">plot_IeztE_3DtzofE</a>(t_PnL,h_atm/1e3,E,IeZTE,dE,BeamW*2*pi,[7 12.5],spp, theta_strs,iE500);
+0037 figure(<span class="string">'position'</span>,[692, 556, 997, 418])
+0038 <a href="plot_IeztE_3DtzofE.html" class="code" title="function H = plot_IeztE_3DtzofE(t,h_atm,E,Ie_ztE,dE,BeamSA,cx_lims,spp, theta_strs,idx_E)">plot_IeztE_3DtzofE</a>(t_PnL,h_atm/1e3,E,IeZTE,dE,BeamW*2*pi,[7 12.5],spp, theta_strs,iE1000);
+0039 figure(<span class="string">'position'</span>,[692, 556, 997, 418])
+0040 <a href="plot_IeztE_3DtzofE.html" class="code" title="function H = plot_IeztE_3DtzofE(t,h_atm,E,Ie_ztE,dE,BeamSA,cx_lims,spp, theta_strs,idx_E)">plot_IeztE_3DtzofE</a>(t_PnL,h_atm/1e3,E,IeZTE,dE,BeamW*2*pi,[7 12.5],spp, theta_strs,iE2000);
+0041 
+0042 
+0043 <span class="comment">%   Copyright � 2019 Bjorn Gustavsson, &lt;bjorn.gustavsson@irf.se&gt;</span>
+0044 <span class="comment">%   This is free software, licensed under GNU GPL version 2 or later</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

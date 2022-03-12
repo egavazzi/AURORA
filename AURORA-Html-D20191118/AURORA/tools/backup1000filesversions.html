@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of backup1000filesversions</title>
+  <meta name="keywords" content="backup1000filesversions">
+  <meta name="description" content="BACKUP1000FILESVERSIONS - Backup files to prevent overwriting them">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html tools -->
+<h1>backup1000filesversions
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>BACKUP1000FILESVERSIONS - Backup files to prevent overwriting them</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [status, message] = backup1000filesversions(filename) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> BACKUP1000FILESVERSIONS - Backup files to prevent overwriting them
+   
+ Calling:
+   [status, message] = backup1000filesversions(FILENAME)
+ Input:
+   FILENAME - name of file to be moved. The file FILENAME will be
+              moved to FILENAME.N, so that one can save file
+              FILENAME multiple times and get the history of the
+              previous files as FILENAME.1, FILENAME.2, ...
+              FILENAME.N 
+ Output:
+  status  -  logical scalar, defining the outcome of COPYFILE.
+             1 : copyfile executed successfully. 0 : an error
+             occurred.
+  message - string, defining the error or warning message.
+            string : copyfile executed successfully. message
+            : an error or warning message, as applicable.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/setup4etrptd10streams.html" class="code" title="">setup4etrptd10streams</a>	% Set-up script for Examples in time-dependent electron transport</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [status, message] = backup1000filesversions(filename)</a>
+0002 <span class="comment">% BACKUP1000FILESVERSIONS - Backup files to prevent overwriting them</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Calling:</span>
+0005 <span class="comment">%   [status, message] = backup1000filesversions(FILENAME)</span>
+0006 <span class="comment">% Input:</span>
+0007 <span class="comment">%   FILENAME - name of file to be moved. The file FILENAME will be</span>
+0008 <span class="comment">%              moved to FILENAME.N, so that one can save file</span>
+0009 <span class="comment">%              FILENAME multiple times and get the history of the</span>
+0010 <span class="comment">%              previous files as FILENAME.1, FILENAME.2, ...</span>
+0011 <span class="comment">%              FILENAME.N</span>
+0012 <span class="comment">% Output:</span>
+0013 <span class="comment">%  status  -  logical scalar, defining the outcome of COPYFILE.</span>
+0014 <span class="comment">%             1 : copyfile executed successfully. 0 : an error</span>
+0015 <span class="comment">%             occurred.</span>
+0016 <span class="comment">%  message - string, defining the error or warning message.</span>
+0017 <span class="comment">%            string : copyfile executed successfully. message</span>
+0018 <span class="comment">%            : an error or warning message, as applicable.</span>
+0019 
+0020 <span class="comment">%   Copyright � 2011 M V, Bjorn Gustavsson &lt;bjorn.gustavsson@irf.se&gt;,</span>
+0021 <span class="comment">%   This is free software, licensed under GNU GPL version 2 or later</span>
+0022 
+0023 sprintf(<span class="string">'\nBacking up the old file as...'</span>)
+0024 counter = <span class="string">'001'</span>;
+0025 <span class="keyword">while</span> exist([filename, <span class="string">'.'</span>, counter],<span class="string">'file'</span>)
+0026   counter = num2str(sprintf(<span class="string">'%03d'</span>, str2num(counter)+1));
+0027 <span class="keyword">end</span>
+0028 disp(sprintf(<span class="string">'%s'</span>, [filename, <span class="string">'.'</span>, counter]))
+0029 [status, message] = movefile(filename, [filename, <span class="string">'.'</span>, counter]);</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

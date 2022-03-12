@@ -1,0 +1,24 @@
+/* Created by mdot for Matlab */
+digraph m2html {
+  cbfit -> cbhandle;
+  cbfit -> cmfit;
+  cbfreeze -> cbfreeze;
+  cbfreeze -> cbhandle;
+  cblabel -> cbhandle;
+  cbunits -> cbhandle;
+  cmfit -> cbhandle;
+  cmfit -> cmapping;
+  cmjoin -> cmapping;
+  cmlines -> cmapping;
+
+  Contents [URL="Contents.html"];
+  cbfit [URL="cbfit.html"];
+  cbfreeze [URL="cbfreeze.html"];
+  cbhandle [URL="cbhandle.html"];
+  cblabel [URL="cblabel.html"];
+  cbunits [URL="cbunits.html"];
+  cmapping [URL="cmapping.html"];
+  cmfit [URL="cmfit.html"];
+  cmjoin [URL="cmjoin.html"];
+  cmlines [URL="cmlines.html"];
+}

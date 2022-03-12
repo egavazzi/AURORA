@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of labinterp</title>
+  <meta name="keywords" content="labinterp">
+  <meta name="description" content="Interpolate an sRGB colormap in the Lab colorspace.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html tools -->
+<h1>labinterp
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Interpolate an sRGB colormap in the Lab colorspace.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function rgb = labinterp(xi,rgb,xo,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Interpolate an sRGB colormap in the Lab colorspace.
+
+ Syntax:
+  rgb = labinterp(xi,rgb,xo,&lt;interp1 options&gt;)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="inferno.html" class="code" title="function map = inferno(N)">inferno</a>	Colormap from MatPlotLib 2.0. Perceptually uniform and very attractive!</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function rgb = liGammaCor(rgb)</a></li><li><a href="#_sub2" class="code">function rgb = liGammaInv(rgb)</a></li><li><a href="#_sub3" class="code">function lab = liRGB2Lab(rgb,M,wpt)</a></li><li><a href="#_sub4" class="code">function rgb = liLab2RGB(lab,M,wpt)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function rgb = labinterp(xi,rgb,xo,varargin)</a>
+0002 <span class="comment">% Interpolate an sRGB colormap in the Lab colorspace.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Syntax:</span>
+0005 <span class="comment">%  rgb = labinterp(xi,rgb,xo,&lt;interp1 options&gt;)</span>
+0006 
+0007 M = [<span class="keyword">...</span>
+0008     +3.2406255,-1.5372080,-0.4986286;<span class="keyword">...</span>
+0009     -0.9689307,+1.8757561,+0.0415175;<span class="keyword">...</span>
+0010     +0.0557101,-0.2040211,+1.0569959];
+0011 wpt = [0.95047,1,1.08883]; <span class="comment">% D65</span>
+0012 <span class="comment">%</span>
+0013 rgb = <a href="#_sub3" class="code" title="subfunction lab = liRGB2Lab(rgb,M,wpt) ">liRGB2Lab</a>(rgb,M,wpt);
+0014 rgb = interp1(xi,rgb,xo,varargin{:});
+0015 rgb = <a href="#_sub4" class="code" title="subfunction rgb = liLab2RGB(lab,M,wpt) ">liLab2RGB</a>(rgb,M,wpt);
+0016 <span class="comment">%</span>
+0017 <span class="keyword">end</span>
+0018 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%labinterp</span>
+0019 <a name="_sub1" href="#_subfunctions" class="code">function rgb = liGammaCor(rgb)</a>
+0020 <span class="comment">% Gamma correction of sRGB data.</span>
+0021 idx = rgb &lt;= 0.0031308;
+0022 rgb(idx) = 12.92 * rgb(idx);
+0023 rgb(~idx) = real(1.055 * rgb(~idx).^(1/2.4) - 0.055);
+0024 <span class="keyword">end</span>
+0025 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%liGammaCor</span>
+0026 <a name="_sub2" href="#_subfunctions" class="code">function rgb = liGammaInv(rgb)</a>
+0027 <span class="comment">% Inverse gamma correction of sRGB data.</span>
+0028 idx = rgb &lt;= 0.04045;
+0029 rgb(idx) = rgb(idx) / 12.92;
+0030 rgb(~idx) = real(((rgb(~idx) + 0.055) / 1.055).^2.4);
+0031 <span class="keyword">end</span>
+0032 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%liGammaInv</span>
+0033 <a name="_sub3" href="#_subfunctions" class="code">function lab = liRGB2Lab(rgb,M,wpt) </a><span class="comment">% Nx3 &lt;- Nx3</span>
+0034 <span class="comment">% Convert a matrix of sRGB values to Lab.</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%lab = applycform(rgb,makecform('srgb2lab','AdaptedWhitePoint',wpt));</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">% RGB2XYZ:</span>
+0039 xyz = <a href="#_sub2" class="code" title="subfunction rgb = liGammaInv(rgb)">liGammaInv</a>(rgb) / M.';
+0040 <span class="comment">% Remember to include my license when copying my implementation.</span>
+0041 <span class="comment">% XYZ2Lab:</span>
+0042 xyz = bsxfun(@rdivide,xyz,wpt);
+0043 idx = xyz&gt;(6/29)^3;
+0044 F = idx.*(xyz.^(1/3)) + ~idx.*(xyz*(29/6)^2/3+4/29);
+0045 lab(:,2:3) = bsxfun(@times,[500,200],F(:,1:2)-F(:,2:3));
+0046 lab(:,1) = 116*F(:,2) - 16;
+0047 <span class="comment">%</span>
+0048 <span class="keyword">end</span>
+0049 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%liRGB2Lab</span>
+0050 <a name="_sub4" href="#_subfunctions" class="code">function rgb = liLab2RGB(lab,M,wpt) </a><span class="comment">% Nx3 &lt;- Nx3</span>
+0051 <span class="comment">% Convert a matrix of Lab values to sRGB.</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%rgb = applycform(lab,makecform('lab2srgb','AdaptedWhitePoint',wpt));</span>
+0054 <span class="comment">%</span>
+0055 <span class="comment">% Lab2XYZ</span>
+0056 tmp = bsxfun(@rdivide,lab(:,[2,1,3]),[500,Inf,-200]);
+0057 tmp = bsxfun(@plus,tmp,(lab(:,1)+16)/116);
+0058 idx = tmp&gt;(6/29);
+0059 tmp = idx.*(tmp.^3) + ~idx.*(3*(6/29)^2*(tmp-4/29));
+0060 xyz = bsxfun(@times,tmp,wpt);
+0061 <span class="comment">% Remember to include my license when copying my implementation.</span>
+0062 <span class="comment">% XYZ2RGB</span>
+0063 rgb = max(0,min(1, <a href="#_sub1" class="code" title="subfunction rgb = liGammaCor(rgb)">liGammaCor</a>(xyz * M.')));
+0064 <span class="comment">%</span>
+0065 <span class="keyword">end</span>
+0066 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%cbLab2RGB</span>
+0067 <span class="comment">% Copyright (c) 2017 Stephen Cobeldick</span>
+0068 <span class="comment">%</span>
+0069 <span class="comment">% Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+0070 <span class="comment">% you may not use this file except in compliance with the License.</span>
+0071 <span class="comment">% You may obtain a copy of the License at</span>
+0072 <span class="comment">%</span>
+0073 <span class="comment">% http://www.apache.org/licenses/LICENSE-2.0</span>
+0074 <span class="comment">%</span>
+0075 <span class="comment">% Unless required by applicable law or agreed to in writing, software</span>
+0076 <span class="comment">% distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+0077 <span class="comment">% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+0078 <span class="comment">% See the License for the specific language governing permissions and limitations under the License.</span>
+0079 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%license</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

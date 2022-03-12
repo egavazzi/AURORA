@@ -1,0 +1,28 @@
+/* Created by mdot for Matlab */
+digraph m2html {
+  Fig_PnL_Iezt_E -> plot_IeztE_3DtzofE;
+
+  Contents [URL="Contents.html"];
+  Fig_PnL5n6 [URL="Fig_PnL5n6.html"];
+  Fig_PnL_Iezt_E [URL="Fig_PnL_Iezt_E.html"];
+  Fig_PnL_VEMCEM [URL="Fig_PnL_VEMCEM.html"];
+  animate_IeEztE_3DEzoft [URL="animate_IeEztE_3DEzoft.html"];
+  animate_IeEztE_3DtEofz [URL="animate_IeEztE_3DtEofz.html"];
+  animate_IeztE_3DEthetaoft [URL="animate_IeztE_3DEthetaoft.html"];
+  animate_IeztE_3DEzoft [URL="animate_IeztE_3DEzoft.html"];
+  animate_IeztE_3DtEofz [URL="animate_IeztE_3DtEofz.html"];
+  animate_IeztE_3DtlinEofz [URL="animate_IeztE_3DtlinEofz.html"];
+  animate_IeztE_3DtzofE [URL="animate_IeztE_3DtzofE.html"];
+  animate_IeztE_pitchangleflux [URL="animate_IeztE_pitchangleflux.html"];
+  plot_IeEztE_3DEzoft [URL="plot_IeEztE_3DEzoft.html"];
+  plot_IeEztE_3DtEofz [URL="plot_IeEztE_3DtEofz.html"];
+  plot_IeztE_3DEthetaoft [URL="plot_IeztE_3DEthetaoft.html"];
+  plot_IeztE_3DEzoft [URL="plot_IeztE_3DEzoft.html"];
+  plot_IeztE_3DtEofz [URL="plot_IeztE_3DtEofz.html"];
+  plot_IeztE_3DtzofE [URL="plot_IeztE_3DtzofE.html"];
+  plot_IeztE_3DtzofE0 [URL="plot_IeztE_3DtzofE0.html"];
+  plot_exc1state [URL="plot_exc1state.html"];
+  plot_exc5states [URL="plot_exc5states.html"];
+  plot_excMstates [URL="plot_excMstates.html"];
+  threeDplot1stream [URL="threeDplot1stream.html"];
+}

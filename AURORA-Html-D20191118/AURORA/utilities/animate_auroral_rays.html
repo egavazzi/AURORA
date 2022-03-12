@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of animate_auroral_rays</title>
+  <meta name="keywords" content="animate_auroral_rays">
+  <meta name="description" content="% Animate Auroral Rays">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html utilities -->
+<h1>animate_auroral_rays
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>% Animate Auroral Rays</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% Animate Auroral Rays
+ This is a script utilizing the AIDA-tools toolbox for 
+ projecting 3-D volume emission-rates down to an image-
+ plane. The script is unfortunately not self-contained,
+ Please contact the author for additional information.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%% Animate Auroral Rays</span>
+0002 <span class="comment">% This is a script utilizing the AIDA-tools toolbox for</span>
+0003 <span class="comment">% projecting 3-D volume emission-rates down to an image-</span>
+0004 <span class="comment">% plane. The script is unfortunately not self-contained,</span>
+0005 <span class="comment">% Please contact the author for additional information.</span>
+0006 
+0007 <span class="comment">%   Copyright � 2018-2019 Bjorn Gustavsson, &lt;bjorn.gustavsson@uit.no&gt;</span>
+0008 <span class="comment">%   This is free software, licensed under GNU GPL version 2 or later</span>
+0009 
+0010 root_dir = <span class="string">'/media/bgu001/5f5e8978-a828-4fd4-aabf-2032a3fb895b/Data/Bjorns-panic-repository/Etrp-tdms/Run20190619/'</span>;
+0011 load_dirs = {<span class="string">'Awa_1200-1'</span>
+0012              <span class="string">'Awa_1200-2'</span>
+0013              <span class="string">'Awa_1200-4'</span>
+0014              <span class="string">'AWA_2400-1'</span>
+0015              <span class="string">'AWA_2400-2'</span>
+0016              <span class="string">'AWA_2400-4'</span>
+0017              <span class="string">'AWA_3000-2'</span>
+0018              <span class="string">'AWA_3000-4'</span>};
+0019 
+0020 
+0021 <span class="keyword">for</span> iD = 1:numel(load_dirs)
+0022   cd(fullfile(root_dir,load_dirs{iD}))
+0023   pwd
+0024   load Qzt_all_L t h_atm Q4278 Q6730 Q7774 Q8446 QO1S QO1D
+0025   I5577l = 0*Q4278;
+0026   <span class="keyword">for</span> it = 2:numel(t),
+0027     I5577l(:,it) = I5577l(:,it-1)*exp(-(t(it)-t(it-1))/0.7) + QO1S(:,it);
+0028   <span class="keyword">end</span>
+0029   Ibeams(iD).t = t;                                  
+0030   Ibeams(iD).z = h_atm/1e3;
+0031   Ibeams(iD).wavelengths = [4278 5577 6730 7774 8446];
+0032   Ibeams(iD).I{1} = Q4278;                              
+0033   Ibeams(iD).I{2} = I5577l;                             
+0034   Ibeams(iD).I{3} = Q6730;
+0035   Ibeams(iD).I{4} = Q7774;
+0036   Ibeams(iD).I{5} = Q8446;
+0037   
+0038 <span class="keyword">end</span>
+0039 
+0040 
+0041 
+0042 idx_col_ray = [30 42 54 66];
+0043 idx_row_ray = [25 75];
+0044 [idx_col_ray,idx_row_ray] = meshgrid(idx_col_ray,idx_row_ray);
+0045 idxCR = [idx_col_ray(:),idx_row_ray(:)]
+0046 
+0047 I3D = 0*ZfI;
+0048 z3D = squeeze(ZfI(1,1,:));
+0049 
+0050 zi = squeeze(ZfI(1,1,:));
+0051 wbh = waitbar(1,<span class="string">'patience Bjeorn, patience...'</span>);
+0052 <span class="keyword">for</span> it = 151:-1:1,
+0053   
+0054   I3D = 0*ZfI;
+0055   <span class="keyword">for</span> i_L = 1:numel(Ibeams(1).I),
+0056     <span class="keyword">for</span> iRay = 1:numel(Ibeams)
+0057       t = Ibeams(iRay).t;
+0058       z = Ibeams(iRay).z;
+0059       <span class="comment">% if it &lt;= numel(t)</span>
+0060         I3D(idxCR(iRay,2),idxCR(iRay,1),:) = <span class="keyword">...</span>
+0061             interp1(z,Ibeams(iRay).I{i_L}(:,min(it,end)),zi,<span class="string">'linear'</span>,0);
+0062         I_of_z(:,iRay) = Ibeams(iRay).I{i_L}(:,min(it,end));
+0063       <span class="comment">% end</span>
+0064     <span class="keyword">end</span>
+0065     <span class="keyword">if</span> exist(<span class="string">'fKray'</span>)
+0066       I3D = convn(I3D,fKray,<span class="string">'same'</span>);
+0067     <span class="keyword">end</span>
+0068     Imgstacks{i_L}(:,:,it) = fastprojection(I3D,<span class="keyword">...</span>
+0069                                             stns.uv,stns.d,stns.l_cl,stns.bfk,256*[1 1],<span class="keyword">...</span>
+0070                                             ones(256,256),stns.sz3d);
+0071     
+0072   <span class="keyword">end</span>
+0073   <span class="keyword">try</span>
+0074     waitbar(it/151,wbh)
+0075     <span class="keyword">if</span> it == 50
+0076       waitbar(it/151,wbh,<span class="string">'2 3rds to the end now'</span>)
+0077     <span class="keyword">elseif</span> it == 49
+0078       waitbar(it/151,wbh,<span class="string">'soon it will be done...'</span>)      
+0079     <span class="keyword">end</span>
+0080   <span class="keyword">end</span>
+0081 <span class="keyword">end</span>
+0082 
+0083 <span class="keyword">try</span>
+0084   close(wbh)
+0085 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

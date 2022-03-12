@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of e_N2w1du</title>
+  <meta name="keywords" content="e_N2w1du">
+  <meta name="description" content="Xs = e_N2w1du(E)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>e_N2w1du
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Xs = e_N2w1du(E)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function Xs = e_N2w1du(Ep) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Xs = e_N2w1du(E)
+ 
+ e_N2w1du - electron excitation cross section (m^2)
+ E electron energy (eV)
+ Cross-sections for energies below 50 eV digitized from Itikawa et
+ al 1986, figure 7.12, data from Cartwright et al. (1977),
+ renormalized by Trajmar et al. (1983). /BG 20180603</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Xs = e_N2w1du(Ep)</a>
+0002 <span class="comment">% Xs = e_N2w1du(E)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% e_N2w1du - electron excitation cross section (m^2)</span>
+0005 <span class="comment">% E electron energy (eV)</span>
+0006 <span class="comment">% Cross-sections for energies below 50 eV digitized from Itikawa et</span>
+0007 <span class="comment">% al 1986, figure 7.12, data from Cartwright et al. (1977),</span>
+0008 <span class="comment">% renormalized by Trajmar et al. (1983). /BG 20180603</span>
+0009 
+0010 <span class="keyword">for</span> ie=1:length(Ep),
+0011   <span class="keyword">if</span> Ep(ie) &gt; 8.89 &amp; Ep(ie) &lt; 20.487,
+0012     cross_section(ie)=(1-8.89/Ep(ie))*exp(-5231.492+7031.762*log(Ep(ie))-3566.315*log(Ep(ie))^2+802.9877*log(Ep(ie))^3-67.74330*log(Ep(ie))^4);
+0013   <span class="keyword">elseif</span> Ep(ie) &gt;=20.487 &amp; Ep(ie) &lt; 100,
+0014     cross_section(ie)=exp(-131.5858+104.4165*log(Ep(ie))-43.27655*log(Ep(ie))^2+7.735902*log(Ep(ie))^3-0.5085983*log(Ep(ie))^4);    
+0015   <span class="keyword">elseif</span> Ep(ie) &gt;=100,
+0016     cross_section(ie)=7.415168e-17/Ep(ie);
+0017   <span class="keyword">else</span>
+0018     cross_section(ie)=0;
+0019   <span class="keyword">end</span>
+0020 <span class="keyword">end</span>
+0021 
+0022 
+0023 E = [8.8895 12  15  17  20  30    50];
+0024 s = [.0001  12  9.5  7   3   1.75  0.7]*1e-22;<span class="comment">%-18;</span>
+0025 
+0026 Xs = exp([interp1(E,log(s),Ep(Ep&lt;E(end)),<span class="string">'pchip'</span>) interp1(log(E),log(s),log(Ep(Ep&gt;=E(end))),<span class="string">'linear'</span>,<span class="string">'extrap'</span>)] );
+0027 I = find(~isfinite(Xs));
+0028 Xs(I) = 0;
+0029 
+0030 inans = find(Ep&lt;8.8895);
+0031 Xs(inans) = 0;
+0032 
+0033 Xs(30&lt;=Ep&amp;Ep&lt;35) = ( Xs(30&lt;=Ep&amp;Ep&lt;35)*2/3 + <span class="keyword">...</span>
+0034                     cross_section(30&lt;=Ep&amp;Ep&lt;35)*1/3/1e4 );
+0035 Xs(35&lt;=Ep&amp;Ep&lt;40) = ( Xs(35&lt;=Ep&amp;Ep&lt;40)*2/3 + <span class="keyword">...</span>
+0036                     cross_section(35&lt;=Ep&amp;Ep&lt;40)*1/3/1e4 );
+0037 Xs(40&lt;=Ep) = cross_section(40&lt;=Ep)/1e4;</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

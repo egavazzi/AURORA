@@ -1,0 +1,385 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of gridLegend</title>
+  <meta name="keywords" content="gridLegend">
+  <meta name="description" content="gridLegend : plots a legend in a multi column format">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html tools -->
+<h1>gridLegend
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>gridLegend : plots a legend in a multi column format</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function legend_h = gridLegend(hdl,gd,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> gridLegend : plots a legend in a multi column format
+
+ On a plot with a lot of traces the standard legend will often scroll off the bottom or the side of the figure,
+ this function is intended to overcome this by allowing the user to define a multi column format for the
+ legend.
+ 
+  Usage : legHdl = gridLegend(hdl,nCols,gKey,'parameter_name','parameter_value',...);
+
+  Inputs :  hdl -  a vector of graphic handles of the plotted data 
+               nCols - the number of columns in the legend. (defaults to 2 if not defined)
+               gKey - a cell array of strings to display which should match the number of graphic handles in hdl (optional)
+               'parameter_name','parameter_value' - any parameter name pairs applicable to the legend
+
+  Output : legHdl - a vector of graphic handles for the legend generated.
+
+  Notes :
+
+  By default the legend will be arranged vertically, ie the second legend trace is placed under the first
+  trace, filling the first column before moving onto the next. If you use the 'Orientation','Horizontal'
+  parameter pair then the traces will be arranged horizontally, so the second trace will be in the second
+  column and so on to the end of the row, then moving down to the next row.
+ 
+  The parameter name / value pairs are passed over to the legend function so you can set things
+  like 'Fontsize',8 etc.
+
+  The parameter / name pair of location can be used to place the legend - available options are
+      'location','bestoutside' : for 2 column legend uses 'eastoutside', more than 2 it uses 'southoutside'
+      'location','north' : places the legend centrally at the top of the axes
+      'location','northoutside' : places the legend centrally at the top of the figure
+      'location','eastoutside' : places the legend on the right of the figure
+      'location','southoutside' : places the legend centrally at the bottom of the figure
+      'location','westoutside' : places the legend on the left of the figure
+
+  By default this is set to 'bestoutside'
+
+  This will work on x-y plots, bar and errorbar charts.
+
+  With many traces it's sometimes difficult to work out which trace the legend is referring to. From the
+  MATLAB file exchange I've used a function called 'clickableLegend' which allows you to switch the plotted
+  data on and off by clicking on the Legend key. This function will use clickableLegend if it can find it
+  in your MATLAB path, otherwise it will revert back to the standard legend function.
+
+ Examples : 
+
+ This will plot a vertical legend with two columns
+        gridLegend(hdl,2)
+
+ This will plot a horizontal legend, 8 traces per row, and fontsize set to 8 points.
+        gridLegend(hdl,8,gKey,'Orientation','Horizontal','Fontsize',8)
+ 
+ This will plot a vertical legend on the left hand side with 2 columns with the box switched off.
+ I've fiddled with the XColor and YColor otherwise we end up with black lines for the X and Y axis.
+        gridLegend(hdl,2,gKey,'location','westoutside','Fontsize',8,'Box','off','XColor',[1 1 1],'YColor',[1 1 1])</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/setup4etrptd10streams.html" class="code" title="">setup4etrptd10streams</a>	% Set-up script for Examples in time-dependent electron transport</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% gridLegend : plots a legend in a multi column format</span>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% On a plot with a lot of traces the standard legend will often scroll off the bottom or the side of the figure,</span>
+0004 <span class="comment">% this function is intended to overcome this by allowing the user to define a multi column format for the</span>
+0005 <span class="comment">% legend.</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">%  Usage : legHdl = gridLegend(hdl,nCols,gKey,'parameter_name','parameter_value',...);</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%  Inputs :  hdl -  a vector of graphic handles of the plotted data</span>
+0010 <span class="comment">%               nCols - the number of columns in the legend. (defaults to 2 if not defined)</span>
+0011 <span class="comment">%               gKey - a cell array of strings to display which should match the number of graphic handles in hdl (optional)</span>
+0012 <span class="comment">%               'parameter_name','parameter_value' - any parameter name pairs applicable to the legend</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%  Output : legHdl - a vector of graphic handles for the legend generated.</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">%  Notes :</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%  By default the legend will be arranged vertically, ie the second legend trace is placed under the first</span>
+0019 <span class="comment">%  trace, filling the first column before moving onto the next. If you use the 'Orientation','Horizontal'</span>
+0020 <span class="comment">%  parameter pair then the traces will be arranged horizontally, so the second trace will be in the second</span>
+0021 <span class="comment">%  column and so on to the end of the row, then moving down to the next row.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%  The parameter name / value pairs are passed over to the legend function so you can set things</span>
+0024 <span class="comment">%  like 'Fontsize',8 etc.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%  The parameter / name pair of location can be used to place the legend - available options are</span>
+0027 <span class="comment">%      'location','bestoutside' : for 2 column legend uses 'eastoutside', more than 2 it uses 'southoutside'</span>
+0028 <span class="comment">%      'location','north' : places the legend centrally at the top of the axes</span>
+0029 <span class="comment">%      'location','northoutside' : places the legend centrally at the top of the figure</span>
+0030 <span class="comment">%      'location','eastoutside' : places the legend on the right of the figure</span>
+0031 <span class="comment">%      'location','southoutside' : places the legend centrally at the bottom of the figure</span>
+0032 <span class="comment">%      'location','westoutside' : places the legend on the left of the figure</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%  By default this is set to 'bestoutside'</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">%  This will work on x-y plots, bar and errorbar charts.</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">%  With many traces it's sometimes difficult to work out which trace the legend is referring to. From the</span>
+0039 <span class="comment">%  MATLAB file exchange I've used a function called 'clickableLegend' which allows you to switch the plotted</span>
+0040 <span class="comment">%  data on and off by clicking on the Legend key. This function will use clickableLegend if it can find it</span>
+0041 <span class="comment">%  in your MATLAB path, otherwise it will revert back to the standard legend function.</span>
+0042 <span class="comment">%</span>
+0043 <span class="comment">% Examples :</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">% This will plot a vertical legend with two columns</span>
+0046 <span class="comment">%        gridLegend(hdl,2)</span>
+0047 <span class="comment">%</span>
+0048 <span class="comment">% This will plot a horizontal legend, 8 traces per row, and fontsize set to 8 points.</span>
+0049 <span class="comment">%        gridLegend(hdl,8,gKey,'Orientation','Horizontal','Fontsize',8)</span>
+0050 <span class="comment">%</span>
+0051 <span class="comment">% This will plot a vertical legend on the left hand side with 2 columns with the box switched off.</span>
+0052 <span class="comment">% I've fiddled with the XColor and YColor otherwise we end up with black lines for the X and Y axis.</span>
+0053 <span class="comment">%        gridLegend(hdl,2,gKey,'location','westoutside','Fontsize',8,'Box','off','XColor',[1 1 1],'YColor',[1 1 1])</span>
+0054 <span class="comment">%</span>
+0055 
+0056 <span class="comment">%  Adrian Cherry</span>
+0057 <span class="comment">%  adrian.cherry@baesystems.com</span>
+0058 <span class="comment">%  13/1/2011</span>
+0059 <span class="comment">%</span>
+0060 
+0061 <a name="_sub0" href="#_subfunctions" class="code">function legend_h = gridLegend(hdl,gd,varargin)</a>
+0062 
+0063 <span class="comment">% set default column number to 2 if not defined</span>
+0064 <span class="keyword">if</span> nargin &lt; 2,
+0065     gd = 2;
+0066 <span class="keyword">end</span>
+0067 
+0068 <span class="comment">% test if the user has clickableLegend available, otherwise default to the standard legend.</span>
+0069 <span class="keyword">if</span> exist(<span class="string">'clickableLegend'</span>,<span class="string">'file'</span>),
+0070     fLegend = @clickableLegend;
+0071 <span class="keyword">else</span>
+0072     fLegend = @legend;
+0073 <span class="keyword">end</span>
+0074 
+0075 <span class="comment">% pull out the orientation parameter so we can work out which way to go, across or down when moving the</span>
+0076 <span class="comment">% legend traces around but create the legend initially in vertical mode. Also pull out location if defined.</span>
+0077 location=<span class="string">'bestoutside'</span>;
+0078 orient=<span class="string">'vertical'</span>;
+0079 
+0080 <span class="comment">% identify the start position for the parameter name pairs, if there are an odd number of varargin</span>
+0081 <span class="comment">% inputs then I'm guessing that the first one is a cell array of data labels, so start ofn the second input.</span>
+0082 st=1;
+0083 <span class="keyword">if</span> mod(length(varargin),2),
+0084     st = 2;
+0085 <span class="keyword">end</span>
+0086 <span class="keyword">for</span> i=st:2:length(varargin),
+0087     <span class="keyword">switch</span> lower(varargin{i}); 
+0088         <span class="keyword">case</span> {<span class="string">'orientation'</span>}
+0089             orient=varargin{i+1};
+0090             varargin(i+1)={<span class="string">'vertical'</span>};
+0091         <span class="keyword">case</span> {<span class="string">'location'</span>}
+0092             location=lower(varargin{i+1});
+0093     <span class="keyword">end</span>   
+0094 <span class="keyword">end</span>
+0095 
+0096 <span class="comment">% for the bestoutside option if its 2 columns stick it on the right, else put it at the bottom.</span>
+0097 <span class="keyword">if</span> strcmpi(location,<span class="string">'bestoutside'</span>),
+0098     <span class="keyword">if</span> gd==2,
+0099         location=<span class="string">'eastoutside'</span>;
+0100     <span class="keyword">else</span>
+0101         location=<span class="string">'southoutside'</span>;
+0102     <span class="keyword">end</span>
+0103 <span class="keyword">end</span>
+0104 
+0105 <span class="comment">% create the normal legend supplying it all the parameter name value pairs given in the function call</span>
+0106 [legend_h,object_h] = fLegend(hdl,varargin{:});
+0107 
+0108 <span class="comment">% if only one column then bail out now - nothing else to do here. Although it might seem daft to call</span>
+0109 <span class="comment">%gridLegend with one column this does allow the user the flexibility of always calling gridLegend and their</span>
+0110 <span class="comment">% code can adapt the number of columns required in which case one column might be a valid input.</span>
+0111 <span class="keyword">if</span> gd &lt; 2,
+0112     <span class="keyword">return</span>
+0113 <span class="keyword">end</span>
+0114 
+0115 <span class="comment">% work out how many traces per column in the new format.</span>
+0116 numlines = length(hdl);
+0117 numpercolumn = ceil(numlines/gd);
+0118 
+0119 <span class="comment">% if we don't get enough legend objects than something has gone wrong generating the legend..</span>
+0120 <span class="keyword">if</span> length(object_h) &lt; 2*numlines,
+0121     warning(<span class="string">'Sorry problems generating the standard legend - not enough labels were generated'</span>)
+0122     <span class="keyword">return</span>
+0123 <span class="keyword">end</span>
+0124 
+0125 <span class="comment">%get old width, new width and scale factor</span>
+0126 pos = get(legend_h, <span class="string">'position'</span>);
+0127 width = gd*pos(3);
+0128 rescale = pos(3)/width;
+0129 
+0130 <span class="comment">% get some old values so we can scale everything later</span>
+0131 <span class="comment">% if it's x-y plot then there are three objects per plotted line: a label, a line and a marker.</span>
+0132 hdlMarker = object_h(numlines+1);
+0133 <span class="keyword">if</span> isprop(hdlMarker, <span class="string">'xdata'</span>),
+0134     plotType = <span class="string">'xyPlot'</span>;
+0135     xdata = get(hdlMarker, <span class="string">'xdata'</span>);
+0136     dx = xdata(2)-xdata(1);
+0137     di = 2;
+0138 <span class="comment">% if it's a bar chart then only 2 objects per plotted line: a labela and a colour patch.</span>
+0139 <span class="keyword">elseif</span> isprop(get(hdlMarker,<span class="string">'children'</span>), <span class="string">'xdata'</span>)
+0140     plotType = <span class="string">'barChart'</span>;
+0141     xdata = get(get(hdlMarker,<span class="string">'children'</span>), <span class="string">'xdata'</span>);
+0142     ydata = get(get(hdlMarker,<span class="string">'children'</span>), <span class="string">'ydata'</span>);
+0143     dx = xdata(3)-xdata(1);
+0144     dy = ydata(2)-ydata(1);
+0145     di = 1;
+0146 <span class="comment">% if the marker objects is a hggroup then one possibility is an errorbar plot</span>
+0147 <span class="keyword">elseif</span> strcmp(get(get(hdlMarker,<span class="string">'children'</span>), <span class="string">'Type'</span>),<span class="string">'hggroup'</span>)
+0148     plotType = <span class="string">'errorBar'</span>;
+0149     ec = get(get(hdlMarker,<span class="string">'children'</span>), <span class="string">'children'</span>);
+0150     xdata = get(ec(2), <span class="string">'xdata'</span>);
+0151     dx = xdata(2)-xdata(1);
+0152     di = 1;
+0153 <span class="keyword">else</span>
+0154     error(<span class="string">'Can''t work out what sort of legend we''ve got - sorry bailing out'</span>);
+0155 <span class="keyword">end</span>
+0156     
+0157 <span class="comment">% we'll use these later to align things appropriately</span>
+0158 sheight = 1/numpercolumn;                  <span class="comment">% height between data lines</span>
+0159 height = 1-sheight/2;                            <span class="comment">% height of the box. Used to top margin offset</span>
+0160 line_width = dx*rescale;                        <span class="comment">% rescaled linewidth to match original</span>
+0161 spacer = xdata(1)*rescale;                    <span class="comment">% rescaled spacer used for margins</span>
+0162 
+0163 
+0164 <span class="comment">% put the legend on the upper left corner and increase to required width.</span>
+0165 loci = get(gca, <span class="string">'position'</span>);
+0166 set(legend_h, <span class="string">'position'</span>, [loci(1) pos(2) width pos(4)]);
+0167 
+0168 
+0169 <span class="comment">% for each trace and label in the legend we need to define the new column and row position</span>
+0170 col = -1;
+0171 position=-1;
+0172 <span class="keyword">for</span> i=1:numlines,
+0173     <span class="comment">% for horizontal legends increment the column on each loop and add one to the row when we reach the end</span>
+0174     <span class="keyword">if</span> strcmpi(orient,<span class="string">'horizontal'</span>),
+0175         <span class="keyword">if</span> mod(i,gd)==1,
+0176             position = position+1;
+0177         <span class="keyword">end</span>
+0178         col = mod(i,gd)-1;
+0179         <span class="keyword">if</span> col == -1,
+0180              col = gd-1;
+0181         <span class="keyword">end</span>
+0182     <span class="comment">% for vertical legends increment the row on each loop and add one to the column when we reach the bottom</span>
+0183     <span class="keyword">else</span>
+0184         <span class="keyword">if</span> numpercolumn==1 || mod(i,numpercolumn)==1,
+0185             col = col+1;
+0186         <span class="keyword">end</span>
+0187 
+0188         position = mod(i,numpercolumn)-1;
+0189         <span class="keyword">if</span> position == -1,
+0190              position = numpercolumn-1;
+0191         <span class="keyword">end</span>   
+0192     <span class="keyword">end</span>
+0193     
+0194     <span class="comment">% in the legend list of objects the first handle is the label, the second is the label and the third is the marker</span>
+0195     <span class="keyword">if</span> i==1
+0196         linenum = i+numlines;
+0197     <span class="keyword">else</span>
+0198         linenum = linenum+di;
+0199     <span class="keyword">end</span>
+0200     labelnum = i;
+0201     
+0202     
+0203     <span class="comment">% realign the lines and markers for the x-y plots</span>
+0204     <span class="keyword">switch</span> plotType;
+0205         <span class="keyword">case</span> <span class="string">'xyPlot'</span>
+0206             set(object_h(linenum), <span class="string">'ydata'</span>, [height-position*sheight height-position*sheight]);
+0207             set(object_h(linenum), <span class="string">'xdata'</span>, [col/gd+spacer col/gd+spacer+line_width]);
+0208             set(object_h(linenum+1), <span class="string">'ydata'</span>, height-position*sheight);
+0209             set(object_h(linenum+1), <span class="string">'xdata'</span>, col/gd+spacer+line_width/2);
+0210         <span class="comment">% or move the color patch and label for the bar charts</span>
+0211         <span class="keyword">case</span> <span class="string">'barChart'</span>
+0212             hdb=get(object_h(linenum),<span class="string">'children'</span>);
+0213             x1 = col/gd+spacer;
+0214             x2 = x1 + line_width;
+0215             y1 = height-position*sheight-dy*numlines/(2*numpercolumn);
+0216             y2 = y1 + dy*numlines/numpercolumn; <span class="comment">% need to make the colour patch bigger so that when rescaled it returns to a sensible size.</span>
+0217             set(hdb,<span class="string">'xdata'</span>,[x1 x1 x2 x2 x1]');
+0218             set(hdb,<span class="string">'ydata'</span>,[y1 y2 y2 y1 y1]');
+0219         <span class="keyword">case</span> <span class="string">'errorBar'</span>
+0220             hdlEb = get(get(object_h(linenum),<span class="string">'children'</span>), <span class="string">'children'</span>);
+0221             set(hdlEb(2), <span class="string">'ydata'</span>, [height-position*sheight height-position*sheight]);
+0222             set(hdlEb(2), <span class="string">'xdata'</span>, [col/gd+spacer col/gd+spacer+line_width]);
+0223             set(hdlEb(1), <span class="string">'ydata'</span>, height-position*sheight);
+0224             set(hdlEb(1), <span class="string">'xdata'</span>, col/gd+spacer+line_width/2);
+0225     <span class="keyword">end</span>
+0226     <span class="comment">% move the legend label to the new position.</span>
+0227     set(object_h(labelnum), <span class="string">'position'</span>, [col/gd+spacer*2+line_width height-position*sheight]);
+0228       
+0229 <span class="keyword">end</span>
+0230 
+0231 <span class="comment">% resize the data aspect ratio to match the new shape.</span>
+0232 <span class="keyword">try</span>
+0233   set(legend_h,<span class="string">'dataaspectratio'</span>,[width/gd gd/numpercolumn 1]);
+0234 <span class="keyword">catch</span>
+0235   disp(<span class="string">'tooooo fancy'</span>)
+0236 <span class="keyword">end</span>
+0237 <span class="comment">% get the axes sizes and tightInset values so we can work out the padding required for the axis labels.</span>
+0238 ti = get(gca,<span class="string">'TightInset'</span>);
+0239 axp = get(gca,<span class="string">'Position'</span>);
+0240 
+0241 <span class="comment">% calculate the required position for the legend and current axes so that there is space for it.</span>
+0242 <span class="keyword">switch</span> location,
+0243     <span class="keyword">case</span> {<span class="string">'north'</span>}
+0244         <span class="comment">% top location</span>
+0245         np=[(1-width)/2 1-numpercolumn/numlines width pos(4)*numpercolumn/numlines]; 
+0246     <span class="keyword">case</span> {<span class="string">'southoutside'</span>}
+0247         <span class="comment">% middle bottom location</span>
+0248         np=[(1-width)/2 0 width pos(4)*numpercolumn/numlines]; 
+0249         axn = np(4) + ti(2);
+0250         <span class="comment">% define the new axis postion and apply</span>
+0251         axp(4)=axp(4) - axn + axp(2);
+0252         axp(2)=axn;
+0253     <span class="keyword">case</span> {<span class="string">'eastoutside'</span>}
+0254         <span class="comment">% right hand side location</span>
+0255         np=[0.995-width numpercolumn/numlines/2 width pos(4)*numpercolumn/numlines];
+0256         axp(1)=axp(1)/2;
+0257         axp(3)=0.995-width-axp(1)-ti(3);
+0258     <span class="keyword">case</span> {<span class="string">'westoutside'</span>}
+0259         <span class="comment">% left hand side location</span>
+0260         np=[0.005 numpercolumn/numlines/2 width pos(4)*numpercolumn/numlines];
+0261         axp(1)=0.01+width+ti(1);
+0262         axp(3)=0.99-axp(1)-ti(3);
+0263     <span class="keyword">case</span> {<span class="string">'northoutside'</span>}
+0264         <span class="comment">% middle top location</span>
+0265         np=[(1-width)/2 1-numpercolumn/numlines width pos(4)*numpercolumn/numlines]; 
+0266         <span class="comment">% define the new axis postion and apply</span>
+0267         axp(4)=1 - np(4) - ti(4)- axp(2);
+0268     <span class="keyword">otherwise</span>
+0269         <span class="comment">% no changes applied to the axis sizing</span>
+0270         <span class="comment">% left hand side location</span>
+0271         np=[0.005 numpercolumn/numlines/2 width pos(4)*numpercolumn/numlines];
+0272         
+0273 <span class="keyword">end</span>
+0274 
+0275 <span class="comment">% finally move the legend and update the axes</span>
+0276 set(legend_h, <span class="string">'Position'</span>,np);
+0277 set(gca,<span class="string">'Position'</span>,axp);
+0278 
+0279 <span class="comment">% also disable legend listeners, printpreview redrew all the legend and messed everything up</span>
+0280 <span class="comment">% fortunately thanks to undocumented matlab website worked out how to make it static.</span>
+0281 <span class="keyword">try</span>
+0282 LL = get(gca,<span class="string">'ScribeLegendListeners'</span>);
+0283 set(LL.fontname,<span class="string">'enabled'</span>,<span class="string">'off'</span>);
+0284 set(LL.fontsize,<span class="string">'enabled'</span>,<span class="string">'off'</span>);
+0285 set(LL.fontweight,<span class="string">'enabled'</span>,<span class="string">'off'</span>);
+0286 set(LL.fontangle,<span class="string">'enabled'</span>,<span class="string">'off'</span>);
+0287 set(LL.linewidth,<span class="string">'enabled'</span>,<span class="string">'off'</span>);
+0288 set(gca,<span class="string">'ScribeLegendListeners'</span>,LL);
+0289 <span class="keyword">end</span>
+0290 
+0291 <span class="keyword">return</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

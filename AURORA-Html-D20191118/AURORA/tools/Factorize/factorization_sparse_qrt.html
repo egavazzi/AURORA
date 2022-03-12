@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of factorization_sparse_qrt</title>
+  <meta name="keywords" content="factorization_sparse_qrt">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html AURORA --><!-- ../menu.html tools --><!-- menu.html Factorize -->
+<h1>factorization_sparse_qrt
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="factorization_generic.html" class="code" title="">factorization_generic</a>	</li><li><a href="factorization_sparse_qrt.html" class="code" title="">factorization_sparse_qrt</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="factorization_sparse_qrt.html" class="code" title="">factorization_sparse_qrt</a>	</li><li><a href="factorize.html" class="code" title="function F = factorize (A,try_chol)">factorize</a>	FACTORIZE an object-oriented method for solving linear systems</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function F = factorization_sparse_qrt (A)</a></li><li><a href="#_sub2" class="code">function disp (F)</a></li><li><a href="#_sub3" class="code">function x = mldivide_subclass (F,b)</a></li><li><a href="#_sub4" class="code">function x = mrdivide_subclass (b,F)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 classdef <a href="factorization_sparse_qrt.html" class="code" title="">factorization_sparse_qrt</a> &lt; <a href="factorization_generic.html" class="code" title="">factorization_generic</a>
+0002 <span class="comment">%FACTORIZATION_SPARSE_QRT economy sparse QR of A': (p*A)*(p*A)'=R'*R</span>
+0003 
+0004 <span class="comment">% Copyright 2009, Timothy A. Davis, University of Florida</span>
+0005 
+0006     methods
+0007 
+0008         <span class="keyword">function</span> F = <a href="factorization_sparse_qrt.html" class="code" title="">factorization_sparse_qrt</a> (A)
+0009             <span class="comment">%FACTORIZATION_SPARSE_QRT economy sparse QR: (p*A)*(p*A)'=R'*R</span>
+0010             m = size (A,1) ;
+0011             C = A' ;
+0012             p = sparse (1:m, colamd (C), 1) ;
+0013             R = qr (C*p', 0) ;
+0014             assert (nnz (diag (R)) == m, <span class="string">'Matrix is rank deficient.'</span>) ;
+0015             F.A = A ;
+0016             F.R = R ;
+0017             F.p = p ;
+0018         <span class="keyword">end</span>
+0019 
+0020         <span class="keyword">function</span> <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F)
+0021             <span class="comment">%DISP displays a Q-less economy sparse QR</span>
+0022             fprintf (<span class="string">'  Q-less economy sparse QR factorization of A'': '</span>) ;
+0023             fprintf (<span class="string">'(p*A)*(p*A)'' = R''*R\n'</span>) ;
+0024             fprintf (<span class="string">'  A:\n'</span>) ; <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F.A) ;
+0025             fprintf (<span class="string">'  R:\n'</span>) ; <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F.R) ;
+0026             fprintf (<span class="string">'  p:\n'</span>) ; <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F.p) ;
+0027             fprintf (<span class="string">'  is_inverse: %d\n'</span>, F.is_inverse) ;
+0028         <span class="keyword">end</span>
+0029 
+0030 
+0031         <span class="keyword">function</span> x = <a href="#_sub3" class="code" title="subfunction x = mldivide_subclass (F,b)">mldivide_subclass</a> (F,b)
+0032             <span class="comment">%MLDIVIDE_SUBCLASS x = A\b using economy sparse QR of A'</span>
+0033             <span class="comment">% minimum 2-norm solution of an underdetermined system</span>
+0034             A = F.A ;
+0035             R = F.R ;
+0036             p = F.p ;
+0037             x = A' * (p' * (R \ (R' \ (p * b)))) ;
+0038             e = A' * (p' * (R \ (R' \ (p * (b - A * x))))) ;
+0039             x = x + e ;
+0040         <span class="keyword">end</span>
+0041 
+0042         <span class="keyword">function</span> x = <a href="#_sub4" class="code" title="subfunction x = mrdivide_subclass (b,F)">mrdivide_subclass</a> (b,F)
+0043             <span class="comment">%MRDIVIDE_SUBCLASS x = b/A using economy sparse QR of A'</span>
+0044             <span class="comment">% least-squares solution of an overdetermined problem</span>
+0045             bT = b' ;
+0046             A = F.A ;
+0047             R = F.R ;
+0048             p = F.p ;
+0049             x = p' * (R \ (R' \ (p * (A * bT)))) ;
+0050             e = p' * (R \ (R' \ (p * (A * (bT - A' * x))))) ;
+0051             x = (x + e)' ;
+0052         <span class="keyword">end</span>
+0053     <span class="keyword">end</span>
+0054 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of strim</title>
+  <meta name="keywords" content="strim">
+  <meta name="description" content="STRIM(S) strip the trailing and leading blanks of a string.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html tools -->
+<h1>strim
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>STRIM(S) strip the trailing and leading blanks of a string.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function s1 = strim(s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">STRIM(S) strip the trailing and leading blanks of a string.
+         STRIM(S)is an extension of the MATLAB function DEBLANK(S)
+         and removes both leading and trailing blanks from the string S.
+
+ Date 11-08-98
+ Written by Stefan Baunack. Please send any bug
+ reports or other comments to: s.baunack@ifw-dresden.de.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function s1 = strim(s)</a>
+0002 <span class="comment">%STRIM(S) strip the trailing and leading blanks of a string.</span>
+0003 <span class="comment">%         STRIM(S)is an extension of the MATLAB function DEBLANK(S)</span>
+0004 <span class="comment">%         and removes both leading and trailing blanks from the string S.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Date 11-08-98</span>
+0007 <span class="comment">% Written by Stefan Baunack. Please send any bug</span>
+0008 <span class="comment">% reports or other comments to: s.baunack@ifw-dresden.de.</span>
+0009 
+0010 <span class="keyword">if</span> ~ischar(s)
+0011     error(<span class="string">'Input must be a string.'</span>)
+0012 <span class="keyword">end</span>
+0013 s1 = deblank(s);
+0014 s1 = fliplr(s1);
+0015 s1 = deblank(s1);
+0016 s1 = fliplr(s1);</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

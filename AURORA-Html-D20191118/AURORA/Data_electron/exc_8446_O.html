@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of exc_8446_O</title>
+  <meta name="keywords" content="exc_8446_O">
+  <meta name="description" content="Xs = exc_8446(E)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>exc_8446_O
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Xs = exc_8446(E)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function sigma = exc_8446_O(E) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Xs = exc_8446(E)
+ 
+ exc_8446 - emission cross section (m^2) for 8446 AA
+ from atomic oxygen. E electron energy (eV)
+
+ Electron-impact excitation of OI 3p 3P from ground state
+ in the excitation of O
+ From Itikawa and Ichimura, J Phys Chem Ref Data 1990
+
+    Given by the generous Bjorn, March 2009
+ parent       O
+ products     0    (emission)
+ threshold    10.99   (Itikawa) Confirmed/BG-20191016
+ units        eV
+ valid from   0.0   Remove this eventually - or replace with other comments ...
+ valid to     0.0
+ points       34</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/utilities/Ie_zE2Qz.html" class="code" title="function ThatWentOK = Ie_zE2Qz(nN2,nO2,nO,h_atm)">Ie_zE2Qz</a>	IE_ZE2Q_Z - Calculate the volume emission/excitation rates</li><li><a href="../../AURORA/utilities/Ie_ztE2Q_zt.html" class="code" title="function ThatWentOK = Ie_ztE2Q_zt(nN2,nO2,nO,h_atm)">Ie_ztE2Q_zt</a>	IE_ZTE2Q_ZT - Calculate the volume emission/excitation rates</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function sigma = exc_8446_O(E)</a>
+0002 <span class="comment">% Xs = exc_8446(E)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% exc_8446 - emission cross section (m^2) for 8446 AA</span>
+0005 <span class="comment">% from atomic oxygen. E electron energy (eV)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Electron-impact excitation of OI 3p 3P from ground state</span>
+0008 <span class="comment">% in the excitation of O</span>
+0009 <span class="comment">% From Itikawa and Ichimura, J Phys Chem Ref Data 1990</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%    Given by the generous Bjorn, March 2009</span>
+0012 <span class="comment">% parent       O</span>
+0013 <span class="comment">% products     0    (emission)</span>
+0014 <span class="comment">% threshold    10.99   (Itikawa) Confirmed/BG-20191016</span>
+0015 <span class="comment">% units        eV</span>
+0016 <span class="comment">% valid from   0.0   Remove this eventually - or replace with other comments ...</span>
+0017 <span class="comment">% valid to     0.0</span>
+0018 <span class="comment">% points       34</span>
+0019 
+0020 EnX = [ 1.1000000e+01   2.5781459e-01
+0021         1.2059649e+01   3.6743271e-01
+0022         1.3221375e+01   4.8399335e-01
+0023         1.4495013e+01   5.9391952e-01
+0024         1.5891342e+01   6.8434932e-01
+0025         1.7422182e+01   7.4632073e-01
+0026         1.9100490e+01   7.7643659e-01
+0027         2.0940473e+01   7.6493066e-01
+0028         2.2957704e+01   6.7097864e-01
+0029         2.5169259e+01   5.5059069e-01
+0030         2.7593856e+01   4.5203505e-01
+0031         3.0252019e+01   3.9695472e-01
+0032         3.3166248e+01   3.6965228e-01
+0033         3.6361209e+01   3.5009898e-01
+0034         3.9863946e+01   3.3411540e-01
+0035         4.3704108e+01   3.1832706e-01
+0036         4.7914199e+01   2.9997511e-01
+0037         5.2529855e+01   2.7743037e-01
+0038         5.7590145e+01   2.5248291e-01
+0039         6.3137901e+01   2.3229768e-01
+0040         6.9220083e+01   2.1658731e-01
+0041         7.5888171e+01   2.0184430e-01
+0042         8.3198607e+01   1.8801995e-01
+0043         9.1213271e+01   1.7506665e-01
+0044         1.0000000e+02   1.6293805e-01
+0045         2.1544347e+02   8.8234000e-02
+0046         4.6415888e+02   4.6805251e-02
+0047         1.0000000e+03   2.4440707e-02
+0048         2.1544347e+03   1.2604857e-02
+0049         4.6415888e+03   6.4357220e-03
+0050         1.0000000e+04   3.2587610e-03
+0051         2.1544347e+04   1.6386314e-03
+0052         4.6415888e+04   8.1909190e-04
+0053         1.0000000e+05   4.0734512e-04];
+0054         
+0055 sigma = exp(interp1(log(EnX(:,1)),log(EnX(:,2)),log(E),<span class="string">'pchip'</span>));
+0056 sigma(E&lt;10.99) = 0;
+0057 sigma = sigma*1e-21;</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

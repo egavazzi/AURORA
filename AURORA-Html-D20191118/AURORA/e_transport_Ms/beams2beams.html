@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of beams2beams</title>
+  <meta name="keywords" content="beams2beams">
+  <meta name="description" content="BEAMS2BEAMS - multi-beam scattering redistribution coefficients">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html e_transport_Ms -->
+<h1>beams2beams
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>BEAMS2BEAMS - multi-beam scattering redistribution coefficients</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function B2B = beams2beams(phase_fcn,Pmu2mup,thetaW) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> BEAMS2BEAMS - multi-beam scattering redistribution coefficients 
+   
+ Calling:
+   B2B = beams2beams(phase_fcn,Pmu2mup,thetaW)
+ Input:
+  phase_fcn - phase-function, [n_dirs x 1], double array with
+              probabillity for scattering with an angle theta, for
+              scattering normally probability is given for
+              scattering to a solid angle dOhmega at an angle
+              theta, here that probabillity should be weighted
+              with 2*pi*sin(theta)*dtheta
+  Pmu2mup   - array with probabillities for scattering to beams
+              from arbitrary pitch-angles to the different beams
+              given a scattering of theta, double array
+              [n_dirs x n_dirs x nBeams], see:
+              e_scattering_beamdistribution 
+  thetaW    - Relative weighting matrix, double matrix [n_beams
+              x n_dirs], with the relative contribution from
+              within each beam, assuming isotropic pich-angle
+              distribution within each beam.
+ Output:
+  B2B       - beam-redistribution coefficients.
+ Example:
+   n_dirs = 181;
+   mu_lims = [-cos(pi/4) 0 cos(pi/4)];
+   theta = linspace(0,pi,181);
+   E = 2e3;
+   [Pmu2mup,theta2beamW] = e_scattering_beamdistribution(mu_lims,n_dirs);
+   for i1 = 1:4
+     subplot(3,2,i1)
+     imagesc(0:180,0:180,Pmu2mup(:,:,i1)),colorbar_labeled('')
+   end
+   subplot(3,2,1)
+   xlabel('scattering angle')
+   ylabel('starting angle')
+   title('to beam #1')
+   subplot(3,2,5)
+   imagesc(0:180,1:(numel(mu_lims+1)),theta2beamW),colorbar_labeled('')
+   [phfcnN2_e,phfcnN2_i] = phase_fcn_N2(E,theta');
+   phfcnN2_e = phfcnN2_e.*sin(theta')./sum(phfcnN2_e.*sin(theta'));
+   B2B = beams2beams(phase_fcn,Pmu2mup,thetaW)
+   subplot(3,2,6)
+   imagesc(B2B),colorbar_labeled('')</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Ie_M_stream_4_aurora.html" class="code" title="function [Ie_zE,mu_pars_out] = Ie_M_stream_4_aurora(h,mag_ze,E,mu_lims,mu_pars,Ie_primary,p_e_q,ne,Te,varargin)">Ie_M_stream_4_aurora</a>	Ie_M_stream_4_aurora - steady-state multi-stream electron transport</li><li><a href="Ie_Mstream_tz_2_aurora.html" class="code" title="function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora(h,mag_ze,E,mu_lims,mu_pars,t,I0,Ie_primary,p_e_q,ne,Te,OPS,varargin)">Ie_Mstream_tz_2_aurora</a>	Ie_Mstream_tz_2_aurora - time-dependent multi-stream electron transport</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function B2B = beams2beams(phase_fcn,Pmu2mup,thetaW)</a>
+0002 <span class="comment">% BEAMS2BEAMS - multi-beam scattering redistribution coefficients</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Calling:</span>
+0005 <span class="comment">%   B2B = beams2beams(phase_fcn,Pmu2mup,thetaW)</span>
+0006 <span class="comment">% Input:</span>
+0007 <span class="comment">%  phase_fcn - phase-function, [n_dirs x 1], double array with</span>
+0008 <span class="comment">%              probabillity for scattering with an angle theta, for</span>
+0009 <span class="comment">%              scattering normally probability is given for</span>
+0010 <span class="comment">%              scattering to a solid angle dOhmega at an angle</span>
+0011 <span class="comment">%              theta, here that probabillity should be weighted</span>
+0012 <span class="comment">%              with 2*pi*sin(theta)*dtheta</span>
+0013 <span class="comment">%  Pmu2mup   - array with probabillities for scattering to beams</span>
+0014 <span class="comment">%              from arbitrary pitch-angles to the different beams</span>
+0015 <span class="comment">%              given a scattering of theta, double array</span>
+0016 <span class="comment">%              [n_dirs x n_dirs x nBeams], see:</span>
+0017 <span class="comment">%              e_scattering_beamdistribution</span>
+0018 <span class="comment">%  thetaW    - Relative weighting matrix, double matrix [n_beams</span>
+0019 <span class="comment">%              x n_dirs], with the relative contribution from</span>
+0020 <span class="comment">%              within each beam, assuming isotropic pich-angle</span>
+0021 <span class="comment">%              distribution within each beam.</span>
+0022 <span class="comment">% Output:</span>
+0023 <span class="comment">%  B2B       - beam-redistribution coefficients.</span>
+0024 <span class="comment">% Example:</span>
+0025 <span class="comment">%   n_dirs = 181;</span>
+0026 <span class="comment">%   mu_lims = [-cos(pi/4) 0 cos(pi/4)];</span>
+0027 <span class="comment">%   theta = linspace(0,pi,181);</span>
+0028 <span class="comment">%   E = 2e3;</span>
+0029 <span class="comment">%   [Pmu2mup,theta2beamW] = e_scattering_beamdistribution(mu_lims,n_dirs);</span>
+0030 <span class="comment">%   for i1 = 1:4</span>
+0031 <span class="comment">%     subplot(3,2,i1)</span>
+0032 <span class="comment">%     imagesc(0:180,0:180,Pmu2mup(:,:,i1)),colorbar_labeled('')</span>
+0033 <span class="comment">%   end</span>
+0034 <span class="comment">%   subplot(3,2,1)</span>
+0035 <span class="comment">%   xlabel('scattering angle')</span>
+0036 <span class="comment">%   ylabel('starting angle')</span>
+0037 <span class="comment">%   title('to beam #1')</span>
+0038 <span class="comment">%   subplot(3,2,5)</span>
+0039 <span class="comment">%   imagesc(0:180,1:(numel(mu_lims+1)),theta2beamW),colorbar_labeled('')</span>
+0040 <span class="comment">%   [phfcnN2_e,phfcnN2_i] = phase_fcn_N2(E,theta');</span>
+0041 <span class="comment">%   phfcnN2_e = phfcnN2_e.*sin(theta')./sum(phfcnN2_e.*sin(theta'));</span>
+0042 <span class="comment">%   B2B = beams2beams(phase_fcn,Pmu2mup,thetaW)</span>
+0043 <span class="comment">%   subplot(3,2,6)</span>
+0044 <span class="comment">%   imagesc(B2B),colorbar_labeled('')</span>
+0045 
+0046 <span class="comment">%  Copyright � Bjorn Gustavsson 20180603, bjorn.gustavsson@uit.no</span>
+0047 <span class="comment">%  This is free software, licensed under GNU GPL version 2 or later</span>
+0048 
+0049 
+0050 <span class="keyword">for</span> i3 = size(Pmu2mup,3):-1:1,
+0051   B2B(i3,:) = thetaW*(Pmu2mup(:,:,i3)*phase_fcn(:));
+0052 <span class="keyword">end</span>
+0053 B2B = B2B./repmat(sum(B2B,1),size(B2B,1),1);</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

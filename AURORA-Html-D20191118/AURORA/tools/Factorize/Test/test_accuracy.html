@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of test_accuracy</title>
+  <meta name="keywords" content="test_accuracy">
+  <meta name="description" content="TEST_ACCURACY test the accuracy of the factorize object">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../../menu.html AURORA --><!-- ../../menu.html tools --><!-- ../menu.html Factorize --><!-- menu.html Test -->
+<h1>test_accuracy
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>TEST_ACCURACY test the accuracy of the factorize object</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="box"><strong>function err = test_accuracy </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">TEST_ACCURACY test the accuracy of the factorize object
+
+ Example
+   err = test_accuracy
+
+ See also <a href="test_all.html" class="code" title="function test_all">test_all</a>, <a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a>.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a>	TEST_FACTORIZE test the accuracy of the factorization object</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../../matlabicon.gif)">
+<li><a href="test_all.html" class="code" title="function test_all">test_all</a>	TEST_ALL test the Factorize package (factorize, factorize1, and inverse)</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function err = test_accuracy</a>
+0002 <span class="comment">%TEST_ACCURACY test the accuracy of the factorize object</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Example</span>
+0005 <span class="comment">%   err = test_accuracy</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% See also test_all, test_factorize.</span>
+0008 
+0009 <span class="comment">% Coyright 2009, Timothy A. Davis, University of Florida</span>
+0010 
+0011 fprintf (<span class="string">'\nTesting accuracy: '</span>) ;
+0012 
+0013 <span class="comment">% dense matrices</span>
+0014 err = 0 ;
+0015 <span class="keyword">for</span> n = 0:20
+0016     A = rand (n) ;
+0017     <span class="comment">% unsymmetric</span>
+0018     err = max (err, <a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a> (A)) ;
+0019     <span class="comment">% dense, symmetric but not always positive definite</span>
+0020     A = A+A' ;
+0021     err = max (err, <a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a> (A)) ;
+0022     <span class="comment">% symmetric positive definite</span>
+0023     A = A'*A + eye (n) ;
+0024     err = max (err, <a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a> (A)) ;
+0025     <span class="comment">% least-squares problem</span>
+0026     A = rand (2*n,n) ;
+0027     err = max (err, <a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a> (A)) ;
+0028     <span class="comment">% under-determined problem</span>
+0029     A = A' ;
+0030     err = max (err, <a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a> (A)) ;
+0031 <span class="keyword">end</span>
+0032 <span class="comment">% default dense 100-by-100 matrix</span>
+0033 err = max (err, <a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a>) ;
+0034 
+0035 fprintf (<span class="string">' please wait '</span>) ;
+0036 
+0037 <span class="comment">% sparse rectangular</span>
+0038 A = sprandn (5,10,0.6) + speye (5,10) ;
+0039 err = max (err, <a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a> (A)) ;
+0040 A = A' ;
+0041 err = max (err, <a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a> (A)) ;
+0042 
+0043 <span class="comment">% sparse, unsymmetric</span>
+0044 load west0479
+0045 A = west0479 ;
+0046 err = max (err, <a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a> (A)) ;
+0047 
+0048 <span class="comment">% sparse, symmetric, but not positive definite</span>
+0049 A = abs (A+A') + eps * speye (size (A,1)) ;
+0050 err = max (err, <a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a> (A)) ;
+0051 
+0052 <span class="comment">% sparse symmetric positive definite</span>
+0053 A = delsq (numgrid (<span class="string">'L'</span>, 15)) ;
+0054 err = max (err, <a href="test_factorize.html" class="code" title="function err = test_factorize (A)">test_factorize</a> (A)) ;
+0055 
+0056 fprintf (<span class="string">'\nmax error is OK: %g\n'</span>, err) ;
+0057</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

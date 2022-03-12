@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of e_O2_OO3S</title>
+  <meta name="keywords" content="e_O2_OO3S">
+  <meta name="description" content="Xs = e_O2_OO3S(E)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>e_O2_OO3S
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Xs = e_O2_OO3S(E)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function Xs = e_O2_OO3S(E) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Xs = e_O2_OO3S(E)
+ 
+ e_O2_OO3S - electron excitation cross section (m^2)
+ E electron energy (eV)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Xs = e_O2_OO3S(E)</a>
+0002 <span class="comment">% Xs = e_O2_OO3S(E)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% e_O2_OO3S - electron excitation cross section (m^2)</span>
+0005 <span class="comment">% E electron energy (eV)</span>
+0006 
+0007 <span class="comment">%  Copyright � Bjorn Gustavsson 20110527, bjorn.gustavsson@uit.no</span>
+0008 <span class="comment">%  This is free software, licensed under GNU GPL version 2 or later</span>
+0009 
+0010 xs = [ 0.15583   1.2885    2.185   2.9369   3.3692   3.3338   2.6989   1.7689]*1e-22;<span class="comment">%-18;</span>
+0011 E_o =[15.647    18.361    30      50       80      100      200      400];
+0012 
+0013 Xs = exp([interp1(log(E_o),log(xs),log(E(E&lt;E_o(end))),<span class="string">'pchip'</span>) interp1(log(E_o),log(xs),log(E(E&gt;=E_o(end))),<span class="string">'linear'</span>,<span class="string">'extrap'</span>)]);
+0014 inans = find(~isfinite(Xs));
+0015 Xs(inans) = 0;
+0016 inans = find(E&lt;15.6);
+0017 Xs(inans) = 0;
+0018</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Fig_PnL5n6</title>
+  <meta name="keywords" content="Fig_PnL5n6">
+  <meta name="description" content="% Reproduce Differential-flux-plots of Peticolas and Lummerzheim">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Plotting -->
+<h1>Fig_PnL5n6
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>% Reproduce Differential-flux-plots of Peticolas and Lummerzheim</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% Reproduce Differential-flux-plots of Peticolas and Lummerzheim
+ This script reproduces the differential electron flux panels of
+ Figures 5 and 6 in Peticolas and Lummerzheim (2000), with fluxes
+ from AURORA. This script requires the results from a 0.7 s long
+ integration of 5 Hz square-wave modulated FAB from 4000 km. This
+ is generated with one of the parameter-sets in
+ Loop_finalRun_PnL_flickering10beams.m, that will be automatically
+ saved in a directory named PnLs-05-4000-3keV-0-10</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>	COLORBAR_LABELED - colorbar with label for range linear or log</li><li><a href="../../AURORA/utilities/Ie_ztE_loader.html" class="code" title="function [t,h_atm,E,mu_lims,IeZTE,mu_scatterings] = Ie_ztE_loader(data_paths,ops)">Ie_ztE_loader</a>	Ie_ztE_loader reads flickering-aurora data from the</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%% Reproduce Differential-flux-plots of Peticolas and Lummerzheim</span>
+0002 <span class="comment">% This script reproduces the differential electron flux panels of</span>
+0003 <span class="comment">% Figures 5 and 6 in Peticolas and Lummerzheim (2000), with fluxes</span>
+0004 <span class="comment">% from AURORA. This script requires the results from a 0.7 s long</span>
+0005 <span class="comment">% integration of 5 Hz square-wave modulated FAB from 4000 km. This</span>
+0006 <span class="comment">% is generated with one of the parameter-sets in</span>
+0007 <span class="comment">% Loop_finalRun_PnL_flickering10beams.m, that will be automatically</span>
+0008 <span class="comment">% saved in a directory named PnLs-05-4000-3keV-0-10</span>
+0009 
+0010 
+0011 <span class="keyword">try</span>
+0012   [t_PnL,h_atm,E,mu_lims,IeZTE] = <a href="../../AURORA/utilities/Ie_ztE_loader.html" class="code" title="function [t,h_atm,E,mu_lims,IeZTE,mu_scatterings] = Ie_ztE_loader(data_paths,ops)">Ie_ztE_loader</a>({<span class="string">'PnLs-05-4000-3keV-0-10'</span>});
+0013 <span class="keyword">catch</span>
+0014   [t_PnL,h_atm,E,mu_lims,IeZTE] = <a href="../../AURORA/utilities/Ie_ztE_loader.html" class="code" title="function [t,h_atm,E,mu_lims,IeZTE,mu_scatterings] = Ie_ztE_loader(data_paths,ops)">Ie_ztE_loader</a>({<span class="string">'PnLs-05-4000-3keV-FA'</span>});
+0015 <span class="keyword">end</span>
+0016 
+0017 szIzte = size(IeZTE);
+0018 dE = diff(E);
+0019 dE(end+1) = dE(end);
+0020 [dZ490,iz490] = min(abs(490-h_atm/1e3))
+0021 [dz153,iz153] = min(abs(153-h_atm/1e3))
+0022 
+0023 Ie_ZTE490 = squeeze(sum(IeZTE(iz490:numel(h_atm):<span class="keyword">end</span>,:,:)));
+0024 Ie_ZTE153 = squeeze(sum(IeZTE(iz153:numel(h_atm):<span class="keyword">end</span>,:,:)));
+0025 
+0026 figure
+0027 sp211 = subplot(2,1,1);
+0028 pcolor(t_PnL,E(1:szIzte(3)),log10(Ie_ZTE490.'./repmat(dE(1:szIzte(3))'*4*pi,size(t_PnL)))),shading flat
+0029 caxis([-5 0]+12-1)
+0030 set(gca,<span class="string">'fontsize'</span>,12,<span class="string">'yscale'</span>,<span class="string">'log'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>,<span class="string">'box'</span>,<span class="string">'off'</span>)
+0031 title(<span class="string">'Electron flux, z = 490 km'</span>,<span class="string">'fontsize'</span>,16)
+0032 ylabel(<span class="string">'Energy (eV)'</span>,<span class="string">'fontsize'</span>,15)
+0033 <span class="comment">% cblh = colorbar_labeled('Log_{10}(Flux(m^{-2}eV^{-1}s^{-1}))','log','fontsize',14);</span>
+0034 cblh1 = <a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>(<span class="string">'Flux m^{-2}eV^{-1}s^{-1})'</span>,<span class="string">'log'</span>,<span class="string">'fontsize'</span>,14);
+0035 set(cblh1,<span class="string">'position'</span>,get(cblh1,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0036 set(cblh1,<span class="string">'position'</span>,get(cblh1,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0037 set(cblh1,<span class="string">'position'</span>,get(cblh1,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0038 set(cblh1,<span class="string">'position'</span>,get(cblh1,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0039 set(cblh1,<span class="string">'position'</span>,get(cblh1,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0040 set(gca,<span class="string">'position'</span>,get(gca,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0041 set(gca,<span class="string">'position'</span>,get(gca,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0042 set(cblh1,<span class="string">'ytick'</span>,[1e6 1e8 1e10 1e12])
+0043 set(gca,<span class="string">'xticklabel'</span>,<span class="string">''</span>)
+0044 sp211pos = get(gca,<span class="string">'position'</span>);
+0045 set(gca,<span class="string">'ytick'</span>,[10 100 1000])
+0046 
+0047 sp212 = subplot(2,1,2);
+0048 pcolor(t_PnL,E(1:szIzte(3)),log10(Ie_ZTE153.'./repmat(4*pi*dE(1:szIzte(3))',size(t_PnL)))),shading flat
+0049 set(gca,<span class="string">'fontsize'</span>,12,<span class="string">'yscale'</span>,<span class="string">'log'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>,<span class="string">'box'</span>,<span class="string">'off'</span>)
+0050 caxis([-5 0]+12)
+0051 title(<span class="string">'Electron flux, z = 153 km'</span>,<span class="string">'fontsize'</span>,16)
+0052 xlabel(<span class="string">'time (s)'</span>,<span class="string">'fontsize'</span>,15)
+0053 ylabel(<span class="string">'Energy (eV)'</span>,<span class="string">'fontsize'</span>,15)
+0054 caxis([-5 0]+13)
+0055 caxis([-5 0]+13.5)
+0056 caxis([-5 0]+12-1)
+0057 <span class="comment">% cblh2 = colorbar_labeled('Log_{10}(Flux(m^{-2}eV^{-1}s^{-1}))','log','fontsize',14);</span>
+0058 cblh2 = <a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>(<span class="string">'Flux (m^{-2}eV^{-1}s^{-1})'</span>,<span class="string">'log'</span>,<span class="string">'fontsize'</span>,14);
+0059 set(cblh2,<span class="string">'position'</span>,get(cblh2,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0060 set(cblh2,<span class="string">'position'</span>,get(cblh2,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0061 set(cblh2,<span class="string">'position'</span>,get(cblh2,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0062 set(cblh2,<span class="string">'position'</span>,get(cblh2,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0063 set(cblh2,<span class="string">'position'</span>,get(cblh2,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0064 set(gca,<span class="string">'position'</span>,get(gca,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0065 set(gca,<span class="string">'position'</span>,get(gca,<span class="string">'position'</span>)+[-0.01 0 0 0])
+0066 set(cblh2,<span class="string">'ytick'</span>,[1e6 1e8 1e10 1e12])
+0067 sp212pos = get(gca,<span class="string">'position'</span>);
+0068 set(gca,<span class="string">'position'</span>,[sp212pos(1:3),sp211pos(4)])
+0069 cb1h1pos = get(cblh2,<span class="string">'position'</span>)
+0070 set(cblh2,<span class="string">'position'</span>,[cb1h1pos(1:3),sp211pos(4)])
+0071 set(gca,<span class="string">'ytick'</span>,[10 100 1000])
+0072 
+0073 <span class="comment">%print -depsc2 -painters PnL-fig5n6-01.eps</span>
+0074 
+0075 axes(sp211)
+0076 axis([0 0.7 10 3002])
+0077 axes(sp212)
+0078 axis([0 0.7 10 3002])
+0079 <span class="comment">% print -depsc2 -painters ../Figures/PnL-fig5n6-02.eps</span>
+0080 
+0081 <span class="comment">%   Copyright � 2019 Bjorn Gustavsson, &lt;bjorn.gustavsson@irf.se&gt;</span>
+0082 <span class="comment">%   This is free software, licensed under GNU GPL version 2 or later</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

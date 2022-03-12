@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of factorization_dense_lu</title>
+  <meta name="keywords" content="factorization_dense_lu">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html AURORA --><!-- ../menu.html tools --><!-- menu.html Factorize -->
+<h1>factorization_dense_lu
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="factorization_dense_lu.html" class="code" title="">factorization_dense_lu</a>	</li><li><a href="factorization_generic.html" class="code" title="">factorization_generic</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="factorization_dense_lu.html" class="code" title="">factorization_dense_lu</a>	</li><li><a href="factorize.html" class="code" title="function F = factorize (A,try_chol)">factorize</a>	FACTORIZE an object-oriented method for solving linear systems</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function F = factorization_dense_lu (A)</a></li><li><a href="#_sub2" class="code">function disp (F)</a></li><li><a href="#_sub3" class="code">function x = mldivide_subclass (F,b)</a></li><li><a href="#_sub4" class="code">function x = mrdivide_subclass (b,F)</a></li></ul>
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 classdef <a href="factorization_dense_lu.html" class="code" title="">factorization_dense_lu</a> &lt; <a href="factorization_generic.html" class="code" title="">factorization_generic</a>
+0002 <span class="comment">%FACTORIZATION_DENSE_LU dense LU factorization: p*A = L*U</span>
+0003 
+0004 <span class="comment">% Copyright 2009, Timothy A. Davis, University of Florida</span>
+0005 
+0006     methods
+0007 
+0008         <span class="keyword">function</span> F = <a href="factorization_dense_lu.html" class="code" title="">factorization_dense_lu</a> (A)
+0009             <span class="comment">%FACTORIZATION_DENSE_LU dense LU: p*A = L*U</span>
+0010             n = size (A,2) ;
+0011             [F.L U p] = lu (A, <span class="string">'vector'</span>) ;
+0012             assert (nnz (diag (U)) == n, <span class="string">'Matrix is rank deficient.'</span>) ;
+0013             F.p = sparse (1:n, p, 1) ;
+0014             F.U = U ;
+0015             F.A = A ;
+0016         <span class="keyword">end</span>
+0017 
+0018         <span class="keyword">function</span> <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F)
+0019             <span class="comment">%DISP displays a dense LU factorization</span>
+0020             fprintf (<span class="string">'  dense LU factorization: p*A = L*U\n'</span>) ;
+0021             fprintf (<span class="string">'  A:\n'</span>) ; <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F.A) ;
+0022             fprintf (<span class="string">'  L:\n'</span>) ; <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F.L) ;
+0023             fprintf (<span class="string">'  U:\n'</span>) ; <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F.U) ;
+0024             fprintf (<span class="string">'  p:\n'</span>) ; <a href="#_sub2" class="code" title="subfunction disp (F)">disp</a> (F.p) ;
+0025             fprintf (<span class="string">'  is_inverse: %d\n'</span>, F.is_inverse) ;
+0026         <span class="keyword">end</span>
+0027 
+0028         <span class="keyword">function</span> x = <a href="#_sub3" class="code" title="subfunction x = mldivide_subclass (F,b)">mldivide_subclass</a> (F,b)
+0029             <span class="comment">%MLDIVIDE_SUBCLASS x=A\b using dense LU</span>
+0030             <span class="comment">% x = U \ (L \ (p*b)) ;</span>
+0031             <span class="keyword">if</span> (issparse (b))
+0032                 b = full (b) ;
+0033             <span class="keyword">end</span>
+0034             opL.LT = true ;
+0035             opU.UT = true ;
+0036             x = linsolve (F.U, linsolve (F.L, F.p*b, opL), opU) ;
+0037         <span class="keyword">end</span>
+0038 
+0039         <span class="keyword">function</span> x = <a href="#_sub4" class="code" title="subfunction x = mrdivide_subclass (b,F)">mrdivide_subclass</a> (b,F)
+0040             <span class="comment">%MRDIVIDE_SUBCLASS x = b/A using dense LU</span>
+0041             <span class="comment">% x = (P' * (L' \ (U' \ b')))'</span>
+0042             bT = b' ;
+0043             <span class="keyword">if</span> (issparse (bT))
+0044                 bT = full (bT) ;
+0045             <span class="keyword">end</span>
+0046             opUT.UT = true ;
+0047             opUT.TRANSA = true ;
+0048             opLT.LT = true ;
+0049             opLT.TRANSA = true ;
+0050             x = (F.p' * linsolve (F.L, linsolve (F.U, bT, opUT), opLT))' ;
+0051         <span class="keyword">end</span>
+0052     <span class="keyword">end</span>
+0053 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

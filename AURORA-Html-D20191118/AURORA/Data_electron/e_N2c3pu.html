@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of e_N2c3pu</title>
+  <meta name="keywords" content="e_N2c3pu">
+  <meta name="description" content="Xs = e_N2c3pu(E)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>e_N2c3pu
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Xs = e_N2c3pu(E)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function Xs = e_N2c3pu(Ep) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Xs = e_N2c3pu(E)
+ 
+ e_N2c3pu - electron excitation cross section (m^2)
+ E electron energy (eV)
+ Cross-sections for energies below 50 eV digitized from Itikawa et
+ al 1986, figure 7.6, data from Cartwright et al. (1977),
+ renormalized by Trajmar et al. (1983). /BG 20180603</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Xs = e_N2c3pu(Ep)</a>
+0002 <span class="comment">% Xs = e_N2c3pu(E)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% e_N2c3pu - electron excitation cross section (m^2)</span>
+0005 <span class="comment">% E electron energy (eV)</span>
+0006 <span class="comment">% Cross-sections for energies below 50 eV digitized from Itikawa et</span>
+0007 <span class="comment">% al 1986, figure 7.6, data from Cartwright et al. (1977),</span>
+0008 <span class="comment">% renormalized by Trajmar et al. (1983). /BG 20180603</span>
+0009 
+0010 <span class="keyword">for</span> ie=1:length(Ep),
+0011   <span class="keyword">if</span> Ep(ie) &gt; 11.03 &amp; Ep(ie) &lt; 20.169,
+0012     cross_section(ie)=(1-11.03/Ep(ie))*exp(-9134.460+12303.41*log(Ep(ie))-6226.840*log(Ep(ie))^2+1397.931*log(Ep(ie))^3-117.4893*log(Ep(ie))^4);
+0013   <span class="keyword">elseif</span> Ep(ie) &gt;=20.169 &amp; Ep(ie) &lt; 100,
+0014     cross_section(ie)=exp(-145.6415+117.1985*log(Ep(ie))-47.66838*log(Ep(ie))^2+8.547379*log(Ep(ie))^3-0.5779936*log(Ep(ie))^4);    
+0015   <span class="keyword">elseif</span> Ep(ie) &gt;=100,
+0016     cross_section(ie)=5.5409940e-13/Ep(ie)^3;
+0017   <span class="keyword">else</span>
+0018     cross_section(ie)=0;
+0019   <span class="keyword">end</span>
+0020 <span class="keyword">end</span>
+0021 
+0022 
+0023 E = [12.1 12.67 13.33 13.5 15   17   20   30   50];
+0024 s = [ 0.5  1     2     3    3.75 2.05 1.44 0.54 0.21]*1e-21;<span class="comment">%-17;</span>
+0025 
+0026 Xs = exp([interp1(E,log(s),Ep(Ep&lt;E(end)),<span class="string">'pchip'</span>) interp1(log(E),log(s),log(Ep(Ep&gt;=E(end))),<span class="string">'linear'</span>,<span class="string">'extrap'</span>)] );
+0027 I = find(~isfinite(Xs));
+0028 Xs(I) = 0;
+0029 
+0030 inans = find(Ep&lt;11.032);
+0031 Xs(inans) = 0;
+0032 
+0033 Xs(Ep&gt;24.4) = cross_section(Ep&gt;24.4)/1e4;</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

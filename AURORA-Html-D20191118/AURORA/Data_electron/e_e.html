@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of e_e</title>
+  <meta name="keywords" content="e_e">
+  <meta name="description" content="E_E - equivalent electron-electron collision cross section.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>e_e
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>E_E - equivalent electron-electron collision cross section.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function sigma_ee = e_e(E,Te,ne) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> E_E - equivalent electron-electron collision cross section.
+   Calculates the Coulomb cross section (M. Mitchner and
+   C. H. Kruger, Jr, Partially ionized gases, 1973, pp 54-62)
+ 
+ Calling:
+   sigma_ee = e_e(E,Te,ne)
+ Input:
+   E - electron energies [1xN] (eV)
+   Te - electron temperature (K)
+   ne - electron concentration (m^-3)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function sigma_ee = e_e(E,Te,ne)</a>
+0002 <span class="comment">% E_E - equivalent electron-electron collision cross section.</span>
+0003 <span class="comment">%   Calculates the Coulomb cross section (M. Mitchner and</span>
+0004 <span class="comment">%   C. H. Kruger, Jr, Partially ionized gases, 1973, pp 54-62)</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Calling:</span>
+0007 <span class="comment">%   sigma_ee = e_e(E,Te,ne)</span>
+0008 <span class="comment">% Input:</span>
+0009 <span class="comment">%   E - electron energies [1xN] (eV)</span>
+0010 <span class="comment">%   Te - electron temperature (K)</span>
+0011 <span class="comment">%   ne - electron concentration (m^-3)</span>
+0012 
+0013 
+0014 Ep_0    = 1e-9/36/pi;               <span class="comment">% Permittivity [As/Vm]</span>
+0015 q_e     = 1.6021773e-19;            <span class="comment">% elementary charge [C]</span>
+0016 m_e     = 9.10939e-31;              <span class="comment">% electron rest mass [kg]</span>
+0017 
+0018 <span class="comment">%v = v_of_E(E);</span>
+0019 
+0020 
+0021 <span class="comment">% sigma_ee = 4*pi*b_0^2*(1+ln((b_0/l_D)^2))^(1/2)</span>
+0022 
+0023 <span class="comment">% b_0 = q_e^2/(4*pi*Ep_0)/(m_e*v^2/2) = q_e^2/(4*pi*Ep_0)/(E)</span>
+0024 l_D = debye_length(ne,Te);
+0025 
+0026 b_0 = (q_e)./(E)/(4*pi*Ep_0);
+0027 
+0028 
+0029 <span class="keyword">if</span> numel(l_D) == 1
+0030   sigma_ee = 4*pi*b_0.^2.*(1+log((b_0/l_D).^2)).^(1/2);
+0031 <span class="keyword">else</span>
+0032   sigma_ee = 4*pi*repmat(b_0,size(l_D)).^2.*(1+log((repmat(b_0,size(l_D))./repmat(l_D,size(b_0))).^2)).^(1/2);
+0033 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

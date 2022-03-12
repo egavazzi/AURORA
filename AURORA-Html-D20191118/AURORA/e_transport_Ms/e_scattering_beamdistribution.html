@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of e_scattering_beamdistribution</title>
+  <meta name="keywords" content="e_scattering_beamdistribution">
+  <meta name="description" content="e_scattering_beamdistribution - angular redistribution PDF for">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html e_transport_Ms -->
+<h1>e_scattering_beamdistribution
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>e_scattering_beamdistribution - angular redistribution PDF for</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [Pmu2mup,theta2beamW,BeamW] = e_scattering_beamdistribution(mu_lims,n_dirs) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> e_scattering_beamdistribution - angular redistribution PDF for
+ scattering from all pitch-angles to discrete beams with arbitrary
+ pitch-angle limits, and the relative contribution-weighting-
+ matrices accounting for isotropic distribution of fluxes inside
+ corresponding beams.
+ 
+ Calling:
+  [Pmu2mup,theta2beamW] = e_scattering_beamdistribution(mu_lims,n_dirs)
+ Input:
+   mu_lims - cosine of pitch-angle limits, double array [1 x (nB-1)]
+             or [(nB-1) x 1 ], -1 and +1 are the effective min and
+             maximum cosine of pitch-angle limits
+   n_dirs  - number of directions to use for the discretized
+             calculation, optional argument, when left emtpy
+             defaults to 181
+ Output:
+  Pmu2mup     - double array [n_dirs x n_dirs x n_beams] with the
+                probability distribution for an electron ending up
+                in a beam starting at pitch-angle theta0 and
+                scattering an angle theta1.
+  theta2beamW - Relative weighting matrix, double matrix [n_beams
+                x n_dirs], with the relative contribution from
+                within each beam, assuming isotropic pich-angle
+                distribution within each beam.
+ 
+ Example:
+   n_dirs = 181;
+   mu_lims = [-1 -cos(pi/4) 0 cos(pi/4) 1];
+   [Pmu2mup,theta2beamW] = e_scattering_beamdistribution(mu_lims,n_dirs);
+   for i1 = 1:4
+     subplot(3,2,i1)
+     imagesc(0:180,0:180,Pmu2mup(:,:,i1))
+   end
+   subplot(3,1,3)
+   imagesc(0:180,1:(numel(mu_lims+1)),theta2beamW)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/tools/Geometry/rot_around_v.html" class="code" title="function R = rot_around_v(e_rot,phi)">rot_around_v</a>	ROT_AROUND_V - matrix for rotation PHI radians around E_ROT</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Ie_M_stream_4_aurora.html" class="code" title="function [Ie_zE,mu_pars_out] = Ie_M_stream_4_aurora(h,mag_ze,E,mu_lims,mu_pars,Ie_primary,p_e_q,ne,Te,varargin)">Ie_M_stream_4_aurora</a>	Ie_M_stream_4_aurora - steady-state multi-stream electron transport</li><li><a href="Ie_Mstream_tz_2_aurora.html" class="code" title="function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora(h,mag_ze,E,mu_lims,mu_pars,t,I0,Ie_primary,p_e_q,ne,Te,OPS,varargin)">Ie_Mstream_tz_2_aurora</a>	Ie_Mstream_tz_2_aurora - time-dependent multi-stream electron transport</li><li><a href="../../AURORA/setup4etrptd10streams.html" class="code" title="">setup4etrptd10streams</a>	% Set-up script for Examples in time-dependent electron transport</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Pmu2mup,theta2beamW,BeamW] = e_scattering_beamdistribution(mu_lims,n_dirs)</a>
+0002 <span class="comment">% e_scattering_beamdistribution - angular redistribution PDF for</span>
+0003 <span class="comment">% scattering from all pitch-angles to discrete beams with arbitrary</span>
+0004 <span class="comment">% pitch-angle limits, and the relative contribution-weighting-</span>
+0005 <span class="comment">% matrices accounting for isotropic distribution of fluxes inside</span>
+0006 <span class="comment">% corresponding beams.</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Calling:</span>
+0009 <span class="comment">%  [Pmu2mup,theta2beamW] = e_scattering_beamdistribution(mu_lims,n_dirs)</span>
+0010 <span class="comment">% Input:</span>
+0011 <span class="comment">%   mu_lims - cosine of pitch-angle limits, double array [1 x (nB-1)]</span>
+0012 <span class="comment">%             or [(nB-1) x 1 ], -1 and +1 are the effective min and</span>
+0013 <span class="comment">%             maximum cosine of pitch-angle limits</span>
+0014 <span class="comment">%   n_dirs  - number of directions to use for the discretized</span>
+0015 <span class="comment">%             calculation, optional argument, when left emtpy</span>
+0016 <span class="comment">%             defaults to 181</span>
+0017 <span class="comment">% Output:</span>
+0018 <span class="comment">%  Pmu2mup     - double array [n_dirs x n_dirs x n_beams] with the</span>
+0019 <span class="comment">%                probability distribution for an electron ending up</span>
+0020 <span class="comment">%                in a beam starting at pitch-angle theta0 and</span>
+0021 <span class="comment">%                scattering an angle theta1.</span>
+0022 <span class="comment">%  theta2beamW - Relative weighting matrix, double matrix [n_beams</span>
+0023 <span class="comment">%                x n_dirs], with the relative contribution from</span>
+0024 <span class="comment">%                within each beam, assuming isotropic pich-angle</span>
+0025 <span class="comment">%                distribution within each beam.</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% Example:</span>
+0028 <span class="comment">%   n_dirs = 181;</span>
+0029 <span class="comment">%   mu_lims = [-1 -cos(pi/4) 0 cos(pi/4) 1];</span>
+0030 <span class="comment">%   [Pmu2mup,theta2beamW] = e_scattering_beamdistribution(mu_lims,n_dirs);</span>
+0031 <span class="comment">%   for i1 = 1:4</span>
+0032 <span class="comment">%     subplot(3,2,i1)</span>
+0033 <span class="comment">%     imagesc(0:180,0:180,Pmu2mup(:,:,i1))</span>
+0034 <span class="comment">%   end</span>
+0035 <span class="comment">%   subplot(3,1,3)</span>
+0036 <span class="comment">%   imagesc(0:180,1:(numel(mu_lims+1)),theta2beamW)</span>
+0037 <span class="comment">%</span>
+0038 
+0039 <span class="comment">%  Copyright � Bjorn Gustavsson 20180603, bjorn.gustavsson@uit.no</span>
+0040 <span class="comment">%  This is free software, licensed under GNU GPL version 2 or later</span>
+0041 
+0042 
+0043 
+0044 <span class="keyword">if</span> nargin &lt; 2 || isempty(n_dirs)
+0045   n_dirs = 181;
+0046 <span class="keyword">end</span>
+0047 
+0048 theta0 = linspace(0,pi,n_dirs); <span class="comment">% Initial pitch-angle</span>
+0049 theta1 = linspace(0,pi,n_dirs); <span class="comment">% scattering angle, i.e. the angle</span>
+0050                                 <span class="comment">% a particle scatters of its</span>
+0051                                 <span class="comment">% initial traveling direction,</span>
+0052                                 <span class="comment">% without taking the direction</span>
+0053                                 <span class="comment">% around that initial direction</span>
+0054                                 <span class="comment">% into account</span>
+0055 theta0 = (0:(180/(n_dirs-1)):180)*pi/180;
+0056 theta1 = (0:(180/(n_dirs-1)):180)*pi/180;
+0057 <span class="comment">% wbh = waitbar(1,'This step is a bit slow...');</span>
+0058 <span class="keyword">for</span> i1 = numel(theta0):-1:1
+0059   <span class="keyword">if</span> i1 == numel(theta0) || mod(i1,10) == 0
+0060     fprintf(<span class="string">'starting with %d/(of %d) at: %s\n'</span>,i1,numel(theta0),datestr(now,<span class="string">'HH:MM:SS'</span>))
+0061   <span class="keyword">end</span>
+0062   <span class="comment">% First we calculate the unit vector of initial propagation</span>
+0063   e0 = [sin(theta0(i1)) 0 cos(theta0(i1))]';
+0064   
+0065   <span class="keyword">for</span> i2 = numel(theta1):-1:1
+0066     <span class="comment">% Then we rotate that one with a(ll) scattering angles:</span>
+0067     e1 = <a href="../../AURORA/tools/Geometry/rot_around_v.html" class="code" title="function R = rot_around_v(e_rot,phi)">rot_around_v</a>([0 1 0],theta1(i2))*e0;
+0068     <span class="keyword">for</span> iPhi = 1:(n_dirs-1)
+0069       <span class="comment">% Then we rotate that one around all clock-angles</span>
+0070       es = <a href="../../AURORA/tools/Geometry/rot_around_v.html" class="code" title="function R = rot_around_v(e_rot,phi)">rot_around_v</a>(e0',180/(n_dirs-1)*iPhi*pi/180)*e1;
+0071       <span class="comment">% then we save away the corresponding final pitch-angle of</span>
+0072       <span class="comment">% the unit vector after scattering:</span>
+0073       mu(iPhi) = es(3);
+0074     <span class="keyword">end</span>
+0075     
+0076     <span class="comment">% So the number of mu (cosine of pitch-angles) that are within</span>
+0077     <span class="comment">% the beam pitch-angle limits^* ...</span>
+0078     <span class="comment">% B(1,from_mu,to_mup)</span>
+0079     <span class="keyword">for</span> iMu = (numel(mu_lims)-1):-1:1
+0080       B(i1,i2,iMu) = sum(mu_lims(iMu)&lt;=mu&amp;mu&lt;mu_lims(iMu+1));
+0081     <span class="keyword">end</span>
+0082     <span class="comment">%B(i1,i2,1) = sum(mu&lt;mu_lims(1));</span>
+0083     
+0084   <span class="keyword">end</span>
+0085 <span class="comment">% $$$   try</span>
+0086 <span class="comment">% $$$     wbh = waitbar(i1/numel(theta0),wbh);</span>
+0087 <span class="comment">% $$$   end</span>
+0088 <span class="keyword">end</span>
+0089 <span class="comment">% ...can be converted to the fraction - which should be equal to</span>
+0090 <span class="comment">% the probability P of going from theta to theta'</span>
+0091 Pmu2mup = B./repmat(sum(B,3),[1 1 size(B,3)]);
+0092 Pmu2mup(1,1,:) = Pmu2mup(2,1,:)/2+Pmu2mup(1,2,:)/2; 
+0093 Pmu2mup(<span class="keyword">end</span>,<span class="keyword">end</span>,:) = Pmu2mup(end-1,<span class="keyword">end</span>,:)/2+Pmu2mup(<span class="keyword">end</span>,end-1,:)/2; 
+0094 <span class="comment">% B(1,from_mu,to_mup)</span>
+0095 <span class="keyword">for</span> iMu = (numel(mu_lims)-1):-1:1
+0096   <span class="comment">% theta2beamW(iMu,:) = abs(sin(theta0)).*(mu_lims(iMu)&lt;=cos(theta0)&amp;cos(theta0)&lt;mu_lims(iMu+1));</span>
+0097   theta2beamW(iMu,:) = abs(sin(theta0)).*(mu_lims(iMu)&lt;cos(theta0)&amp;cos(theta0)&lt;=mu_lims(iMu+1));
+0098   BeamW(iMu) = abs(integral(@(pa) sin(pa),acos(mu_lims(iMu)),acos(mu_lims(iMu+1))));
+0099 <span class="keyword">end</span>
+0100 
+0101 
+0102 <span class="comment">% $$$ try</span>
+0103 <span class="comment">% $$$   close(wbh)</span>
+0104 <span class="comment">% $$$ end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

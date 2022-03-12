@@ -1,0 +1,49 @@
+/* Created by mdot for Matlab */
+digraph m2html {
+  factorization_dense_chol -> factorization_dense_chol;
+  factorization_dense_chol -> factorization_generic;
+  factorization_dense_lu -> factorization_dense_lu;
+  factorization_dense_lu -> factorization_generic;
+  factorization_dense_qr -> factorization_dense_qr;
+  factorization_dense_qr -> factorization_generic;
+  factorization_dense_qrt -> factorization_dense_qrt;
+  factorization_dense_qrt -> factorization_generic;
+  factorization_generic -> factorization_generic;
+  factorization_sparse_chol -> factorization_generic;
+  factorization_sparse_chol -> factorization_sparse_chol;
+  factorization_sparse_lu -> factorization_generic;
+  factorization_sparse_lu -> factorization_sparse_lu;
+  factorization_sparse_qr -> factorization_generic;
+  factorization_sparse_qr -> factorization_sparse_qr;
+  factorization_sparse_qrt -> factorization_generic;
+  factorization_sparse_qrt -> factorization_sparse_qrt;
+  factorize -> factorization_dense_chol;
+  factorize -> factorization_dense_lu;
+  factorize -> factorization_dense_qr;
+  factorize -> factorization_dense_qrt;
+  factorize -> factorization_sparse_chol;
+  factorize -> factorization_sparse_lu;
+  factorize -> factorization_sparse_qr;
+  factorize -> factorization_sparse_qrt;
+  factorize1 -> factorize1;
+  factorize_demo -> factorize;
+  factorize_demo -> inverse;
+  inverse -> factorize;
+  inverse -> inverse;
+
+  Contents [URL="Contents.html"];
+  factorization_dense_chol [URL="factorization_dense_chol.html"];
+  factorization_dense_lu [URL="factorization_dense_lu.html"];
+  factorization_dense_qr [URL="factorization_dense_qr.html"];
+  factorization_dense_qrt [URL="factorization_dense_qrt.html"];
+  factorization_generic [URL="factorization_generic.html"];
+  factorization_sparse_chol [URL="factorization_sparse_chol.html"];
+  factorization_sparse_lu [URL="factorization_sparse_lu.html"];
+  factorization_sparse_qr [URL="factorization_sparse_qr.html"];
+  factorization_sparse_qrt [URL="factorization_sparse_qrt.html"];
+  factorize [URL="factorize.html"];
+  factorize1 [URL="factorize1.html"];
+  factorize_demo [URL="factorize_demo.html"];
+  fdemo [URL="fdemo.html"];
+  inverse [URL="inverse.html"];
+}

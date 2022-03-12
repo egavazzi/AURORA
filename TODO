@@ -1,0 +1,21 @@
+TODO (20191119)
+
+Fix the time-shift for the general case including the effects of the
+mirror force. This will require some smarts. We have:
+
+dv||/dt = -Mu*dB/dz
+v||(t_ionosphere) = v_of_E(E)*mu_l^avg
+Mu(t_ionosphere) = m_e*v_of_E(E)^2*(1-mu_l^avg)/B(z_max)
+
+B = B(z0)*(z0+Re)^3/(z+Re)^3
+dBdz = -(3*B(z0)*(Re + z0)^3)/(Re + z)^4
+
+integrate
+d2z/dt2 =  -m_e*v_of_E(E)^2*(1-mu_l^avg)/B(z_max)*(-(3*B(z0)*(Re + z0)^3)/(Re + z)^4)
+with initial conditions:
+z(0) = z_max
+dz/dt(z_max) = -v_of_E(E)*mu_l^avg
+from t = 0 to t = -10000
+with interuption at z == z_source
+this will give us the time at the source and the initial v_par and
+v_perp - that is the initial pitch-angle...

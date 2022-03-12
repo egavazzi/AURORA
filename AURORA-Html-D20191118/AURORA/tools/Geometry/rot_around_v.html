@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of rot_around_v</title>
+  <meta name="keywords" content="rot_around_v">
+  <meta name="description" content="ROT_AROUND_V - matrix for rotation PHI radians around E_ROT">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html AURORA --><!-- ../menu.html tools --><!-- menu.html Geometry -->
+<h1>rot_around_v
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>ROT_AROUND_V - matrix for rotation PHI radians around E_ROT</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function R = rot_around_v(e_rot,phi) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> ROT_AROUND_V - matrix for rotation PHI radians around E_ROT
+   
+ Calling:
+ R = rot_around_v(e_rot,phi)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="../../../AURORA/Documentation/etrp_scattering.html" class="code" title="">etrp_scattering</a>	% Script illustrating (elastic) scattering</li><li><a href="../../../AURORA/Documentation/etrp_scattering2.html" class="code" title="">etrp_scattering2</a>	% Script illustrating (elastic) scattering</li><li><a href="../../../AURORA/e_transport_Ms/e_scattering_beamdistribution.html" class="code" title="function [Pmu2mup,theta2beamW,BeamW] = e_scattering_beamdistribution(mu_lims,n_dirs)">e_scattering_beamdistribution</a>	e_scattering_beamdistribution - angular redistribution PDF for</li><li><a href="r_arc.html" class="code" title="function r_a = r_arc(e1,e2,r0,r)">r_arc</a>	R_ARC -</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function R = rot_around_v(e_rot,phi)</a>
+0002 <span class="comment">% ROT_AROUND_V - matrix for rotation PHI radians around E_ROT</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Calling:</span>
+0005 <span class="comment">% R = rot_around_v(e_rot,phi)</span>
+0006 
+0007 
+0008 
+0009 <span class="comment">%   Copyright � 2002 Bjorn Gustavsson, &lt;bjorn.gustavsson@irf.se&gt;</span>
+0010 <span class="comment">%   This is free software, licensed under GNU GPL version 2 or later</span>
+0011 
+0012 r = [cos(phi) -sin(phi) 0;
+0013      sin(phi)  cos(phi) 0;
+0014      0         0        1];
+0015 e_Rot = e_rot./sum(e_rot.^2)^(1/2);
+0016 az = atan2(e_Rot(1),e_Rot(2));
+0017 ze = acos(e_Rot(3));
+0018 T = [1 0        0;
+0019      0 cos(ze)  -sin(ze);
+0020      0 sin(ze) cos(ze)]*<span class="keyword">...</span>
+0021     [cos(az)  -sin(az) 0;
+0022      sin(az) cos(az) 0;
+0023      0         0        1];
+0024 
+0025 R = T'*r*T;</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

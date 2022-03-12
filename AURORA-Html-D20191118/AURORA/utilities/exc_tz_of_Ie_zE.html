@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of exc_tz_of_Ie_zE</title>
+  <meta name="keywords" content="exc_tz_of_Ie_zE">
+  <meta name="description" content="EXC_TZ_OF_IE_ZTE - steady-state volume excitation rate">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html utilities -->
+<h1>exc_tz_of_Ie_zE
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>EXC_TZ_OF_IE_ZTE - steady-state volume excitation rate</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function Q = exc_tz_of_Ie_zE(h_atm,E,Ie_zE,n,Xs) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> EXC_TZ_OF_IE_ZTE - steady-state volume excitation rate
+ from altitude-energy varying electron fluxes, height-varying
+ neutral densities and excitation cross-section.
+   
+ Calling:
+  Q = exc_tz_of_Ie_zE(h_atm,E,Ie_zE,n,Xs)
+ Input:
+  h_atm - height (m), double array [n_z x 1]
+  E     - energy (eV), double array [1 x n_E]
+  Ie_zE - electron particle flux (/m^2/s/Delta_E), double array
+          [n_z*n_beams x n_E]
+  n     - density of exciteable atmospheric constituent (/m^3),
+          dobule array [n_z x 1]
+  Xs    - excitation cross-section (/m^2), double array [1 x n_E]
+ Output:
+  Q     - volume excitation rate (/m^3/s), time-dependent
+          variation of volume excitation-rate, double array
+          [n_z x 1]
+ Example:
+  TBD
+ This function calculates the excitation rates from
+ electron-fluxes produced by the steady-state multistream
+ electron transport-code. This function automatically determines
+ the number of streams used from the size-ratio
+ size(Ie_tzE,1)/size(h,1) - since the multi-stream code stacks the
+ fluxes in all streams in the first dimension.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/tools/steadystate_ionprof_cmp.html" class="code" title="">steadystate_ionprof_cmp</a>	</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Q = exc_tz_of_Ie_zE(h_atm,E,Ie_zE,n,Xs)</a>
+0002 <span class="comment">% EXC_TZ_OF_IE_ZTE - steady-state volume excitation rate</span>
+0003 <span class="comment">% from altitude-energy varying electron fluxes, height-varying</span>
+0004 <span class="comment">% neutral densities and excitation cross-section.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Calling:</span>
+0007 <span class="comment">%  Q = exc_tz_of_Ie_zE(h_atm,E,Ie_zE,n,Xs)</span>
+0008 <span class="comment">% Input:</span>
+0009 <span class="comment">%  h_atm - height (m), double array [n_z x 1]</span>
+0010 <span class="comment">%  E     - energy (eV), double array [1 x n_E]</span>
+0011 <span class="comment">%  Ie_zE - electron particle flux (/m^2/s/Delta_E), double array</span>
+0012 <span class="comment">%          [n_z*n_beams x n_E]</span>
+0013 <span class="comment">%  n     - density of exciteable atmospheric constituent (/m^3),</span>
+0014 <span class="comment">%          dobule array [n_z x 1]</span>
+0015 <span class="comment">%  Xs    - excitation cross-section (/m^2), double array [1 x n_E]</span>
+0016 <span class="comment">% Output:</span>
+0017 <span class="comment">%  Q     - volume excitation rate (/m^3/s), time-dependent</span>
+0018 <span class="comment">%          variation of volume excitation-rate, double array</span>
+0019 <span class="comment">%          [n_z x 1]</span>
+0020 <span class="comment">% Example:</span>
+0021 <span class="comment">%  TBD</span>
+0022 <span class="comment">% This function calculates the excitation rates from</span>
+0023 <span class="comment">% electron-fluxes produced by the steady-state multistream</span>
+0024 <span class="comment">% electron transport-code. This function automatically determines</span>
+0025 <span class="comment">% the number of streams used from the size-ratio</span>
+0026 <span class="comment">% size(Ie_tzE,1)/size(h,1) - since the multi-stream code stacks the</span>
+0027 <span class="comment">% fluxes in all streams in the first dimension.</span>
+0028 
+0029 <span class="comment">% Copyright � B. Gustavsson 20190125</span>
+0030 <span class="comment">%  This is free software, licensed under GNU GPL version 2 or later</span>
+0031 
+0032 
+0033 n_beams = size(Ie_zE,1)/numel(h_atm);
+0034 I_current = Ie_zE;
+0035 
+0036 n_x_sigma = n*Xs(<span class="keyword">end</span>,:);
+0037 Ie = 0;
+0038 <span class="keyword">for</span> iB = 1:n_beams,
+0039   Ie = Ie + I_current((1:numel(h_atm))+(iB-1)*numel(h_atm),:);
+0040 <span class="keyword">end</span>
+0041 Q = sum(n_x_sigma.*Ie,2);</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

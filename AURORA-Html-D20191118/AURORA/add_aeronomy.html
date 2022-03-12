@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of add_aeronomy</title>
+  <meta name="keywords" content="add_aeronomy">
+  <meta name="description" content="% Set-up of matlab-path for the aeronomy toolbox">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html AURORA -->
+<h1>add_aeronomy
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>% Set-up of matlab-path for the aeronomy toolbox</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% Set-up of matlab-path for the aeronomy toolbox</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%% Set-up of matlab-path for the aeronomy toolbox</span>
+0002 
+0003 [S1,S2,S3] = fileparts(which(<span class="string">'add_aeronomy'</span>));
+0004 
+0005 addpath(S1,<span class="string">'-end'</span>) <span class="comment">% /home/bgu001/matlab/aeronomy/,'-end')</span>
+0006 addpath(fullfile(S1,<span class="string">'Data_electron'</span>),<span class="string">'-end'</span>)
+0007 addpath(fullfile(S1,<span class="string">'Data_neutrals'</span>),<span class="string">'-end'</span>)
+0008 addpath(fullfile(S1,<span class="string">'Demo-data'</span>),<span class="string">'-end'</span>)    
+0009 addpath(fullfile(S1,<span class="string">'e_transport_Ms'</span>),<span class="string">'-end'</span>)
+0010 addpath(fullfile(S1,<span class="string">'e_transport_2s'</span>),<span class="string">'-end'</span>)
+0011 addpath(fullfile(S1,<span class="string">'e_spectras'</span>),<span class="string">'-end'</span>)   
+0012 <span class="comment">% addpath(fullfile(S1,'Flickering_examples'),'-end')</span>
+0013 <span class="comment">% addpath(fullfile(S1,'Steady_state_examples'),'-end')</span>
+0014 addpath(fullfile(S1,<span class="string">'Plotting'</span>),<span class="string">'-end'</span>)
+0015 addpath(fullfile(S1,<span class="string">'tools'</span>),<span class="string">'-end'</span>) 
+0016 addpath(fullfile(S1,<span class="string">'tools/cm_and_cb_utilities'</span>),<span class="string">'-end'</span>)
+0017 addpath(fullfile(S1,<span class="string">'tools/Factorize'</span>),<span class="string">'-end'</span>)          
+0018 addpath(fullfile(S1,<span class="string">'tools/Geometry'</span>),<span class="string">'-end'</span>) 
+0019 addpath(fullfile(S1,<span class="string">'utilities'</span>),<span class="string">'-end'</span>) 
+0020 addpath(fullfile(S1,<span class="string">'tests'</span>),<span class="string">'-end'</span>) 
+0021 addpath(fullfile(S1,<span class="string">'sup-scripts'</span>),<span class="string">'-end'</span>) 
+0022 
+0023 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/ -end</span>
+0024 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/Data_electron/ -end</span>
+0025 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/Data_neutrals/ -end</span>
+0026 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/Demo-data/ -end</span>
+0027 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/e_transport_Ms/ -end</span>
+0028 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/e_transport_2s/ -end</span>
+0029 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/e_spectras/ -end</span>
+0030 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/Flickering_examples/ -end</span>
+0031 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/Steady_state_examples/ -end</span>
+0032 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/Plotting/ -end</span>
+0033 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/tools/ -end</span>
+0034 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/tools/cm_and_cb_utilities/ -end</span>
+0035 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/tools/Factorize/ -end</span>
+0036 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/tools/Geometry/ -end</span>
+0037 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/tests -end</span>
+0038 <span class="comment">% $$$ addpath /home/bgu001/matlab/aeronomy/sup-scripts -end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

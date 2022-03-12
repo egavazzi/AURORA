@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of time_of_flight_DOMS_diffusion</title>
+  <meta name="keywords" content="time_of_flight_DOMS_diffusion">
+  <meta name="description" content="TIME_OF_FLIGHT_DOMS_DIFFUSION - Energy-pitch-angle time-of-flight widening">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html e_transport_Ms -->
+<h1>time_of_flight_DOMS_diffusion
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>TIME_OF_FLIGHT_DOMS_DIFFUSION - Energy-pitch-angle time-of-flight widening</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function D_e = time_of_flight_DOMS_diffusion(E,dE,theta_lims,plotit) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> TIME_OF_FLIGHT_DOMS_DIFFUSION - Energy-pitch-angle time-of-flight widening
+   of electrons. For discrete ordinate electron-multi-beam codes
+   the electron flux (Ie(z,E,theta,t) is discretized into energy
+   bins and pitch-angle streams. With the assumption that the
+   electron flux is isotropically distributed inside an
+   energy-pitch-angle bin (flux with energies between E(i) and
+   E(i+1) with pitch-angles to the magnetic field (B) between
+   theta(j) and theta(j+1)) the electrons will have a distribution
+   of field-aligned velocity components v(E)*cos(theta). That
+   spread in velocities will lead to a time-of-flight
+   dispersion. This function calculates the width of that t-o-f
+   dispersion and converts that to a diffusion coefficient D.
+   
+ Calling:
+   D_e = time_of_flight_DOMS_diffusion(E,dE,theta_lims,plotit)
+ Input:
+  E          - Energy (eV), double array [nE x 1], 
+  dE         - width in energy (eV) of energy bins, double array
+               [nE x 1] 
+  theta_lims - pitch-angle limits (radians) of streams, double
+               array [nStreams + 1 x 1]
+  plotit     - Flag for plotting the proceedings, Bolean scalar,
+               optional input, default is 0 i.e. not to plot 
+ Output:
+  D_e        - Diffusion-coefficients, double matrix [nE x nStreams]</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/utilities/v_of_E.html" class="code" title="function v = v_of_E(E)">v_of_E</a>	v_of_E - convert electron energy (eV) to velocity (m/s)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Ie_Mstream_tz_2_aurora.html" class="code" title="function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora(h,mag_ze,E,mu_lims,mu_pars,t,I0,Ie_primary,p_e_q,ne,Te,OPS,varargin)">Ie_Mstream_tz_2_aurora</a>	Ie_Mstream_tz_2_aurora - time-dependent multi-stream electron transport</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function D_e = time_of_flight_DOMS_diffusion(E,dE,theta_lims,plotit)</a>
+0002 <span class="comment">% TIME_OF_FLIGHT_DOMS_DIFFUSION - Energy-pitch-angle time-of-flight widening</span>
+0003 <span class="comment">%   of electrons. For discrete ordinate electron-multi-beam codes</span>
+0004 <span class="comment">%   the electron flux (Ie(z,E,theta,t) is discretized into energy</span>
+0005 <span class="comment">%   bins and pitch-angle streams. With the assumption that the</span>
+0006 <span class="comment">%   electron flux is isotropically distributed inside an</span>
+0007 <span class="comment">%   energy-pitch-angle bin (flux with energies between E(i) and</span>
+0008 <span class="comment">%   E(i+1) with pitch-angles to the magnetic field (B) between</span>
+0009 <span class="comment">%   theta(j) and theta(j+1)) the electrons will have a distribution</span>
+0010 <span class="comment">%   of field-aligned velocity components v(E)*cos(theta). That</span>
+0011 <span class="comment">%   spread in velocities will lead to a time-of-flight</span>
+0012 <span class="comment">%   dispersion. This function calculates the width of that t-o-f</span>
+0013 <span class="comment">%   dispersion and converts that to a diffusion coefficient D.</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% Calling:</span>
+0016 <span class="comment">%   D_e = time_of_flight_DOMS_diffusion(E,dE,theta_lims,plotit)</span>
+0017 <span class="comment">% Input:</span>
+0018 <span class="comment">%  E          - Energy (eV), double array [nE x 1],</span>
+0019 <span class="comment">%  dE         - width in energy (eV) of energy bins, double array</span>
+0020 <span class="comment">%               [nE x 1]</span>
+0021 <span class="comment">%  theta_lims - pitch-angle limits (radians) of streams, double</span>
+0022 <span class="comment">%               array [nStreams + 1 x 1]</span>
+0023 <span class="comment">%  plotit     - Flag for plotting the proceedings, Bolean scalar,</span>
+0024 <span class="comment">%               optional input, default is 0 i.e. not to plot</span>
+0025 <span class="comment">% Output:</span>
+0026 <span class="comment">%  D_e        - Diffusion-coefficients, double matrix [nE x nStreams]</span>
+0027 
+0028 <span class="comment">%  Copyright � Bjorn Gustavsson 20190515, bjorn.gustavsson@uit.no</span>
+0029 <span class="comment">%  This is free software, licensed under GNU GPL version 2 or later</span>
+0030 
+0031 
+0032 <span class="keyword">if</span> nargin &lt; 4 || isempty(plotit)
+0033   plotit = 0;
+0034   nE = 3;
+0035   nTheta = 3;
+0036   n_ti = 3;
+0037   n_thi = 4;
+0038 <span class="keyword">else</span>
+0039   nE = 343;
+0040   nTheta = 131;
+0041   n_ti = 701;
+0042   n_thi = 401;
+0043 <span class="keyword">end</span>
+0044 
+0045 <span class="keyword">for</span> iE = numel(E):-1:1
+0046   v = linspace(<a href="../../AURORA/utilities/v_of_E.html" class="code" title="function v = v_of_E(E)">v_of_E</a>(E(iE)),<a href="../../AURORA/utilities/v_of_E.html" class="code" title="function v = v_of_E(E)">v_of_E</a>(E(iE)+dE(iE)),nE);
+0047   <span class="keyword">for</span> iTheta = 1:(numel(theta_lims)-1)
+0048     theta_a = theta_lims(iTheta);
+0049     theta_b = theta_lims(iTheta+1);
+0050     <span class="keyword">if</span> theta_lims(iTheta) == pi/2
+0051       <span class="comment">% theta_a = theta_lims(iTheta)*0.9 + 0.1*theta_lims(iTheta+1);</span>
+0052       theta_a = theta_lims(iTheta)*0.8 + 0.2*theta_lims(iTheta+1);
+0053     <span class="keyword">end</span>
+0054     <span class="keyword">if</span> theta_lims(iTheta+1) == pi/2
+0055       <span class="comment">% theta_b = theta_lims(iTheta)*0.1 + 0.9*theta_lims(iTheta+1);</span>
+0056       theta_b = theta_lims(iTheta)*0.2 + 0.8*theta_lims(iTheta+1);
+0057     <span class="keyword">end</span>
+0058     theta = linspace(theta_a,theta_b,nTheta);
+0059     theta4i = linspace(min(theta),max(theta),n_thi);
+0060     [V,Theta] = meshgrid(v,theta);
+0061     v_par = V.*cos(Theta);
+0062     t_arrival = 500e3./v_par;
+0063     at_a = (max(t_arrival(:)) + min(t_arrival(:)))/2;
+0064     dt_a = max(t_arrival(:)) - min(t_arrival(:));
+0065     D = (dt_a/4)^2/at_a;
+0066     D_e(iE,iTheta) = abs(D);
+0067     <span class="keyword">if</span> plotit
+0068       W = sin(Theta);
+0069       W(:,[1 end]) = 0;
+0070       t4i = linspace(min(t_arrival(:)),max(t_arrival(:)),701);
+0071       [T4i,Theta4i] = meshgrid(t4i,theta4i);
+0072       Warrival = griddata(t_arrival(:),Theta(:),W(:),T4i,Theta4i);
+0073       clf
+0074       subplot(3,1,1)
+0075       pcolor(t_arrival,Theta,W),shading flat   
+0076       subplot(3,1,2)
+0077       pcolor(T4i,Theta4i,Warrival),shading flat
+0078       subplot(3,1,3)
+0079       plot(T4i(1,:),nansum(Warrival))
+0080       hold on,
+0081       plot(T4i(1,:),max(nansum(Warrival))*exp(-(T4i(1,:)-at_a).^2/(dt_a/4)^2),<span class="string">'r'</span>),
+0082       drawnow
+0083     <span class="keyword">end</span>
+0084   <span class="keyword">end</span>
+0085 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

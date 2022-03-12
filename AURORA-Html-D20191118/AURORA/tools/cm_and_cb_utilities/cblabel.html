@@ -1,0 +1,254 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cblabel</title>
+  <meta name="keywords" content="cblabel">
+  <meta name="description" content="CBLABEL   Adds a label to the colorbar.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html AURORA --><!-- ../menu.html tools --><!-- menu.html cm_and_cb_utilities -->
+<h1>cblabel
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CBLABEL   Adds a label to the colorbar.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function CBLH = cblabel(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">CBLABEL   Adds a label to the colorbar.
+
+   SYNTAX:
+            cblabel(LABEL)
+            cblabel(LABEL,..,TP,TV);
+            cblabel(H,...)
+     CBLH = cblabel(...);
+
+   INPUTS:
+     LABEL - String (or cell of strings) specifying the colorbar label.
+     TP,TV - Optional text property/property value arguments (in pairs).
+             DEFAULT:  (none)
+     H     - Color bar or peer axes (see COLORBAR) or figure handle(s) to
+             search for a single color bar handle.
+             DEFAULT: gca (current axes color bar)
+
+   OUTPUTS (all optional):
+     CBLH  - Returns the colorbar label handle(s).
+           - Labels modified on the colorbar of the current figure or
+             the one(s) specified by CBH.
+
+   DESCRIPTION:
+     This function sets the label of the colorbar(s) in the current
+     figure.
+
+   NOTE:
+     * Optional inputs use its DEFAULT value when not given or [].
+     * Optional outputs may or not be called.
+
+   EXAMPLE:
+     figure, colorbar, cblabel(['           T, �C'],'Rotation',0)
+     figure
+      subplot(211), h1 = colorbar;
+      subplot(212), h2 = colorbar('Location','south');
+      cblabel([h1 h2],{'$1-\alpha$','$\beta^3$'},'Interpreter','latex')
+
+   SEE ALSO:
+     COLORBAR
+     and
+     <a href="cbunits.html" class="code" title="function CBH = cbunits(varargin)">CBUNITS</a>, <a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">CBHANDLE</a>, <a href="cbfreeze.html" class="code" title="function CBH = cbfreeze(varargin)">CBFREEZE</a> by Carlos Vargas
+     at http://www.mathworks.com/matlabcentral/fileexchange
+
+
+   ---
+   MFILE:   <a href="cblabel.html" class="code" title="function CBLH = cblabel(varargin)">cblabel</a>.m
+   VERSION: 3.0 (Jun 05, 2014) (&lt;a href=&quot;matlab:web('http://www.mathworks.com/matlabcentral/fileexchange/authors/11258')&quot;&gt;download&lt;/a&gt;)
+   MATLAB:  8.2.0.701 (R2013b)
+   AUTHOR:  Carlos Adrian Vargas Aguilera (MEXICO)
+   CONTACT: nubeobscura@hotmail.com</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>	CBHANDLE   Gets the handle of current colorbar or its peer axes.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function CBLH = cblabel(varargin)</a>
+0002 <span class="comment">%CBLABEL   Adds a label to the colorbar.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%   SYNTAX:</span>
+0005 <span class="comment">%            cblabel(LABEL)</span>
+0006 <span class="comment">%            cblabel(LABEL,..,TP,TV);</span>
+0007 <span class="comment">%            cblabel(H,...)</span>
+0008 <span class="comment">%     CBLH = cblabel(...);</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%   INPUTS:</span>
+0011 <span class="comment">%     LABEL - String (or cell of strings) specifying the colorbar label.</span>
+0012 <span class="comment">%     TP,TV - Optional text property/property value arguments (in pairs).</span>
+0013 <span class="comment">%             DEFAULT:  (none)</span>
+0014 <span class="comment">%     H     - Color bar or peer axes (see COLORBAR) or figure handle(s) to</span>
+0015 <span class="comment">%             search for a single color bar handle.</span>
+0016 <span class="comment">%             DEFAULT: gca (current axes color bar)</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%   OUTPUTS (all optional):</span>
+0019 <span class="comment">%     CBLH  - Returns the colorbar label handle(s).</span>
+0020 <span class="comment">%           - Labels modified on the colorbar of the current figure or</span>
+0021 <span class="comment">%             the one(s) specified by CBH.</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">%   DESCRIPTION:</span>
+0024 <span class="comment">%     This function sets the label of the colorbar(s) in the current</span>
+0025 <span class="comment">%     figure.</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%   NOTE:</span>
+0028 <span class="comment">%     * Optional inputs use its DEFAULT value when not given or [].</span>
+0029 <span class="comment">%     * Optional outputs may or not be called.</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   EXAMPLE:</span>
+0032 <span class="comment">%     figure, colorbar, cblabel(['           T, �C'],'Rotation',0)</span>
+0033 <span class="comment">%     figure</span>
+0034 <span class="comment">%      subplot(211), h1 = colorbar;</span>
+0035 <span class="comment">%      subplot(212), h2 = colorbar('Location','south');</span>
+0036 <span class="comment">%      cblabel([h1 h2],{'$1-\alpha$','$\beta^3$'},'Interpreter','latex')</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">%   SEE ALSO:</span>
+0039 <span class="comment">%     COLORBAR</span>
+0040 <span class="comment">%     and</span>
+0041 <span class="comment">%     CBUNITS, CBHANDLE, CBFREEZE by Carlos Vargas</span>
+0042 <span class="comment">%     at http://www.mathworks.com/matlabcentral/fileexchange</span>
+0043 <span class="comment">%</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%   ---</span>
+0046 <span class="comment">%   MFILE:   cblabel.m</span>
+0047 <span class="comment">%   VERSION: 3.0 (Jun 05, 2014) (&lt;a href=&quot;matlab:web('http://www.mathworks.com/matlabcentral/fileexchange/authors/11258')&quot;&gt;download&lt;/a&gt;)</span>
+0048 <span class="comment">%   MATLAB:  8.2.0.701 (R2013b)</span>
+0049 <span class="comment">%   AUTHOR:  Carlos Adrian Vargas Aguilera (MEXICO)</span>
+0050 <span class="comment">%   CONTACT: nubeobscura@hotmail.com</span>
+0051 
+0052 <span class="comment">%   REVISIONS:</span>
+0053 <span class="comment">%   1.0      Released. (Aug 21, 2008)</span>
+0054 <span class="comment">%   2.0      Minor changes. Added CBHANDLE dependency. (Jun 08, 2009)</span>
+0055 <span class="comment">%   2.1      Changed application data to 'cbfreeze'. (Jun 05, 2014)</span>
+0056 
+0057 <span class="comment">%   DISCLAIMER:</span>
+0058 <span class="comment">%   cblabel.m is provided &quot;as is&quot; without warranty of any kind, under the</span>
+0059 <span class="comment">%   revised BSD license.</span>
+0060 
+0061 <span class="comment">%   Copyright (c) 2008-2014 Carlos Adrian Vargas Aguilera</span>
+0062 
+0063 
+0064 <span class="comment">% INPUTS CHECK-IN</span>
+0065 <span class="comment">% -------------------------------------------------------------------------</span>
+0066 
+0067 <span class="comment">% Parameters:</span>
+0068 appName = <span class="string">'cbfreeze'</span>;
+0069 
+0070 <span class="comment">% Sets defaults:</span>
+0071 H     = get(get(0,<span class="string">'CurrentFigure'</span>),<span class="string">'CurrentAxes'</span>);
+0072 LABEL = <span class="string">''</span>;
+0073 TOPT  = {};
+0074 CBLH  = [];
+0075 
+0076 <span class="comment">% Number of inputs:</span>
+0077 assert(nargout&lt;=1, <span class="string">'CVARGAS:cblabel:tooManyOutputs'</span>,<span class="keyword">...</span>
+0078     <span class="string">'At most 1 output is allowed.'</span>)
+0079 
+0080 <span class="comment">% Looks for H:</span>
+0081 <span class="keyword">if</span> nargin &amp;&amp; ~isempty(varargin{1}) &amp;&amp; <span class="keyword">...</span>
+0082         all(reshape(ishandle(varargin{1}),[],1))
+0083     H = varargin{1};
+0084     varargin(1) = [];
+0085 <span class="keyword">end</span>
+0086 
+0087 <span class="comment">% Looks for CBH:</span>
+0088 CBH = <a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>(H,<span class="string">'force'</span>);
+0089 Ncbh = length(CBH);
+0090 
+0091 <span class="comment">% Looks for LABEL:</span>
+0092 <span class="keyword">if</span> ~isempty(varargin) &amp;&amp; (ischar(varargin{1}) || iscellstr(varargin{1}))
+0093     LABEL = varargin{1};
+0094     varargin(1) = [];
+0095 <span class="keyword">end</span>
+0096 
+0097 <span class="comment">% Forces cell of strings:</span>
+0098 <span class="keyword">if</span> ischar(LABEL)
+0099     <span class="comment">% Same label to all the colorbars:</span>
+0100     LABEL = repmat({LABEL},Ncbh,1);
+0101 <span class="keyword">elseif</span> iscellstr(LABEL) &amp;&amp; (length(LABEL)==Ncbh)
+0102     <span class="comment">% Continue...</span>
+0103 <span class="keyword">else</span>
+0104     error(<span class="string">'CVARGAS:cblabel:incorrectInputLabel'</span>,<span class="keyword">...</span>
+0105         [<span class="string">'LABEL must be a string or cell of strings of equal size as '</span> <span class="keyword">...</span>
+0106         <span class="string">'the color bar handles: %d.'</span>],Ncbh)
+0107 <span class="keyword">end</span>
+0108 
+0109 <span class="comment">% OPTIONAL arguments:</span>
+0110 <span class="keyword">if</span> ~isempty(varargin)
+0111     TOPT = varargin;
+0112 <span class="keyword">end</span>
+0113 <span class="keyword">if</span> length(TOPT)==1
+0114     TOPT = repmat({TOPT},size(CBH));
+0115 <span class="keyword">end</span>
+0116 
+0117 <span class="comment">% -------------------------------------------------------------------------</span>
+0118 <span class="comment">% MAIN</span>
+0119 <span class="comment">% -------------------------------------------------------------------------</span>
+0120 
+0121 <span class="comment">% Applies to each colorbar:</span>
+0122 CBLH = NaN(1,Ncbh);
+0123 <span class="keyword">for</span> icb = 1:Ncbh
+0124     
+0125     <span class="comment">% Colorbar handle</span>
+0126     cbh = double(CBH(icb));
+0127     
+0128     <span class="comment">% Searches for label location:</span>
+0129     <span class="keyword">try</span>
+0130         <span class="comment">% Normal colorbar:</span>
+0131         location = get(cbh,<span class="string">'Location'</span>);
+0132     <span class="keyword">catch</span>
+0133         <span class="comment">% Frozen colorbar:</span>
+0134         location = getappdata(cbh,appName);
+0135         location = location.cbLocation;
+0136     <span class="keyword">end</span>
+0137     <span class="keyword">switch</span> location(1)
+0138         <span class="keyword">case</span> <span class="string">'E'</span>, XYstr  = <span class="string">'Y'</span>;
+0139         <span class="keyword">case</span> <span class="string">'W'</span>, XYstr  = <span class="string">'Y'</span>;
+0140         <span class="keyword">case</span> <span class="string">'N'</span>, XYstr  = <span class="string">'X'</span>;
+0141         <span class="keyword">case</span> <span class="string">'S'</span>, XYstr  = <span class="string">'X'</span>;
+0142     <span class="keyword">end</span>
+0143     
+0144     <span class="comment">% Gets label handle:</span>
+0145     CBLH(icb) = get(cbh,[XYstr <span class="string">'Label'</span>]);
+0146     
+0147     <span class="comment">% Updates label:</span>
+0148     set(CBLH(icb),<span class="string">'String'</span>,LABEL{icb},TOPT{:});
+0149     
+0150 <span class="keyword">end</span>
+0151 
+0152 <span class="comment">% OUTPUTS CHECK-OUT</span>
+0153 <span class="comment">% -------------------------------------------------------------------------</span>
+0154 
+0155 <span class="comment">% Sets output:</span>
+0156 <span class="keyword">if</span> ~nargout
+0157     clear CBLH
+0158 <span class="keyword">else</span>
+0159     CBLH(~ishandle(CBLH)) = [];
+0160 <span class="keyword">end</span>
+0161 
+0162 <span class="keyword">end</span>
+0163 
+0164 <span class="comment">% [EOF] CBLABEL.M by Carlos A. Vargas A.</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

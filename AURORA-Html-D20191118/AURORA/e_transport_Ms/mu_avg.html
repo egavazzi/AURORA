@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of mu_avg</title>
+  <meta name="keywords" content="mu_avg">
+  <meta name="description" content="MU_AVG - pitch-angle averages between limits of cosine-of-pitch-angles">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html e_transport_Ms -->
+<h1>mu_avg
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>MU_AVG - pitch-angle averages between limits of cosine-of-pitch-angles</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function c_o_mu = mu_avg(mu_lims) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> MU_AVG - pitch-angle averages between limits of cosine-of-pitch-angles
+   for isotropically distributed fluxes within each pitch-angle
+   limits, i.e. flux weighted with sin(theta).
+
+ Calling:
+   c_o_mu = mu_avg(mu_lims),
+ Input:
+   mu_lims - pitch-angle limits for beams, double array [1 x n_beams+1]
+ Output:
+   c_o_mu - pitch-angle averages, or centre-of-mu, double array [1 x n_beams+1]
+ 
+ Example:
+   mu_mean = mu_avg([-1 -cos(pi/4) 0 cos(pi/4) 1]);
+   disp(mu_mean)
+   disp(acos(mu_mean)*180/pi)
+   mu_mean = mu_avg([-1 0 1]);
+   disp(mu_mean)
+   disp(acos(mu_mean)*180/pi)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="Ie_M_stream_4_aurora.html" class="code" title="function [Ie_zE,mu_pars_out] = Ie_M_stream_4_aurora(h,mag_ze,E,mu_lims,mu_pars,Ie_primary,p_e_q,ne,Te,varargin)">Ie_M_stream_4_aurora</a>	Ie_M_stream_4_aurora - steady-state multi-stream electron transport</li><li><a href="Ie_Mstream_tz_2_aurora.html" class="code" title="function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora(h,mag_ze,E,mu_lims,mu_pars,t,I0,Ie_primary,p_e_q,ne,Te,OPS,varargin)">Ie_Mstream_tz_2_aurora</a>	Ie_Mstream_tz_2_aurora - time-dependent multi-stream electron transport</li><li><a href="../../AURORA/setup4etrptd10streams.html" class="code" title="">setup4etrptd10streams</a>	% Set-up script for Examples in time-dependent electron transport</li><li><a href="../../AURORA/utilities/Ie_ztE2Q_zt.html" class="code" title="function ThatWentOK = Ie_ztE2Q_zt(nN2,nO2,nO,h_atm)">Ie_ztE2Q_zt</a>	IE_ZTE2Q_ZT - Calculate the volume emission/excitation rates</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function c_o_mu = mu_avg(mu_lims)</a>
+0002 <span class="comment">% MU_AVG - pitch-angle averages between limits of cosine-of-pitch-angles</span>
+0003 <span class="comment">%   for isotropically distributed fluxes within each pitch-angle</span>
+0004 <span class="comment">%   limits, i.e. flux weighted with sin(theta).</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Calling:</span>
+0007 <span class="comment">%   c_o_mu = mu_avg(mu_lims),</span>
+0008 <span class="comment">% Input:</span>
+0009 <span class="comment">%   mu_lims - pitch-angle limits for beams, double array [1 x n_beams+1]</span>
+0010 <span class="comment">% Output:</span>
+0011 <span class="comment">%   c_o_mu - pitch-angle averages, or centre-of-mu, double array [1 x n_beams+1]</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Example:</span>
+0014 <span class="comment">%   mu_mean = mu_avg([-1 -cos(pi/4) 0 cos(pi/4) 1]);</span>
+0015 <span class="comment">%   disp(mu_mean)</span>
+0016 <span class="comment">%   disp(acos(mu_mean)*180/pi)</span>
+0017 <span class="comment">%   mu_mean = mu_avg([-1 0 1]);</span>
+0018 <span class="comment">%   disp(mu_mean)</span>
+0019 <span class="comment">%   disp(acos(mu_mean)*180/pi)</span>
+0020 
+0021 <span class="comment">% Copyright � 20180430 Bj�n Gustavsson, bjorn.gustavsson@uit.no</span>
+0022 <span class="comment">% This is free software GPL copyright license 2.0 or later applies</span>
+0023 
+0024 theta_lims = acos(mu_lims);
+0025 
+0026 c_o_mu = zeros(1,(numel(mu_lims)-1));
+0027 <span class="keyword">for</span> i_th = 1:(numel(mu_lims)-1),
+0028   c_o_mu(i_th) = integral(@(theta) cos(theta).*sin(theta),<span class="keyword">...</span>
+0029                           theta_lims(i_th),<span class="keyword">...</span>
+0030                           theta_lims(i_th+1)) / <span class="keyword">...</span>
+0031       integral(@(theta) sin(theta),<span class="keyword">...</span>
+0032                theta_lims(i_th),<span class="keyword">...</span>
+0033                theta_lims(i_th+1));
+0034   
+0035 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

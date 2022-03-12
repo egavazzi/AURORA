@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of DCSN2</title>
+  <meta name="keywords" content="DCSN2">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>DCSN2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [DCS]=DCSN2(Ang,Energy) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="phase_fcn_N2.html" class="code" title="function [phfcnE,phfcnI] = phase_fcn_N2(E,theta)">phase_fcn_N2</a>	PHASE_FCN_N2 -</li><li><a href="phase_fcn_N2ei2I.html" class="code" title="function [phfcnE,phfcnI] = phase_fcn_N2ei2I(E,theta)">phase_fcn_N2ei2I</a>	PHASE_FCN_N2 -</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [DCS]=DCSN2(Ang,Energy)</a>
+0002 
+0003 
+0004 CoeffA1=[-7.55013 6.4651 -4.61116 1.51264 -0.24804 0.020829 -0.7241e-3];
+0005 CoeffA2=[-121.79 161.31 -88.9543 25.0846 -3.79789  0.294225 -0.91716e-2];
+0006 CoeffA3=[-24.4482 11.6556 -0.109564 -1.50976 0.479943 -0.0597 0.263263e-2];
+0007 CoeffEt1=[-9.06218 11.1088 -6.1393 1.43937 -0.149179 0.570119e-2 0.0];
+0008 CoeffB1=[3.481694 -0.47699  0.0];
+0009 CoeffB2=[-42.1667 13.79589 -1.123838];
+0010 CoeffB3=[-35.49183 12.7418 -1.247576]; 
+0011 CoeffEt2=[1.590443 -0.207755 0.0];
+0012 
+0013 
+0014 Elog(1,1)=1.0;
+0015 Elog(1,2)=log(Energy);
+0016   
+0017   <span class="keyword">for</span> i=3:7
+0018    Elog(1,i)=Elog(1,i-1)*Elog(1,2);
+0019   <span class="keyword">end</span>
+0020     
+0021   <span class="keyword">if</span> Energy &lt;= 500.0
+0022     B(1)=exp(sum(Elog.*CoeffA1));
+0023   <span class="keyword">else</span>
+0024     B(1)=2.0-exp(sum(Elog(1:3).*CoeffB1));
+0025   <span class="keyword">end</span>
+0026   <span class="keyword">if</span> Energy &lt;= 250.0
+0027     B(2)=exp(sum(Elog.*CoeffA2));
+0028   <span class="keyword">else</span>
+0029     B(2)=exp(sum(Elog(1:3).*CoeffB2));
+0030   <span class="keyword">end</span>
+0031   <span class="keyword">if</span> Energy &lt;= 100.0
+0032     B(3)=exp(sum(Elog.*CoeffA3));
+0033   <span class="keyword">else</span>
+0034     B(3)=exp(sum(Elog(1:3).*CoeffB3));
+0035   <span class="keyword">end</span>
+0036   <span class="keyword">if</span> Energy &lt;= 500.0
+0037     Etta=exp(sum(Elog(1:6).*CoeffEt1(1:6)));
+0038   <span class="keyword">else</span>
+0039     Etta=1.6038-exp(sum(Elog(1:2).*CoeffEt2(1:2)));
+0040   <span class="keyword">end</span>
+0041   
+0042 
+0043 T=Energy/510879.0;
+0044 Etta=Etta*6.221e-5/T/(T+2);
+0045 x=(1.-cos(Ang)+2*Etta);
+0046 DCS=B(1)./x.^2+B(2)./x+B(3).*x.^4;
+0047 
+0048</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

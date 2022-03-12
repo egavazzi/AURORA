@@ -1,0 +1,17 @@
+% (eV)  state-name 
+12.072  O2_ion               (1,5)
+12.072  O2_ion_X2Pigp        (1,3)
+16.104  O2_ion_a4Piu_A2Piu   (1,3)
+18.171  O2_ion_b4Sgm         (1,3)
+20.297  O2_ion_B2Sm          (1,4)
+23.112  O2_ion_2Piu_c4Sum    (1,4)
+28      O2_ion_2Sum          (2,4)
+33      O2_ion_33eV          (2,4)
+40      O2_ion_24Sgm         (2,4)
+20      O2_dion              (2,4)
+%  (c4Sum: 24.561)           (2,4)
+% 
+% (1) From Itikawa et al 1986
+% (2) Estimated from Gallagher et al 1987
+% (3) Bound states
+% (4) Dissociating states

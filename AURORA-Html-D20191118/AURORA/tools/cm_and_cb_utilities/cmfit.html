@@ -1,0 +1,471 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cmfit</title>
+  <meta name="keywords" content="cmfit">
+  <meta name="description" content="CMFIT   Sets the COLORMAP and CAXIS to specific color bands.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html AURORA --><!-- ../menu.html tools --><!-- menu.html cm_and_cb_utilities -->
+<h1>cmfit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CMFIT   Sets the COLORMAP and CAXIS to specific color bands.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [CMAP,CLIM,WIDTH,REF,LEVELS] = cmfit(CMAP,CLIM,WIDTH,REF,CENTER,varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">CMFIT   Sets the COLORMAP and CAXIS to specific color bands. 
+
+   SYNTAX:
+                                      cmfit
+                                      cmfit(CMAP)
+                                      cmfit(CMAP,CLIM)
+                                      cmfit(CMAP,CLIM,WIDTH or LEVELS)
+                                      cmfit(CMAP,CLIM,WIDTH,REF)
+                                      cmfit(CMAP,CLIM,WIDTH,REF,CENTER)
+                                      cmfit(AX,...)
+     [CMAPF,CLIMF,WIDTHF,REFF,LEVF] = cmfit(...);
+
+   INPUT:
+     CMAP   - Fits the specified colormap function or RGB colors. 
+              DEFAULT: (current figure colormap)
+     CLIM   - 2 element vector spacifying the limits of CMAP. 
+              DEFAULT: (limits of a COLORBAR)
+     WIDTH  - Color band width (limits are computed with CAXIS) for each
+     or       band or a row vector specifying the LEVELS on each band (see
+     LEVELS   NOTE below).
+              DEFAULT: (fills the ticks of a COLORBAR)
+     REF    - Reference level to start any of the color bands.
+              DEFAULT: (generally the middle of CLIM)
+     CENTER - Logical specifying weather the colormap should be center in
+              the REF value or not.
+              DEFAULT: false (do not centers)
+     AX     - Uses the specified figure or axes handle.
+
+   OUTPUT (all optional):
+     CMAPF  - RGB fitted color map (with 3 columns).
+     CLIMF  - Limits of CMAPF.
+     WIDTHF - Width of fitted colorbands.
+     REFF   - Reference of fitted colorbands.
+     LEVF   - Levels for the color bands.
+
+   DESCRIPTION:
+     This program sets the current figure colormap (when no outputs) with
+     specified band-widths of colors taking the CAXIS limits as reference.
+     When the optional input argument CENTER is true, the colormap is
+     moved and expanded so its middle color will be right at REF. This
+     will help for distinguish between positive and negative values
+     (REF=0).
+
+   NOTE:
+     * Optional inputs use its DEFAULT value when not given or [].
+     * Optional outputs may or not be called.
+     * When one of the first two inputs is missing, they are automatically
+       calculated by using a COLORBAR (created temporarly if necesary). In
+       this case CBHANDLE is necesary.
+     * When CMAP is used as output, the current figure colormap won't be
+       modificated. Use 
+         &gt;&gt; colormap(CMAP)
+       after this function, if necesary.
+     * When LEVELS are used instead of band WINDTH, it shoud be
+       monotonically increasing free of NaNs and of length equal to the
+       number of colors minus one, on the output colormap.
+ 
+   SEE ALSO:
+     COLORMAP
+     and
+     <a href="cmapping.html" class="code" title="function RGB = cmapping(varargin)">CMAPPING</a>, <a href="cbfit.html" class="code" title="function CBH = cbfit(varargin)">CBFIT</a> by Carlos Vargas
+     at http://www.mathworks.com/matlabcentral/fileexchange
+
+
+   ---
+   MFILE:   <a href="cmfit.html" class="code" title="function [CMAP,CLIM,WIDTH,REF,LEVELS] = cmfit(CMAP,CLIM,WIDTH,REF,CENTER,varargin)">cmfit</a>.m
+   VERSION: 1.0 (Jun 08, 2009) (&lt;a href=&quot;matlab:web('http://www.mathworks.com/matlabcentral/fileexchange/authors/11258')&quot;&gt;download&lt;/a&gt;)
+   MATLAB:  7.7.0.471 (R2008b)
+   AUTHOR:  Carlos Adrian Vargas Aguilera (MEXICO)
+   CONTACT: nubeobscura@hotmail.com</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>	CBHANDLE   Gets the handle of current colorbar or its peer axes.</li><li><a href="cmapping.html" class="code" title="function RGB = cmapping(varargin)">cmapping</a>	CMAPPING   Colormap linear mapping/interpolation.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="cbfit.html" class="code" title="function CBH = cbfit(varargin)">cbfit</a>	CBFIT   Changes COLORMAP and CAXIS to fit between colorbar's ticks.</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [CMAP,CLIM,WIDTH,REF,LEVELS] = cmfit(CMAP,CLIM,WIDTH,REF,CENTER,varargin) </a>
+0002 <span class="comment">%CMFIT   Sets the COLORMAP and CAXIS to specific color bands.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%   SYNTAX:</span>
+0005 <span class="comment">%                                      cmfit</span>
+0006 <span class="comment">%                                      cmfit(CMAP)</span>
+0007 <span class="comment">%                                      cmfit(CMAP,CLIM)</span>
+0008 <span class="comment">%                                      cmfit(CMAP,CLIM,WIDTH or LEVELS)</span>
+0009 <span class="comment">%                                      cmfit(CMAP,CLIM,WIDTH,REF)</span>
+0010 <span class="comment">%                                      cmfit(CMAP,CLIM,WIDTH,REF,CENTER)</span>
+0011 <span class="comment">%                                      cmfit(AX,...)</span>
+0012 <span class="comment">%     [CMAPF,CLIMF,WIDTHF,REFF,LEVF] = cmfit(...);</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">%   INPUT:</span>
+0015 <span class="comment">%     CMAP   - Fits the specified colormap function or RGB colors.</span>
+0016 <span class="comment">%              DEFAULT: (current figure colormap)</span>
+0017 <span class="comment">%     CLIM   - 2 element vector spacifying the limits of CMAP.</span>
+0018 <span class="comment">%              DEFAULT: (limits of a COLORBAR)</span>
+0019 <span class="comment">%     WIDTH  - Color band width (limits are computed with CAXIS) for each</span>
+0020 <span class="comment">%     or       band or a row vector specifying the LEVELS on each band (see</span>
+0021 <span class="comment">%     LEVELS   NOTE below).</span>
+0022 <span class="comment">%              DEFAULT: (fills the ticks of a COLORBAR)</span>
+0023 <span class="comment">%     REF    - Reference level to start any of the color bands.</span>
+0024 <span class="comment">%              DEFAULT: (generally the middle of CLIM)</span>
+0025 <span class="comment">%     CENTER - Logical specifying weather the colormap should be center in</span>
+0026 <span class="comment">%              the REF value or not.</span>
+0027 <span class="comment">%              DEFAULT: false (do not centers)</span>
+0028 <span class="comment">%     AX     - Uses the specified figure or axes handle.</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%   OUTPUT (all optional):</span>
+0031 <span class="comment">%     CMAPF  - RGB fitted color map (with 3 columns).</span>
+0032 <span class="comment">%     CLIMF  - Limits of CMAPF.</span>
+0033 <span class="comment">%     WIDTHF - Width of fitted colorbands.</span>
+0034 <span class="comment">%     REFF   - Reference of fitted colorbands.</span>
+0035 <span class="comment">%     LEVF   - Levels for the color bands.</span>
+0036 <span class="comment">%</span>
+0037 <span class="comment">%   DESCRIPTION:</span>
+0038 <span class="comment">%     This program sets the current figure colormap (when no outputs) with</span>
+0039 <span class="comment">%     specified band-widths of colors taking the CAXIS limits as reference.</span>
+0040 <span class="comment">%     When the optional input argument CENTER is true, the colormap is</span>
+0041 <span class="comment">%     moved and expanded so its middle color will be right at REF. This</span>
+0042 <span class="comment">%     will help for distinguish between positive and negative values</span>
+0043 <span class="comment">%     (REF=0).</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%   NOTE:</span>
+0046 <span class="comment">%     * Optional inputs use its DEFAULT value when not given or [].</span>
+0047 <span class="comment">%     * Optional outputs may or not be called.</span>
+0048 <span class="comment">%     * When one of the first two inputs is missing, they are automatically</span>
+0049 <span class="comment">%       calculated by using a COLORBAR (created temporarly if necesary). In</span>
+0050 <span class="comment">%       this case CBHANDLE is necesary.</span>
+0051 <span class="comment">%     * When CMAP is used as output, the current figure colormap won't be</span>
+0052 <span class="comment">%       modificated. Use</span>
+0053 <span class="comment">%         &gt;&gt; colormap(CMAP)</span>
+0054 <span class="comment">%       after this function, if necesary.</span>
+0055 <span class="comment">%     * When LEVELS are used instead of band WINDTH, it shoud be</span>
+0056 <span class="comment">%       monotonically increasing free of NaNs and of length equal to the</span>
+0057 <span class="comment">%       number of colors minus one, on the output colormap.</span>
+0058 <span class="comment">%</span>
+0059 <span class="comment">%   SEE ALSO:</span>
+0060 <span class="comment">%     COLORMAP</span>
+0061 <span class="comment">%     and</span>
+0062 <span class="comment">%     CMAPPING, CBFIT by Carlos Vargas</span>
+0063 <span class="comment">%     at http://www.mathworks.com/matlabcentral/fileexchange</span>
+0064 <span class="comment">%</span>
+0065 <span class="comment">%</span>
+0066 <span class="comment">%   ---</span>
+0067 <span class="comment">%   MFILE:   cmfit.m</span>
+0068 <span class="comment">%   VERSION: 1.0 (Jun 08, 2009) (&lt;a href=&quot;matlab:web('http://www.mathworks.com/matlabcentral/fileexchange/authors/11258')&quot;&gt;download&lt;/a&gt;)</span>
+0069 <span class="comment">%   MATLAB:  7.7.0.471 (R2008b)</span>
+0070 <span class="comment">%   AUTHOR:  Carlos Adrian Vargas Aguilera (MEXICO)</span>
+0071 <span class="comment">%   CONTACT: nubeobscura@hotmail.com</span>
+0072 
+0073 <span class="comment">%   REVISIONS:</span>
+0074 <span class="comment">%   1.0      Released. (Jun 08, 2009)</span>
+0075 
+0076 <span class="comment">%   DISCLAIMER:</span>
+0077 <span class="comment">%   cmfit.m is provided &quot;as is&quot; without warranty of any kind, under the</span>
+0078 <span class="comment">%   revised BSD license.</span>
+0079 
+0080 <span class="comment">%   Copyright (c) 2008,2009 Carlos Adrian Vargas Aguilera</span>
+0081 
+0082 
+0083 <span class="comment">% INPUTS CHECK-IN</span>
+0084 <span class="comment">% -------------------------------------------------------------------------</span>
+0085 
+0086 <span class="comment">% Sets defaults:</span>
+0087 AX  = {};    <span class="comment">% Axes input</span>
+0088 tol = 1;     <span class="comment">% Adds this tolerance to the decimal precision</span>
+0089 hfig = {get(0,<span class="string">'CurrentFigure'</span>)};
+0090 <span class="keyword">if</span> ~isempty(hfig)
+0091  hax = {get(hfig{1},<span class="string">'CurrentAxes'</span>)};
+0092  <span class="keyword">if</span> isempty(hax{1}), hax = {}; <span class="keyword">end</span>
+0093 <span class="keyword">else</span>
+0094  hfig = {};
+0095  hax  = {};
+0096 <span class="keyword">end</span>
+0097 
+0098 <span class="comment">% Checks inputs:</span>
+0099 <span class="keyword">if</span> nargin&gt;6
+0100  error(<span class="string">'CVARGAS:cmfit:tooManyInputs'</span>, <span class="keyword">...</span>
+0101   <span class="string">'At most 6 inputs are allowed.'</span>)
+0102 <span class="keyword">end</span>
+0103 <span class="keyword">if</span> nargin&gt;5
+0104  error(<span class="string">'CVARGAS:cmfit:tooManyOutputs'</span>, <span class="keyword">...</span>
+0105   <span class="string">'At most 5 outputs are allowed.'</span>)
+0106 <span class="keyword">end</span>
+0107 
+0108 <span class="comment">% Saves number of arguments:</span>
+0109 Nargin = nargin;
+0110 
+0111 <span class="comment">% Checks AX input:</span>
+0112 <span class="keyword">if</span> (Nargin&gt;0) &amp;&amp; ~isempty(CMAP) &amp;&amp; (numel(CMAP)==1) &amp;&amp; <span class="keyword">...</span>
+0113   ishandle(CMAP)
+0114  <span class="comment">% Gets AX and moves all other inputs to the left:</span>
+0115  AX = {CMAP};
+0116  <span class="keyword">switch</span> get(AX{1},<span class="string">'Type'</span>)
+0117   <span class="keyword">case</span> <span class="string">'axes'</span>
+0118    hax  = AX;
+0119    hfig = {get(hax{1},<span class="string">'Parent'</span>)};
+0120   <span class="keyword">case</span> {<span class="string">'figure'</span>,<span class="string">'uipanel'</span>}
+0121    hfig = {AX{1}};
+0122    hax  = {get(hfig{1},<span class="string">'CurrentAxes'</span>)};
+0123    <span class="keyword">if</span> isempty(hax{1}), hax = {}; <span class="keyword">end</span>
+0124   <span class="keyword">otherwise</span>
+0125    error(<span class="string">'CVARGAS:cmfit:incorrectAxHandle'</span>,<span class="keyword">...</span>
+0126     <span class="string">'AX must be a valid axes or figure handle.'</span>)
+0127  <span class="keyword">end</span>
+0128  <span class="keyword">if</span> (Nargin&gt;1)
+0129   CMAP = CLIM;
+0130   <span class="keyword">if</span> (Nargin&gt;2)
+0131    CLIM = WIDTH;
+0132    <span class="keyword">if</span> (Nargin&gt;3)
+0133     WIDTH = REF;
+0134     <span class="keyword">if</span> (Nargin&gt;4)
+0135      REF = CENTER;
+0136      <span class="keyword">if</span> (Nargin&gt;5)
+0137       CENTER = varargin{1};
+0138      <span class="keyword">end</span>
+0139     <span class="keyword">end</span>
+0140    <span class="keyword">end</span>
+0141   <span class="keyword">end</span>
+0142  <span class="keyword">end</span>
+0143  Nargin = Nargin-1;
+0144 <span class="keyword">end</span>
+0145 
+0146 <span class="comment">% Checks CMAP input:</span>
+0147 <span class="keyword">if</span> Nargin&lt;1 || isempty(CMAP)
+0148  <span class="keyword">if</span> ~isempty(hax)
+0149   CMAP = colormap(hax{1});
+0150  <span class="keyword">else</span>
+0151   CMAP = get(0,<span class="string">'DefaultFigureColormap'</span>);
+0152  <span class="keyword">end</span>
+0153 <span class="keyword">end</span>
+0154 
+0155 <span class="comment">% Checks CLIM input:</span>
+0156 <span class="keyword">if</span> Nargin&lt;2
+0157  CLIM = [];
+0158 <span class="keyword">end</span>
+0159 
+0160 <span class="comment">% Checks WIDTH input:</span>
+0161 <span class="keyword">if</span> Nargin&lt;3
+0162  WIDTH = [];
+0163 <span class="keyword">end</span>
+0164 
+0165 <span class="comment">% Checks REf input:</span>
+0166 <span class="keyword">if</span> Nargin&lt;4
+0167  REF = [];
+0168 <span class="keyword">end</span>
+0169 
+0170 <span class="comment">% Checks CENTER input:</span>
+0171 <span class="keyword">if</span> Nargin&lt;5 || isempty(CENTER)
+0172  CENTER = false;
+0173 <span class="keyword">end</span>
+0174 
+0175 <span class="comment">% Look for WIDTH and REF from a (temporarly) colorbar:</span>
+0176 <span class="keyword">if</span> isempty(WIDTH) || (length(WIDTH)==1 &amp;&amp; (isempty(REF) || <span class="keyword">...</span>
+0177   (isempty(CLIM) &amp;&amp; (isempty(hax) || <span class="keyword">...</span>
+0178   ~strcmp(get(hax{1},<span class="string">'CLimMode'</span>),<span class="string">'manual'</span>)))))
+0179  <span class="keyword">if</span> ~isempty(CLIM)
+0180   caxis(hax{:},CLIM)
+0181  <span class="keyword">end</span>
+0182  <span class="keyword">if</span> ~isempty(AX) &amp;&amp; ~isempty(<a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>(AX{1}))
+0183   h = <a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>(AX{1}); doclear = false; h = h(1);
+0184  <span class="keyword">elseif</span> ~isempty(hax) &amp;&amp; ~isempty(<a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>(hax{1}))
+0185   h = <a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>(hax{1}); doclear = false; h = h(1);
+0186  <span class="keyword">elseif</span> ~isempty(hfig) &amp;&amp; ~isempty(<a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>(hfig{1}))
+0187   h = <a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>(hfig{1}); doclear = false; h = h(1);
+0188  <span class="keyword">else</span>
+0189   h = colorbar; doclear = true;
+0190  <span class="keyword">end</span>
+0191  ticks = get(h,<span class="string">'XTick'</span>);
+0192  lim   = get(h,<span class="string">'XLim'</span>);
+0193  <span class="keyword">if</span> isempty(ticks)
+0194   ticks = get(h,<span class="string">'YTick'</span>);
+0195   lim   = get(h,<span class="string">'YLim'</span>);
+0196  <span class="keyword">end</span>
+0197  <span class="keyword">if</span> isempty(WIDTH)
+0198   WIDTH = diff(ticks(1:2));
+0199  <span class="keyword">end</span>
+0200  <span class="keyword">if</span> isempty(CLIM)
+0201   CLIM = lim;
+0202  <span class="keyword">end</span>
+0203  <span class="keyword">if</span> isempty(REF) &amp;&amp; ~CENTER
+0204   REF = ticks(1);
+0205  <span class="keyword">end</span>
+0206  <span class="keyword">if</span> doclear
+0207   delete(h)
+0208  <span class="keyword">end</span>
+0209 <span class="keyword">end</span>
+0210 
+0211 <span class="comment">% Centers at the middle:</span>
+0212 <span class="keyword">if</span> CENTER &amp;&amp; isempty(REF)
+0213  REF = 0;
+0214 <span class="keyword">end</span> 
+0215 
+0216 <span class="comment">% -------------------------------------------------------------------------</span>
+0217 <span class="comment">% MAIN</span>
+0218 <span class="comment">% -------------------------------------------------------------------------</span>
+0219 
+0220 
+0221 <span class="comment">% Gets minimum width from specified levels:</span>
+0222 NL = length(WIDTH); 
+0223 <span class="keyword">if</span> (NL&gt;1)
+0224  
+0225  <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0226  <span class="comment">% NONLINEAR CASE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0227  <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0228  
+0229  LEVELS = sort(WIDTH);
+0230  
+0231  <span class="comment">% Gets LEVELS width:</span>
+0232  wLEVELS = diff(LEVELS);
+0233  
+0234  <span class="comment">% Scales to CLIM:</span>
+0235  <span class="keyword">if</span> ~isempty(CLIM)
+0236   <span class="comment">% Scales to [0 1]</span>
+0237   LEVELS = LEVELS-LEVELS(1);
+0238   LEVELS = LEVELS/LEVELS(end);
+0239   <span class="comment">% Scales to CLIM:</span>
+0240   LEVELS = LEVELS*diff(CLIM)+CLIM(1);
+0241  <span class="keyword">else</span>
+0242   CLIM  = [LEVELS(1) LEVELS(end)]; 
+0243  <span class="keyword">end</span>
+0244  
+0245  <span class="comment">% Gets precision:</span>
+0246  <span class="keyword">if</span> isinteger(wLEVELS) <span class="comment">% Allows integer input: uint8, etc.</span>
+0247   wLEVELS = double(wLEVELS);
+0248  <span class="keyword">end</span>
+0249  temp = warning(<span class="string">'off'</span>,<span class="string">'MATLAB:log:logOfZero'</span>);
+0250  precision = floor(log10(abs(wLEVELS))); <span class="comment">% wLEVELS = Str.XXX x 10^precision.</span>
+0251  precision(wLEVELS==0) = 0; <span class="comment">% M=0 if x=0.</span>
+0252  warning(temp.state,<span class="string">'MATLAB:log:logOfZero'</span>)
+0253  precision = min(precision)-tol;
+0254  
+0255  <span class="comment">% Sets levels up to precision:</span>
+0256  wLEVELS = round(wLEVELS*10^(-precision));
+0257  
+0258  <span class="comment">% Gets COLORMAP for each LEVEL:</span>
+0259  <span class="keyword">if</span> CENTER
+0260   <span class="comment">% Centers the colormap:</span>
+0261   ind = (REF==LEVELS);
+0262   <span class="keyword">if</span> ~any(ind)
+0263    error(<span class="string">'CVARGAS:cmfit:uncorrectRefLevel'</span>,<span class="keyword">...</span>
+0264     <span class="string">'When CENTER, REF level must be on of the specifyied LEVELS.'</span>)
+0265   <span class="keyword">end</span>
+0266   Nl     = sum(~ind(1:find(ind)));
+0267   [Nl,l] = max([Nl (NL-1-Nl)]);
+0268   wCMAP  = <a href="cmapping.html" class="code" title="function RGB = cmapping(varargin)">cmapping</a>(2*Nl,CMAP);
+0269   <span class="keyword">if</span> l==1
+0270    wCMAP = wCMAP(1:NL-1,:);
+0271   <span class="keyword">else</span>
+0272    wCMAP = wCMAP(end-NL+2:<span class="keyword">end</span>,:);
+0273   <span class="keyword">end</span>
+0274  <span class="keyword">else</span>
+0275   wCMAP  = <a href="cmapping.html" class="code" title="function RGB = cmapping(varargin)">cmapping</a>(NL-1,CMAP);
+0276  <span class="keyword">end</span>
+0277  
+0278  <span class="comment">% Gets minimum band width:</span>
+0279  WIDTH = wLEVELS(1);
+0280  <span class="keyword">for</span> k = 1:NL-1
+0281   wlev    = wLEVELS;
+0282   wlev(k) = [];
+0283   WIDTH   = min(min(gcd(wLEVELS(k),wlev)),WIDTH);
+0284  <span class="keyword">end</span>
+0285  
+0286  <span class="comment">% Gets number of bands:</span>
+0287  wLEVELS = wLEVELS/WIDTH;
+0288  
+0289  <span class="comment">% Gets new CMAP:</span>
+0290  N = sum(wLEVELS);
+0291  <span class="keyword">try</span>
+0292   CMAP = repmat(wCMAP(1,:),N,1);
+0293  <span class="keyword">catch</span>
+0294   error(<span class="string">'CVARGAS:cmfit:memoryError'</span>,<span class="keyword">...</span>
+0295    [<span class="string">'The number of colors (N='</span> int2str(N) <span class="string">') for the new colormap '</span> <span class="keyword">...</span>
+0296     <span class="string">'is extremely large. Try other LEVELS.'</span>])
+0297  <span class="keyword">end</span>
+0298  ko = wLEVELS(1);
+0299  <span class="keyword">for</span> k = 2:NL-1;
+0300   CMAP(ko+(1:wLEVELS(k)),:) = repmat(wCMAP(k,:),wLEVELS(k),1);
+0301   ko = ko+wLEVELS(k);
+0302  <span class="keyword">end</span>
+0303  
+0304 <span class="keyword">else</span>
+0305  
+0306  <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0307  <span class="comment">% LINEAR CASE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0308  <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0309  
+0310  <span class="comment">% Gets CLIM:</span>
+0311  <span class="keyword">if</span> isempty(CLIM)
+0312   CLIM = caxis(hax{:});
+0313  <span class="keyword">end</span>
+0314 
+0315  <span class="comment">% Sets color limits to be a multipler of WIDTH passing through REF:</span>
+0316  N1   = ceil((+REF-CLIM(1))/WIDTH);
+0317  N2   = ceil((-REF+CLIM(2))/WIDTH);
+0318  CLIM = REF + [-N1 N2]*WIDTH;
+0319 
+0320  <span class="comment">% Sets colormap with NC bands:</span>
+0321  Nc = round(diff(CLIM)/WIDTH);
+0322  <span class="keyword">if</span> CENTER
+0323   <span class="comment">% Necesary colorbands number to be centered:</span>
+0324   Nmin        = [N1 N2];
+0325   [Nmax,imax] = max(Nmin);
+0326   Nmin(imax)  = [];
+0327   Nc2         = Nc + Nmax - Nmin;
+0328   <span class="comment">% Generate a colormap with this size:</span>
+0329   CMAP = <a href="cmapping.html" class="code" title="function RGB = cmapping(varargin)">cmapping</a>(Nc2,CMAP);
+0330   <span class="keyword">if</span> imax==1
+0331    CMAP = CMAP(1:Nc,:);
+0332   <span class="keyword">else</span>
+0333    CMAP = flipud(CMAP);
+0334    CMAP = CMAP(1:Nc,:);
+0335    CMAP = flipud(CMAP);
+0336   <span class="keyword">end</span>
+0337  <span class="keyword">else</span>
+0338   CMAP = <a href="cmapping.html" class="code" title="function RGB = cmapping(varargin)">cmapping</a>(Nc,CMAP);
+0339  <span class="keyword">end</span>
+0340  
+0341  <span class="comment">% Sets levels:</span>
+0342  LEVELS = linspace(CLIM(1),CLIM(2),size(CMAP,1))';
+0343 <span class="keyword">end</span>
+0344 
+0345 <span class="comment">% OUTPUTS CHECK-OUT</span>
+0346 <span class="comment">% -------------------------------------------------------------------------</span>
+0347 <span class="keyword">if</span> ~isempty(AX)
+0348  colormap(AX{:},CMAP)
+0349  caxis(AX{:},CLIM)
+0350 <span class="keyword">end</span>
+0351 <span class="keyword">if</span> ~nargout
+0352  <span class="keyword">if</span> isempty(AX)
+0353   colormap(CMAP)
+0354   caxis(CLIM)
+0355  <span class="keyword">end</span>
+0356  clear CMAP
+0357 <span class="keyword">end</span>
+0358 
+0359 
+0360 <span class="comment">% [EOF]   cmfit.m</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

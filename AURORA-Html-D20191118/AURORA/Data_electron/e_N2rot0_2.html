@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of e_N2rot0_2</title>
+  <meta name="keywords" content="e_N2rot0_2">
+  <meta name="description" content="Xs = e_N2rot0_2(E)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>e_N2rot0_2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Xs = e_N2rot0_2(E)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function Xs = e_N2rot0_2(Ep) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Xs = e_N2rot0_2(E)
+ 
+ e_N2rot0_2 - electron excitation cross section (m^2)
+ E electron energy (eV)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Xs = e_N2rot0_2(Ep)</a>
+0002 <span class="comment">% Xs = e_N2rot0_2(E)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% e_N2rot0_2 - electron excitation cross section (m^2)</span>
+0005 <span class="comment">% E electron energy (eV)</span>
+0006 
+0007 <span class="comment">%  Copyright � Bjorn Gustavsson 20110527, bjorn.gustavsson@uit.no</span>
+0008 <span class="comment">%  This is free software, licensed under GNU GPL version 2 or later</span>
+0009 
+0010 log10E = [ -1.529205842868462  -1.401759744308854  -1.298455005566862 <span class="keyword">...</span>
+0011            -1.229836683674959  -1.107192298263224  -0.930884014999626 <span class="keyword">...</span>
+0012            -0.739165582563789  -0.534726081040409  -0.361197419278502 <span class="keyword">...</span>
+0013            -0.210753800802626  -0.023659016727907   0.148387783842545 <span class="keyword">...</span>
+0014             0.195027357403972   0.256843155275395   0.271309779815279 <span class="keyword">...</span>
+0015             0.284961440170103   0.292280091257079   0.313103310290649 <span class="keyword">...</span>
+0016             0.339325032538764   0.360990712227029   0.383915274219258 <span class="keyword">...</span>
+0017             0.406241931082478   0.426693754073074   0.438007445340180 <span class="keyword">...</span>
+0018             0.442409564564855   0.449441512598424   0.461625748593174 <span class="keyword">...</span>
+0019             0.475071834892396   0.479153568268782   0.698970004336019 <span class="keyword">...</span>
+0020             1.000000000000000   1.301029995663981   1.477121254719663 <span class="keyword">...</span>
+0021             1.698970004336019];  
+0022 log10Xs = [ -16.489672666179871 -16.255790604873923 -16.087003295315228 <span class="keyword">...</span>
+0023             -15.996264950740080 -15.953203452818123 -15.989191402537488 <span class="keyword">...</span>
+0024             -16.041042208514060 -16.116569595034353 -16.168214419287263 <span class="keyword">...</span>
+0025             -16.193450575738691 -16.195569244896330 -16.150452456808626 <span class="keyword">...</span>
+0026             -16.107709885163285 -16.025430820560523 -15.961620468316118 <span class="keyword">...</span>
+0027             -15.840488804947917 -15.803011086935593 -15.948567729023981 <span class="keyword">...</span>
+0028             -15.533186544559602 -15.883157959631777 -15.476897837253116 <span class="keyword">...</span><span class="comment"> </span>
+0029             -15.795237176295828 -15.528433895057361 -15.719342640373487 <span class="keyword">...</span>
+0030             -15.765657146956446 -15.706366402956451 -15.622036628514593 <span class="keyword">...</span>
+0031             -15.639548788652569 -15.655341886713167 -15.511449283499555 <span class="keyword">...</span>
+0032             -15.414539270491499 -15.468521082957746 -15.552841968657781 <span class="keyword">...</span>
+0033             -15.787812395596042];
+0034 
+0035 Xs = 10.^(interp1(log10E,log10Xs,log10(Ep),<span class="string">'pchip'</span>));
+0036 Xs = 10.^([interp1(log10E,log10Xs,log10(Ep(Ep&lt;=10^log10E(end-1))),<span class="string">'pchip'</span>),<span class="keyword">...</span>
+0037            interp1(log10E(end-1:end),log10Xs(end-1:end),log10(Ep(Ep&gt;10^log10E(end-1))),<span class="string">'linear'</span>,<span class="string">'extrap'</span>)]);
+0038 I = find(~isfinite(Xs));
+0039 Xs(I) = 0;
+0040 
+0041 Xs = Xs/1e4;
+0042 
+0043 inans = find(Ep&lt;0.001480105560000);
+0044 Xs(Ep&gt;10) = 0; <span class="comment">% TODO: FIX THIS/BG20190312</span>
+0045 Xs(inans) = 0;</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

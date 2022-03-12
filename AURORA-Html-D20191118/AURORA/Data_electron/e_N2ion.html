@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of e_N2ion</title>
+  <meta name="keywords" content="e_N2ion">
+  <meta name="description" content="Xs = e_N2ion(E)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>e_N2ion
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Xs = e_N2ion(E)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function cross_section = e_N2ion(Energy) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Xs = e_N2ion(E)
+ 
+ e_N2ion - electron ionisation cross section (m^2)
+ E electron energy (eV)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function cross_section = e_N2ion(Energy)</a>
+0002 <span class="comment">% Xs = e_N2ion(E)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% e_N2ion - electron ionisation cross section (m^2)</span>
+0005 <span class="comment">% E electron energy (eV)</span>
+0006 
+0007 
+0008 <span class="keyword">for</span> ie=1:length(Energy),
+0009   <span class="keyword">if</span> Energy(ie) &gt; 15.58 &amp; Energy(ie) &lt; 42.71,
+0010     cross_section(ie)=(1-15.58/Energy(ie))*exp(-833.9598+879.6264*log(Energy(ie))-363.6978*log(Energy(ie))^2+66.81782*log(Energy(ie))^3-4.600032*log(Energy(ie))^4);
+0011   <span class="keyword">elseif</span> Energy(ie) &gt;=42.71 &amp; Energy(ie) &lt; 250,
+0012     cross_section(ie)=exp(-99.91206+51.41718*log(Energy(ie))-15.61180*log(Energy(ie))^2+2.119856*log(Energy(ie))^3-0.1089437*log(Energy(ie))^4);
+0013   <span class="keyword">elseif</span> Energy(ie) &gt;=250,
+0014     cross_section(ie)=2.050132e-14*log(0.0275*Energy(ie))/Energy(ie);
+0015   <span class="keyword">else</span>
+0016     cross_section(ie)=0;
+0017   <span class="keyword">end</span>
+0018 <span class="keyword">end</span>
+0019 cross_section = cross_section/1e4;
+0020 
+0021 <span class="comment">% $$$</span>
+0022 <span class="comment">% $$$ E = [17.5 22.5 27.5 35   45   55   65   75  100  150  200  300 400  500  600 700  800   900  1000];</span>
+0023 <span class="comment">% $$$ s = [2.6   6.4 10.4 14.3 16.8 18.1 18.9 19.3 19.8 18.6 17.4 15  13.1 11.2 10   9.3  8.4   7.9   7.4]*1e-21;%-17;</span>
+0024 <span class="comment">% $$$</span>
+0025 <span class="comment">% $$$</span>
+0026 <span class="comment">% $$$ Xs = exp([interp1(E,log(s),Ep(Ep&lt;E(end)),'pcip') interp1(log(E),log(s),log(Ep(Ep&gt;=E(end))),'linear','extrap')] );</span>
+0027 <span class="comment">% $$$ I = find(~isfinite(Xs));</span>
+0028 <span class="comment">% $$$ Xs(I) = 0;</span>
+0029 <span class="comment">% $$$</span>
+0030 <span class="comment">% $$$ Xs = Xs;</span>
+0031 <span class="comment">% $$$</span>
+0032 <span class="comment">% $$$ inans = find(Ep&lt;15.58);</span>
+0033 <span class="comment">% $$$ Xs(inans) = 0;</span>
+0034</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

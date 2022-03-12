@@ -1,0 +1,351 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cbfit</title>
+  <meta name="keywords" content="cbfit">
+  <meta name="description" content="CBFIT   Changes COLORMAP and CAXIS to fit between colorbar's ticks.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html AURORA --><!-- ../menu.html tools --><!-- menu.html cm_and_cb_utilities -->
+<h1>cbfit
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CBFIT   Changes COLORMAP and CAXIS to fit between colorbar's ticks.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function CBH = cbfit(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">CBFIT   Changes COLORMAP and CAXIS to fit between colorbar's ticks.
+
+   SYNTAX:
+           cbfit
+           cbfit(NBANDS)               % Or LBANDS
+           cbfit(NBANDS,CENTER)
+           cbfit(...,'force')
+           cbfit(H,...)
+     CBH = cbfit(...);
+
+   INPUTS:
+     NBANDS  - If scalar, fits NBANDS colors between each colorbar ticks.
+               If vector, fits a single color between specified LBANDS
+               ticks.
+               DEFAULT: 5
+     CENTER  - Centers the colormap to this reference.
+               DEFAULT: [] (do not centers)
+     'force' - By default, CBFIT changes the actual ticks. Use this
+               option to use the actual ones or the ones at LBANDS.
+     H       - Uses this colorbar handle (or peer axes, or figure)
+               instead of current one.
+
+   OUTPUTS (all optional):
+     CBH  - Returns the colorbar axes handle.
+
+   DESCRIPTION:
+     Draws a colorbar with specified number of color bands between its
+     ticks by modifying the current colormap and caxis.
+
+   NOTE:
+     * Optional inputs use its DEFAULT value when not given or [].
+     * Optional outputs may or not be called.
+     * Sets the color limits, CAXIS, and color map, COLORMAP, before using
+       this function. Use them after this function to get the
+       modifications.
+
+   EXAMPLE:
+     Z = peaks; Z(Z&lt;0) = Z(Z&lt;0)*3;
+     figure(1)
+       surf(Z)
+       colorbar
+       title({'Normal &quot;ugly&quot; COLORBAR'; ...
+              'with colorbar ticks anywhere'; ...
+              'and &quot;green&quot; centered at -5!'})
+     figure(2)
+       surf(Z)
+       cbfit(4,0)
+       title({'CBFIT(4,0)'; ...
+              'Fitted 4 color bands between ticks'; ...
+              'and &quot;green&quot; centered at zero'})
+
+   SEE ALSO:
+     COLORBAR
+     and
+     <a href="cbfreeze.html" class="code" title="function CBH = cbfreeze(varargin)">CBFREEZE</a>, <a href="cmfit.html" class="code" title="function [CMAP,CLIM,WIDTH,REF,LEVELS] = cmfit(CMAP,CLIM,WIDTH,REF,CENTER,varargin)">CMFIT</a> by Carlos Vargas
+     at http://www.mathworks.com/matlabcentral/fileexchange
+
+
+   ---
+   MFILE:   <a href="cbfit.html" class="code" title="function CBH = cbfit(varargin)">cbfit</a>.m
+   VERSION: 3.0 (Jun 05, 2014) (&lt;a href=&quot;matlab:web('http://www.mathworks.com/matlabcentral/fileexchange/authors/11258')&quot;&gt;download&lt;/a&gt;)
+   MATLAB:  7.7.0.471 (R2008b)
+   AUTHOR:  Carlos Adrian Vargas Aguilera (MEXICO)
+   CONTACT: nubeobscura@hotmail.com</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>	CBHANDLE   Gets the handle of current colorbar or its peer axes.</li><li><a href="cmfit.html" class="code" title="function [CMAP,CLIM,WIDTH,REF,LEVELS] = cmfit(CMAP,CLIM,WIDTH,REF,CENTER,varargin)">cmfit</a>	CMFIT   Sets the COLORMAP and CAXIS to specific color bands.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function CBH = cbfit(varargin)</a>
+0002 <span class="comment">%CBFIT   Changes COLORMAP and CAXIS to fit between colorbar's ticks.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%   SYNTAX:</span>
+0005 <span class="comment">%           cbfit</span>
+0006 <span class="comment">%           cbfit(NBANDS)               % Or LBANDS</span>
+0007 <span class="comment">%           cbfit(NBANDS,CENTER)</span>
+0008 <span class="comment">%           cbfit(...,'force')</span>
+0009 <span class="comment">%           cbfit(H,...)</span>
+0010 <span class="comment">%     CBH = cbfit(...);</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%   INPUTS:</span>
+0013 <span class="comment">%     NBANDS  - If scalar, fits NBANDS colors between each colorbar ticks.</span>
+0014 <span class="comment">%               If vector, fits a single color between specified LBANDS</span>
+0015 <span class="comment">%               ticks.</span>
+0016 <span class="comment">%               DEFAULT: 5</span>
+0017 <span class="comment">%     CENTER  - Centers the colormap to this reference.</span>
+0018 <span class="comment">%               DEFAULT: [] (do not centers)</span>
+0019 <span class="comment">%     'force' - By default, CBFIT changes the actual ticks. Use this</span>
+0020 <span class="comment">%               option to use the actual ones or the ones at LBANDS.</span>
+0021 <span class="comment">%     H       - Uses this colorbar handle (or peer axes, or figure)</span>
+0022 <span class="comment">%               instead of current one.</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%   OUTPUTS (all optional):</span>
+0025 <span class="comment">%     CBH  - Returns the colorbar axes handle.</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%   DESCRIPTION:</span>
+0028 <span class="comment">%     Draws a colorbar with specified number of color bands between its</span>
+0029 <span class="comment">%     ticks by modifying the current colormap and caxis.</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">%   NOTE:</span>
+0032 <span class="comment">%     * Optional inputs use its DEFAULT value when not given or [].</span>
+0033 <span class="comment">%     * Optional outputs may or not be called.</span>
+0034 <span class="comment">%     * Sets the color limits, CAXIS, and color map, COLORMAP, before using</span>
+0035 <span class="comment">%       this function. Use them after this function to get the</span>
+0036 <span class="comment">%       modifications.</span>
+0037 <span class="comment">%</span>
+0038 <span class="comment">%   EXAMPLE:</span>
+0039 <span class="comment">%     Z = peaks; Z(Z&lt;0) = Z(Z&lt;0)*3;</span>
+0040 <span class="comment">%     figure(1)</span>
+0041 <span class="comment">%       surf(Z)</span>
+0042 <span class="comment">%       colorbar</span>
+0043 <span class="comment">%       title({'Normal &quot;ugly&quot; COLORBAR'; ...</span>
+0044 <span class="comment">%              'with colorbar ticks anywhere'; ...</span>
+0045 <span class="comment">%              'and &quot;green&quot; centered at -5!'})</span>
+0046 <span class="comment">%     figure(2)</span>
+0047 <span class="comment">%       surf(Z)</span>
+0048 <span class="comment">%       cbfit(4,0)</span>
+0049 <span class="comment">%       title({'CBFIT(4,0)'; ...</span>
+0050 <span class="comment">%              'Fitted 4 color bands between ticks'; ...</span>
+0051 <span class="comment">%              'and &quot;green&quot; centered at zero'})</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%   SEE ALSO:</span>
+0054 <span class="comment">%     COLORBAR</span>
+0055 <span class="comment">%     and</span>
+0056 <span class="comment">%     CBFREEZE, CMFIT by Carlos Vargas</span>
+0057 <span class="comment">%     at http://www.mathworks.com/matlabcentral/fileexchange</span>
+0058 <span class="comment">%</span>
+0059 <span class="comment">%</span>
+0060 <span class="comment">%   ---</span>
+0061 <span class="comment">%   MFILE:   cbfit.m</span>
+0062 <span class="comment">%   VERSION: 3.0 (Jun 05, 2014) (&lt;a href=&quot;matlab:web('http://www.mathworks.com/matlabcentral/fileexchange/authors/11258')&quot;&gt;download&lt;/a&gt;)</span>
+0063 <span class="comment">%   MATLAB:  7.7.0.471 (R2008b)</span>
+0064 <span class="comment">%   AUTHOR:  Carlos Adrian Vargas Aguilera (MEXICO)</span>
+0065 <span class="comment">%   CONTACT: nubeobscura@hotmail.com</span>
+0066 
+0067 <span class="comment">%   REVISIONS:</span>
+0068 <span class="comment">%   1.0      Released as COLORBARFIT.M. (Mar 11, 2008)</span>
+0069 <span class="comment">%   1.1      Fixed bug when CAXIS is used before this function. (Jul 01,</span>
+0070 <span class="comment">%            2008)</span>
+0071 <span class="comment">%   1.2      Works properly when CAXIS is used before this function. Bug</span>
+0072 <span class="comment">%            fixed on subfunction and rewritten code. (Aug 21, 2008)</span>
+0073 <span class="comment">%   2.0      Rewritten code. Instead of the COLORBAND subfunction, now uses</span>
+0074 <span class="comment">%            the CMFIT function. Changed its name from COLORBARFIT to</span>
+0075 <span class="comment">%            CBFIT. (Jun 08, 2008)</span>
+0076 <span class="comment">%   2.1      Fixed bug and help with CBH input. (Sep 30, 2009)</span>
+0077 <span class="comment">%   3.0      Rewritten code. Changed optional input 'manual' to 'force'.</span>
+0078 <span class="comment">%            Now accepts axes and figure handles as inputs. (Jun 05, 2014)</span>
+0079 
+0080 <span class="comment">%   DISCLAIMER:</span>
+0081 <span class="comment">%   cbfit.m is provided &quot;as is&quot; without warranty of any kind, under the</span>
+0082 <span class="comment">%   revised BSD license.</span>
+0083 
+0084 <span class="comment">%   Copyright (c) 2008-2014 Carlos Adrian Vargas Aguilera</span>
+0085 
+0086 
+0087 <span class="comment">% INPUTS CHECK-IN</span>
+0088 <span class="comment">% -------------------------------------------------------------------------</span>
+0089 
+0090 <span class="comment">% Sets defaults:</span>
+0091 NBANDS = 5;
+0092 LBANDS = [];
+0093 CENTER = [];
+0094 FORCE  = false;
+0095 H      = get(get(0,<span class="string">'CurrentFigure'</span>),<span class="string">'CurrentAxes'</span>);
+0096 
+0097 <span class="comment">% Checks inputs/outputs number:</span>
+0098 assert(nargin&lt;=4, <span class="string">'CVARGAS:cbfit:tooManyInputs'</span>,<span class="keyword">...</span>
+0099     <span class="string">'At most 4 inputs are allowed.'</span>)
+0100 assert(nargout&lt;=1, <span class="string">'CVARGAS:cbfit:tooManyOutputs'</span>,<span class="keyword">...</span>
+0101     <span class="string">'At most 1 output is allowed.'</span>)
+0102 
+0103 <span class="comment">% Reads FORCE:</span>
+0104 <span class="keyword">if</span> ~isempty(varargin) &amp;&amp; ~isempty(varargin{end}) &amp;&amp; <span class="keyword">...</span>
+0105         ischar(varargin{end})
+0106     <span class="keyword">if</span> numel(varargin{end})==size(varargin{end},2)
+0107         <span class="keyword">switch</span> lower(varargin{end})
+0108             <span class="keyword">case</span> {<span class="string">'force'</span>,<span class="string">'forc'</span>,<span class="string">'for'</span>,<span class="string">'fo'</span>,<span class="string">'f'</span>}
+0109                 FORCE = true;
+0110         <span class="keyword">end</span>
+0111     <span class="keyword">end</span>
+0112     varargin(end) = [];
+0113 <span class="keyword">end</span>
+0114 
+0115 <span class="comment">% Reads NBANDS and CENTER:</span>
+0116 <span class="keyword">if</span> ~isempty(varargin) &amp;&amp; isnumeric(varargin{end})
+0117     <span class="keyword">if</span> (length(varargin)&gt;1) &amp;&amp; isnumeric(varargin{end-1})
+0118         CENTER = varargin{end};
+0119         varargin(end) = [];
+0120     <span class="keyword">end</span>
+0121     <span class="keyword">if</span> numel(varargin{end})==1
+0122         NBANDS = varargin{end};
+0123         LBANDS = [];
+0124     <span class="keyword">else</span>
+0125         LBANDS = reshape(varargin{end},[],1);
+0126         NBANDS = [];
+0127     <span class="keyword">end</span>
+0128     varargin(end) = [];
+0129 <span class="keyword">end</span>
+0130 
+0131 <span class="comment">% Reads H:</span>
+0132 <span class="keyword">if</span> (length(varargin)==1) &amp;&amp; ~isempty(varargin{1}) &amp;&amp; <span class="keyword">...</span>
+0133         all(reshape(ishandle(varargin{1}),[],1))
+0134     H = varargin{1};
+0135 <span class="keyword">end</span>
+0136 
+0137 <span class="comment">% Gets colorbar handles or creates them:</span>
+0138 CBH = <a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>(H,<span class="string">'force'</span>);
+0139 Ncbh = length(CBH);
+0140 
+0141 <span class="comment">% -------------------------------------------------------------------------</span>
+0142 <span class="comment">% MAIN</span>
+0143 <span class="comment">% -------------------------------------------------------------------------</span>
+0144 
+0145 <span class="keyword">for</span> icb = 1:Ncbh
+0146     <span class="comment">% Generates a preliminary colorbar:</span>
+0147     
+0148     <span class="comment">% Colorbar handle:</span>
+0149     cbh = double(CBH(icb));
+0150     
+0151     <span class="comment">% Gets limits and orientation:</span>
+0152     XYstr = <span class="string">'Y'</span>;
+0153     ticks = get(cbh,[XYstr <span class="string">'Tick'</span>]);
+0154     <span class="keyword">if</span> isempty(ticks)
+0155         XYstr = <span class="string">'X'</span>;
+0156         ticks = get(cbh,[XYstr <span class="string">'Tick'</span>]);
+0157     <span class="keyword">end</span>
+0158     XYLim = get(cbh,[XYstr <span class="string">'Lim'</span>]);
+0159     tempp = ticks;
+0160     <span class="comment">% Gets peer axes</span>
+0161     peer = <a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>(cbh,<span class="string">'peer'</span>);
+0162     
+0163     <span class="comment">% Gets width and ref:</span>
+0164     <span class="keyword">if</span> ~isempty(NBANDS)
+0165         
+0166         <span class="comment">% Force positive integers:</span>
+0167         NBANDS = round(abs(NBANDS));
+0168         
+0169         <span class="comment">% Ignores ticks outside the limits:</span>
+0170         <span class="keyword">if</span> XYLim(1)&gt;ticks(1)
+0171             ticks(1) = [];
+0172         <span class="keyword">end</span>
+0173         <span class="keyword">if</span> XYLim(2)&lt;ticks(end)
+0174             ticks(end) = [];
+0175         <span class="keyword">end</span>
+0176         
+0177         <span class="comment">% Get the ticks step and colorband:</span>
+0178         tstep  = ticks(2)-ticks(1);
+0179         WIDTH  = tstep/NBANDS;
+0180         LBANDS = ticks;
+0181         <span class="comment">% LBANDS = [fliplr(ticks(1)-WIDTH:-WIDTH:XYLim(1)) ...</span>
+0182         <span class="comment">%     ticks(1):WIDTH:XYLim(2)];</span>
+0183         
+0184         <span class="comment">% Sets color limits</span>
+0185         <span class="keyword">if</span> strcmp(get(peer,<span class="string">'CLimMode'</span>),<span class="string">'auto'</span>)
+0186             caxis(XYLim);
+0187         <span class="keyword">end</span>
+0188         
+0189         <span class="comment">% Forces old colorbar limits:</span>
+0190         set(cbh,[XYstr <span class="string">'Lim'</span>],XYLim) <span class="comment">% ,[XYstr 'Tick'],ticks)</span>
+0191         
+0192     <span class="keyword">else</span> <span class="comment">% ~isempty(LBANDS)</span>
+0193             
+0194         <span class="comment">% Nonlinear colorbar:</span>
+0195         ticks = LBANDS;
+0196         WIDTH = ticks;
+0197         
+0198         <span class="comment">% Scales to CLIM:</span>
+0199         <span class="keyword">if</span> strcmp(get(peer,<span class="string">'CLimMode'</span>),<span class="string">'manual'</span>)
+0200             ticks = ticks-ticks(1);
+0201             ticks = ticks/ticks(end);
+0202             ticks = ticks*diff(XYLim) + XYLim(1);
+0203         <span class="keyword">end</span>
+0204         XYLim = [ticks(1) ticks(end)];
+0205         caxis(peer,XYLim)
+0206         CBIH = get(cbh,<span class="string">'Children'</span>);
+0207         
+0208         <span class="comment">% Change ticks:</span>
+0209         set(CBIH,[XYstr <span class="string">'Data'</span>],ticks)
+0210         
+0211         <span class="comment">% Sets limits:</span>
+0212         set(cbh,[XYstr <span class="string">'Lim'</span>],XYLim)
+0213         
+0214     <span class="keyword">end</span>
+0215         
+0216     <span class="comment">% Get reference mark</span>
+0217     <span class="keyword">if</span> ~isempty(CENTER)
+0218         REF    = CENTER;
+0219         CENTER = true;
+0220     <span class="keyword">else</span>
+0221         REF    = ticks(1);
+0222         CENTER = false;
+0223     <span class="keyword">end</span>
+0224         
+0225     <span class="comment">% Fits the colormap and limits:</span>
+0226     fig  = get(peer,<span class="string">'Parent'</span>);
+0227     CMAP = colormap(fig);
+0228     <a href="cmfit.html" class="code" title="function [CMAP,CLIM,WIDTH,REF,LEVELS] = cmfit(CMAP,CLIM,WIDTH,REF,CENTER,varargin)">cmfit</a>(CMAP,XYLim,WIDTH,REF,CENTER);
+0229             
+0230     <span class="comment">% Sets ticks:</span>
+0231     <span class="keyword">if</span> FORCE
+0232         set(cbh,[XYstr <span class="string">'Tick'</span>],LBANDS)
+0233     <span class="keyword">end</span>
+0234 <span class="keyword">end</span>
+0235 
+0236 <span class="comment">% OUTPUTS CHECK-OUT</span>
+0237 <span class="comment">% -------------------------------------------------------------------------</span>
+0238 
+0239 <span class="keyword">if</span> ~nargout
+0240     clear CBH
+0241 <span class="keyword">end</span>
+0242 
+0243 
+0244 <span class="keyword">end</span>
+0245 
+0246 <span class="comment">% [EOF] CBFIT.M by Carlos A. Vargas A.</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cbfreeze</title>
+  <meta name="keywords" content="cbfreeze">
+  <meta name="description" content="CBFREEZE   Freezes the colormap of a colorbar.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html AURORA --><!-- ../menu.html tools --><!-- menu.html cm_and_cb_utilities -->
+<h1>cbfreeze
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CBFREEZE   Freezes the colormap of a colorbar.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function CBH = cbfreeze(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">CBFREEZE   Freezes the colormap of a colorbar.
+
+   SYNTAX:
+           cbfreeze
+           cbfreeze off
+           cbfreeze(CMAP)          % Freezes it with this colormap!
+           cbfreeze(CMAP,'off')
+           cbfreeze(H,...)
+     CBH = cbfreeze(...);
+
+   INPUTS:
+     MAP   - Colormap to be used at the colorbar, GRAY for example.
+             DEFAULT: colormap (uses the figure one)
+     H     - Handles of colorbars to be frozen, or from figures to search
+             for them or from peer axes (see COLORBAR).
+             DEFAULT: gcf (freezes all colorbars from the current figure)
+     'off' - Unfreezes the colorbars, other options are:
+               'on'    Freezes
+               'un'    same as 'off'
+               'del'   Deletes the colorbars.
+             DEFAULT: 'on' (of course)
+
+   OUTPUTS (all optional):
+     CBH - Color bar handle(s).
+
+   DESCRIPTION:
+     MATLAB works with a unique COLORMAP by figure which is a big
+     limitation. Function FREEZECOLORS by John Iversen allows to use
+     different COLORMAPs in a single figure, but it fails freezing the
+     COLORBAR. This program handles this problem.
+
+   NOTE:
+     * Optional inputs use its DEFAULT value when not given or [].
+     * Optional outputs may or not be called.
+     * If no colorbar is found, one is created on each of the axes.
+     * But, if you need to creat it with LCOLORBAR instead of COLORBAR,
+       use:
+        &gt;&gt; lcolorbar(...,'Tag','Colorbar')
+     * The new frozen colorbar is an axes object and does not behaves
+       as normally colorbars when resizing the peer axes. Although, some
+       time the normal behavior is not that good.
+     * Besides, it does not have the 'Location' property anymore.
+     * But, it does acts normally: no ZOOM, no PAN, no ROTATE3D and no
+       mouse selectable.
+     * No need to say that CAXIS and COLORMAP must be defined before using
+       this function. Besides, the colorbar location. Anyway, 'off' or
+       'del' may help.
+     * The 'del' functionality may be used whether or not the colorbar(s)
+       is(are) froozen. The peer axes are resized back. Try:
+        &gt;&gt; colorbar, cbfreeze del
+
+   EXAMPLE:
+     surf(peaks(30))
+     colormap jet
+     cbfreeze
+     colormap gray
+     title('What...?')
+
+   SEE ALSO:
+     COLORMAP, COLORBAR, CAXIS
+     and
+     FREEZECOLORS by John Iversen
+     at http://www.mathworks.com/matlabcentral/fileexchange
+
+
+   ---
+   MFILE:   <a href="cbfreeze.html" class="code" title="function CBH = cbfreeze(varargin)">cbfreeze</a>.m
+   VERSION: 2.0 (Jun 05, 2014) (&lt;a href=&quot;matlab:web('http://www.mathworks.com/matlabcentral/fileexchange/authors/11258')&quot;&gt;download&lt;/a&gt;)
+   MATLAB:  8.2.0.701 (R2013b)
+   AUTHOR:  Carlos Adrian Vargas Aguilera (MEXICO)
+   CONTACT: nubeobscura@hotmail.com</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="cbfreeze.html" class="code" title="function CBH = cbfreeze(varargin)">cbfreeze</a>	CBFREEZE   Freezes the colormap of a colorbar.</li><li><a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>	CBHANDLE   Gets the handle of current colorbar or its peer axes.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="cbfreeze.html" class="code" title="function CBH = cbfreeze(varargin)">cbfreeze</a>	CBFREEZE   Freezes the colormap of a colorbar.</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function CBH = cbfreeze(varargin)</a>
+0002 <span class="comment">%CBFREEZE   Freezes the colormap of a colorbar.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%   SYNTAX:</span>
+0005 <span class="comment">%           cbfreeze</span>
+0006 <span class="comment">%           cbfreeze off</span>
+0007 <span class="comment">%           cbfreeze(CMAP)          % Freezes it with this colormap!</span>
+0008 <span class="comment">%           cbfreeze(CMAP,'off')</span>
+0009 <span class="comment">%           cbfreeze(H,...)</span>
+0010 <span class="comment">%     CBH = cbfreeze(...);</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%   INPUTS:</span>
+0013 <span class="comment">%     MAP   - Colormap to be used at the colorbar, GRAY for example.</span>
+0014 <span class="comment">%             DEFAULT: colormap (uses the figure one)</span>
+0015 <span class="comment">%     H     - Handles of colorbars to be frozen, or from figures to search</span>
+0016 <span class="comment">%             for them or from peer axes (see COLORBAR).</span>
+0017 <span class="comment">%             DEFAULT: gcf (freezes all colorbars from the current figure)</span>
+0018 <span class="comment">%     'off' - Unfreezes the colorbars, other options are:</span>
+0019 <span class="comment">%               'on'    Freezes</span>
+0020 <span class="comment">%               'un'    same as 'off'</span>
+0021 <span class="comment">%               'del'   Deletes the colorbars.</span>
+0022 <span class="comment">%             DEFAULT: 'on' (of course)</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%   OUTPUTS (all optional):</span>
+0025 <span class="comment">%     CBH - Color bar handle(s).</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%   DESCRIPTION:</span>
+0028 <span class="comment">%     MATLAB works with a unique COLORMAP by figure which is a big</span>
+0029 <span class="comment">%     limitation. Function FREEZECOLORS by John Iversen allows to use</span>
+0030 <span class="comment">%     different COLORMAPs in a single figure, but it fails freezing the</span>
+0031 <span class="comment">%     COLORBAR. This program handles this problem.</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">%   NOTE:</span>
+0034 <span class="comment">%     * Optional inputs use its DEFAULT value when not given or [].</span>
+0035 <span class="comment">%     * Optional outputs may or not be called.</span>
+0036 <span class="comment">%     * If no colorbar is found, one is created on each of the axes.</span>
+0037 <span class="comment">%     * But, if you need to creat it with LCOLORBAR instead of COLORBAR,</span>
+0038 <span class="comment">%       use:</span>
+0039 <span class="comment">%        &gt;&gt; lcolorbar(...,'Tag','Colorbar')</span>
+0040 <span class="comment">%     * The new frozen colorbar is an axes object and does not behaves</span>
+0041 <span class="comment">%       as normally colorbars when resizing the peer axes. Although, some</span>
+0042 <span class="comment">%       time the normal behavior is not that good.</span>
+0043 <span class="comment">%     * Besides, it does not have the 'Location' property anymore.</span>
+0044 <span class="comment">%     * But, it does acts normally: no ZOOM, no PAN, no ROTATE3D and no</span>
+0045 <span class="comment">%       mouse selectable.</span>
+0046 <span class="comment">%     * No need to say that CAXIS and COLORMAP must be defined before using</span>
+0047 <span class="comment">%       this function. Besides, the colorbar location. Anyway, 'off' or</span>
+0048 <span class="comment">%       'del' may help.</span>
+0049 <span class="comment">%     * The 'del' functionality may be used whether or not the colorbar(s)</span>
+0050 <span class="comment">%       is(are) froozen. The peer axes are resized back. Try:</span>
+0051 <span class="comment">%        &gt;&gt; colorbar, cbfreeze del</span>
+0052 <span class="comment">%</span>
+0053 <span class="comment">%   EXAMPLE:</span>
+0054 <span class="comment">%     surf(peaks(30))</span>
+0055 <span class="comment">%     colormap jet</span>
+0056 <span class="comment">%     cbfreeze</span>
+0057 <span class="comment">%     colormap gray</span>
+0058 <span class="comment">%     title('What...?')</span>
+0059 <span class="comment">%</span>
+0060 <span class="comment">%   SEE ALSO:</span>
+0061 <span class="comment">%     COLORMAP, COLORBAR, CAXIS</span>
+0062 <span class="comment">%     and</span>
+0063 <span class="comment">%     FREEZECOLORS by John Iversen</span>
+0064 <span class="comment">%     at http://www.mathworks.com/matlabcentral/fileexchange</span>
+0065 <span class="comment">%</span>
+0066 <span class="comment">%</span>
+0067 <span class="comment">%   ---</span>
+0068 <span class="comment">%   MFILE:   cbfreeze.m</span>
+0069 <span class="comment">%   VERSION: 2.0 (Jun 05, 2014) (&lt;a href=&quot;matlab:web('http://www.mathworks.com/matlabcentral/fileexchange/authors/11258')&quot;&gt;download&lt;/a&gt;)</span>
+0070 <span class="comment">%   MATLAB:  8.2.0.701 (R2013b)</span>
+0071 <span class="comment">%   AUTHOR:  Carlos Adrian Vargas Aguilera (MEXICO)</span>
+0072 <span class="comment">%   CONTACT: nubeobscura@hotmail.com</span>
+0073 
+0074 <span class="comment">%   REVISIONS:</span>
+0075 <span class="comment">%   1.0      Released. (Jun 08, 2009)</span>
+0076 <span class="comment">%   1.1      Fixed BUG with image handle on MATLAB R2009a. Thanks to Sergio</span>
+0077 <span class="comment">%            Muniz. (Sep 02, 2009)</span>
+0078 <span class="comment">%   2.0      Fixed several BUGs about scientific notation, thanks to Rafa</span>
+0079 <span class="comment">%            and Jenny from the FileExchange. Changed application name to</span>
+0080 <span class="comment">%            'cbfreeze' on both, the colorbar and the peer axes. New</span>
+0081 <span class="comment">%            optional input CMAP. (Jun 05, 2014)</span>
+0082 
+0083 
+0084 <span class="comment">%   DISCLAIMER:</span>
+0085 <span class="comment">%   cbfreeze.m is provided &quot;as is&quot; without warranty of any kind, under the</span>
+0086 <span class="comment">%   revised BSD license.</span>
+0087 
+0088 <span class="comment">%   Copyright (c) 2009-2014 Carlos Adrian Vargas Aguilera</span>
+0089 
+0090 
+0091 <span class="comment">% INPUTS CHECK-IN</span>
+0092 <span class="comment">% -------------------------------------------------------------------------</span>
+0093 
+0094 <span class="comment">% Parameters:</span>
+0095 appName = <span class="string">'cbfreeze'</span>;
+0096 
+0097 <span class="comment">% Set defaults:</span>
+0098 OPT  = <span class="string">'on'</span>;
+0099 H    = get(get(0,<span class="string">'CurrentFigure'</span>),<span class="string">'CurrentAxes'</span>);
+0100 CMAP = [];
+0101 
+0102 <span class="comment">% Checks inputs:</span>
+0103 assert(nargin&lt;=3,<span class="string">'CAVARGAS:cbfreeze:IncorrectInputsNumber'</span>,<span class="keyword">...</span>
+0104     <span class="string">'At most 3 inputs are allowed.'</span>)
+0105 assert(nargout&lt;=1,<span class="string">'CAVARGAS:cbfreeze:IncorrectOutputsNumber'</span>,<span class="keyword">...</span>
+0106     <span class="string">'Only 1 output is allowed.'</span>)
+0107 
+0108 <span class="comment">% Checks fom where CBFREEZE was called:</span>
+0109 <span class="keyword">if</span> (nargin~=2) || (isempty(varargin{1}) || <span class="keyword">...</span>
+0110         ~all(reshape(ishandle(varargin{1}),[],1)) <span class="keyword">...</span>
+0111         || ~isempty(varargin{2}))
+0112     <span class="comment">% CBFREEZE called from Command Window or M-file:</span>
+0113 
+0114     <span class="comment">% Reads H in the first input:</span>
+0115     <span class="keyword">if</span> nargin &amp;&amp; ~isempty(varargin{1}) &amp;&amp; <span class="keyword">...</span>
+0116             all(reshape(ishandle(varargin{1}),[],1)) 
+0117         H = varargin{1};
+0118         varargin(1) = [];
+0119     <span class="keyword">end</span>
+0120     
+0121     <span class="comment">% Reads CMAP in the first input:</span>
+0122     <span class="keyword">if</span> nargin &amp;&amp; ~isempty(varargin{1}) &amp;&amp; isnumeric(varargin{1}) &amp;&amp; <span class="keyword">...</span>
+0123             (size(varargin{1},2)==3) &amp;&amp; <span class="keyword">...</span>
+0124             (size(varargin{1},1)==numel(varargin{1})/3)
+0125         CMAP = varargin{1};
+0126         varargin(1) = [];
+0127     <span class="keyword">end</span>
+0128     
+0129     <span class="comment">% Reads options:</span>
+0130     <span class="keyword">while</span> ~isempty(varargin)
+0131         <span class="keyword">if</span> isempty(varargin{1}) || ~ischar(varargin{1}) || <span class="keyword">...</span>
+0132                 (numel(varargin{1})==size(varargin{1},2))
+0133             varargin(1) = [];
+0134             <span class="keyword">continue</span>
+0135         <span class="keyword">end</span>
+0136         <span class="keyword">switch</span> varargin{1}
+0137             <span class="keyword">case</span> {<span class="string">'off'</span>,<span class="string">'of'</span>,<span class="string">'unfreeze'</span>,<span class="string">'unfreez'</span>,<span class="string">'unfree'</span>,<span class="string">'unfre'</span>, <span class="keyword">...</span>
+0138                     <span class="string">'unfr'</span>,<span class="string">'unf'</span>,<span class="string">'un'</span>,<span class="string">'u'</span>}
+0139                 OPT = <span class="string">'off'</span>;
+0140             <span class="keyword">case</span> {<span class="string">'delete'</span>,<span class="string">'delet'</span>,<span class="string">'dele'</span>,<span class="string">'del'</span>,<span class="string">'de'</span>,<span class="string">'d'</span>}
+0141                 OPT = <span class="string">'delete'</span>;
+0142             <span class="keyword">otherwise</span>
+0143                 OPT = <span class="string">'on'</span>;
+0144         <span class="keyword">end</span>
+0145     <span class="keyword">end</span>
+0146 
+0147     <span class="comment">% Gets colorbar handles or creates them:</span>
+0148     CBH = <a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>(H,<span class="string">'force'</span>);
+0149     
+0150 <span class="keyword">else</span>
+0151     
+0152     <span class="comment">% Check for CallBacks functionalities:</span>
+0153     <span class="comment">% ------------------------------------</span>
+0154     
+0155     varargin{1} = double(varargin{1});
+0156     
+0157     <span class="keyword">if</span> strcmp(get(varargin{1},<span class="string">'BeingDelete'</span>),<span class="string">'on'</span>)
+0158         <span class="comment">% CBFREEZE called from DeletFcn:</span>
+0159         
+0160         <span class="keyword">if</span> (ishandle(get(varargin{1},<span class="string">'Parent'</span>)) &amp;&amp; <span class="keyword">...</span>
+0161                 ~strcmpi(get(get(varargin{1},<span class="string">'Parent'</span>),<span class="string">'BeingDeleted'</span>),<span class="string">'on'</span>))
+0162             <span class="comment">% The handle input is being deleted so do the colorbar:</span>
+0163             OPT = <span class="string">'delete'</span>;
+0164             
+0165             <span class="keyword">if</span> strcmp(get(varargin{1},<span class="string">'Tag'</span>),<span class="string">'Colorbar'</span>)
+0166                 <span class="comment">% The frozen colorbar is being deleted:</span>
+0167                 H = varargin{1};
+0168             <span class="keyword">else</span>
+0169                 <span class="comment">% The peer axes is being deleted:</span>
+0170                 H = ancestor(varargin{1},{<span class="string">'figure'</span>,<span class="string">'uipanel'</span>});
+0171             <span class="keyword">end</span>
+0172         <span class="keyword">else</span>
+0173             <span class="comment">% The figure is getting close:</span>
+0174             <span class="keyword">return</span>
+0175         <span class="keyword">end</span>
+0176         
+0177     <span class="keyword">elseif</span> ((gca==varargin{1}) &amp;&amp; <span class="keyword">...</span>
+0178             (gcf==ancestor(varargin{1},{<span class="string">'figure'</span>,<span class="string">'uipanel'</span>})))
+0179         <span class="comment">% CBFREEZE called from ButtonDownFcn:</span>
+0180         
+0181         cbdata = getappdata(varargin{1},appName);
+0182         <span class="keyword">if</span> ~isempty(cbdata)
+0183             <span class="keyword">if</span> ishandle(cbdata.peerHandle)
+0184                 <span class="comment">% Sets the peer axes as current (ignores mouse click-over):</span>
+0185                 set(gcf,<span class="string">'CurrentAxes'</span>,cbdata.peerHandle);
+0186                 <span class="keyword">return</span>
+0187             <span class="keyword">end</span>
+0188         <span class="keyword">else</span>
+0189             <span class="comment">% Clears application data:</span>
+0190             rmappdata(varargin{1},appName)
+0191         <span class="keyword">end</span>
+0192         H = varargin{1};
+0193     <span class="keyword">end</span>
+0194     
+0195     <span class="comment">% Gets out:</span>
+0196     CBH = <a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>(H);
+0197     
+0198 <span class="keyword">end</span>
+0199 
+0200 <span class="comment">% -------------------------------------------------------------------------</span>
+0201 <span class="comment">% MAIN</span>
+0202 <span class="comment">% -------------------------------------------------------------------------</span>
+0203 
+0204 <span class="comment">% Keeps current figure:</span>
+0205 cfh = get(0,<span class="string">'CurrentFigure'</span>);
+0206 
+0207 <span class="comment">% Works on every colorbar:</span>
+0208 <span class="keyword">for</span> icb = 1:length(CBH)
+0209     
+0210     <span class="comment">% Colorbar handle:</span>
+0211     cbh = double(CBH(icb));
+0212     
+0213     <span class="comment">% This application data:</span>
+0214     cbdata = getappdata(cbh,appName);
+0215     
+0216     <span class="comment">% Gets peer axes handle:</span>
+0217     <span class="keyword">if</span> ~isempty(cbdata)
+0218         peer = cbdata.peerHandle;
+0219         <span class="keyword">if</span> ~ishandle(peer)
+0220             rmappdata(cbh,appName)
+0221             <span class="keyword">continue</span>
+0222         <span class="keyword">end</span>
+0223     <span class="keyword">else</span>
+0224         <span class="comment">% No matters, get them below:</span>
+0225         peer = [];
+0226     <span class="keyword">end</span>
+0227     
+0228     <span class="comment">% Choose functionality:</span>
+0229     <span class="keyword">switch</span> OPT
+0230         
+0231         <span class="keyword">case</span> <span class="string">'delete'</span>
+0232             <span class="comment">% Deletes:</span>
+0233             <span class="keyword">if</span> ~isempty(peer)
+0234                 <span class="comment">% Returns axes to previous size:</span>
+0235                 oldunits = get(peer,<span class="string">'Units'</span>);
+0236                 set(peer,<span class="string">'Units'</span>,<span class="string">'Normalized'</span>);
+0237                 set(peer,<span class="string">'Position'</span>,cbdata.peerPosition)
+0238                 set(peer,<span class="string">'Units'</span>,oldunits)
+0239                 set(peer,<span class="string">'DeleteFcn'</span>,<span class="string">''</span>)
+0240                 <span class="keyword">if</span> isappdata(peer,appName)
+0241                     rmappdata(peer,appName)
+0242                 <span class="keyword">end</span>
+0243             <span class="keyword">end</span>
+0244             <span class="keyword">if</span> strcmp(get(cbh,<span class="string">'BeingDelete'</span>),<span class="string">'off'</span>)
+0245                 delete(cbh)
+0246             <span class="keyword">end</span>
+0247             
+0248         <span class="keyword">case</span> <span class="string">'off'</span>
+0249             <span class="comment">% Unfrozes:</span>
+0250             <span class="keyword">if</span> ~isempty(peer)
+0251                 delete(cbh);
+0252                 set(peer,<span class="string">'DeleteFcn'</span>,<span class="string">''</span>)
+0253                 <span class="keyword">if</span> isappdata(peer,appName)
+0254                     rmappdata(peer,appName)
+0255                 <span class="keyword">end</span>
+0256                 oldunits = get(peer,<span class="string">'Units'</span>);
+0257                 set(peer,<span class="string">'Units'</span>,<span class="string">'Normalized'</span>)
+0258                 set(peer,<span class="string">'Position'</span>,cbdata.peerPosition)
+0259                 set(peer,<span class="string">'Units'</span>,oldunits)
+0260                 CBH(icb) = colorbar(<span class="keyword">...</span>
+0261                     <span class="string">'Peer'</span>    ,peer,<span class="keyword">...</span>
+0262                     <span class="string">'Location'</span>,cbdata.cbLocation);
+0263             <span class="keyword">end</span>
+0264             
+0265         <span class="keyword">case</span> <span class="string">'on'</span>
+0266             <span class="comment">% Freezes:</span>
+0267 
+0268             <span class="comment">% Gets colorbar axes properties:</span>
+0269             cbprops = get(cbh);
+0270             
+0271             <span class="comment">% Current axes on colorbar figure:</span>
+0272             fig = ancestor(cbh,{<span class="string">'figure'</span>,<span class="string">'uipanel'</span>});
+0273             cah = get(fig,<span class="string">'CurrentAxes'</span>);
+0274             
+0275             <span class="comment">% Gets colorbar image handle. Fixed BUG, Sep 2009</span>
+0276             himage = findobj(cbh,<span class="string">'Type'</span>,<span class="string">'image'</span>);
+0277             
+0278             <span class="comment">% Gets image data and transforms them to RGB:</span>
+0279             CData = get(himage,<span class="string">'CData'</span>);
+0280             <span class="keyword">if</span> size(CData,3)~=1
+0281                 <span class="comment">% It's already frozen:</span>
+0282                 <span class="keyword">continue</span>
+0283             <span class="keyword">end</span>
+0284             
+0285             <span class="comment">% Gets image tag:</span>
+0286             imageTag = get(himage,<span class="string">'Tag'</span>);
+0287             
+0288             <span class="comment">% Deletes previous colorbar preserving peer axes position:</span>
+0289             <span class="keyword">if</span> isempty(peer)
+0290                 peer = <a href="cbhandle.html" class="code" title="function CBH = cbhandle(varargin)">cbhandle</a>(cbh,<span class="string">'peer'</span>);
+0291             <span class="keyword">end</span>
+0292             oldunits = get(peer,<span class="string">'Units'</span>);
+0293             set(peer,<span class="string">'Units'</span>,<span class="string">'Normalized'</span>)
+0294             position = get(peer,<span class="string">'Position'</span>);
+0295             delete(cbh)
+0296             oldposition = get(peer,<span class="string">'Position'</span>);
+0297             
+0298             <span class="comment">% Seves axes position</span>
+0299             cbdata.peerPosition = oldposition;
+0300             set(peer,<span class="string">'Position'</span>,position)
+0301             set(peer,<span class="string">'Units'</span>,oldunits)
+0302             
+0303             <span class="comment">% Generates a new colorbar axes:</span>
+0304             <span class="comment">% NOTE: this is needed because each time COLORMAP or CAXIS</span>
+0305             <span class="comment">%       is used, MATLAB generates a new COLORBAR! This</span>
+0306             <span class="comment">%       eliminates that behaviour and is the central point</span>
+0307             <span class="comment">%       on this function.</span>
+0308             cbh = axes(<span class="keyword">...</span>
+0309                 <span class="string">'Parent'</span>  ,cbprops.Parent,<span class="keyword">...</span>
+0310                 <span class="string">'Units'</span>   ,<span class="string">'Normalized'</span>,<span class="keyword">...</span>
+0311                 <span class="string">'Position'</span>,cbprops.Position<span class="keyword">...</span>
+0312                 );
+0313             
+0314             <span class="comment">% Saves location for future calls:</span>
+0315             cbdata.cbLocation = cbprops.Location;
+0316             
+0317             <span class="comment">% Move ticks because IMAGE draws centered pixels:</span>
+0318             XLim = cbprops.XLim;
+0319             YLim = cbprops.YLim;
+0320             <span class="keyword">if</span>     isempty(cbprops.XTick)
+0321                 <span class="comment">% Vertical:</span>
+0322                 X = XLim(1) + diff(XLim)/2;
+0323                 Y = YLim    + diff(YLim)/(2*length(CData))*[+1 -1];
+0324             <span class="keyword">else</span> <span class="comment">% isempty(YTick)</span>
+0325                 <span class="comment">% Horizontal:</span>
+0326                 Y = YLim(1) + diff(YLim)/2;
+0327                 X = XLim    + diff(XLim)/(2*length(CData))*[+1 -1];
+0328             <span class="keyword">end</span>
+0329             
+0330             <span class="comment">% Gets colormap:</span>
+0331             <span class="keyword">if</span> isempty(CMAP)
+0332                 cmap = colormap(fig);
+0333             <span class="keyword">else</span>
+0334                 cmap = CMAP;
+0335             <span class="keyword">end</span>
+0336             
+0337             <span class="comment">% Draws a new RGB image:</span>
+0338             image(X,Y,ind2rgb(CData,cmap),<span class="keyword">...</span>
+0339                 <span class="string">'Parent'</span>            ,cbh,<span class="keyword">...</span>
+0340                 <span class="string">'HitTest'</span>           ,<span class="string">'off'</span>,<span class="keyword">...</span>
+0341                 <span class="string">'Interruptible'</span>     ,<span class="string">'off'</span>,<span class="keyword">...</span>
+0342                 <span class="string">'SelectionHighlight'</span>,<span class="string">'off'</span>,<span class="keyword">...</span>
+0343                 <span class="string">'Tag'</span>               ,imageTag)
+0344             
+0345             <span class="comment">% Moves all '...Mode' properties at the end of the structure,</span>
+0346             <span class="comment">% so they won't become 'manual':</span>
+0347             <span class="comment">% Bug found by Rafa at the FEx. Thanks!, which also solves the</span>
+0348             <span class="comment">% bug found by Jenny at the FEx too. Version 2.0</span>
+0349             cbfields = fieldnames(cbprops);
+0350             indmode  = strfind(cbfields,<span class="string">'Mode'</span>);
+0351             temp     = repmat({<span class="string">''</span> []},length(indmode),1);
+0352             cont     = 0;
+0353             <span class="keyword">for</span> k = 1:length(indmode)
+0354                 <span class="comment">% Removes the '...Mode' properties:</span>
+0355                 <span class="keyword">if</span> ~isempty(indmode{k})
+0356                     cont = cont+1;
+0357                     temp{cont,1} = cbfields{k};
+0358                     temp{cont,2} = getfield(cbprops,cbfields{k});
+0359                     cbprops = rmfield(cbprops,cbfields{k});
+0360                 <span class="keyword">end</span>
+0361             <span class="keyword">end</span>
+0362             <span class="keyword">for</span> k=1:cont
+0363                 <span class="comment">% Now adds them at the end:</span>
+0364                 cbprops = setfield(cbprops,temp{k,1},temp{k,2});
+0365             <span class="keyword">end</span>
+0366             
+0367             <span class="comment">% Removes special COLORBARs properties:</span>
+0368             cbprops = rmfield(cbprops,{<span class="keyword">...</span>
+0369                 <span class="string">'CurrentPoint'</span>,<span class="string">'TightInset'</span>,<span class="string">'BeingDeleted'</span>,<span class="string">'Type'</span>,<span class="keyword">...</span><span class="comment">       % read-only</span>
+0370                 <span class="string">'Title'</span>,<span class="string">'XLabel'</span>,<span class="string">'YLabel'</span>,<span class="string">'ZLabel'</span>,<span class="string">'Parent'</span>,<span class="string">'Children'</span>,<span class="keyword">...</span><span class="comment">  % handles</span>
+0371                 <span class="string">'UIContextMenu'</span>,<span class="string">'Location'</span>,<span class="keyword">...</span><span class="comment">                              % colorbars</span>
+0372                 <span class="string">'ButtonDownFcn'</span>,<span class="string">'DeleteFcn'</span>,<span class="keyword">...</span><span class="comment">                             % callbacks</span>
+0373                 <span class="string">'CameraPosition'</span>,<span class="string">'CameraTarget'</span>,<span class="string">'CameraUpVector'</span>, <span class="keyword">...</span>
+0374                 <span class="string">'CameraViewAngle'</span>,<span class="keyword">...</span>
+0375                 <span class="string">'PlotBoxAspectRatio'</span>,<span class="string">'DataAspectRatio'</span>,<span class="string">'Position'</span>,<span class="keyword">...</span>
+0376                 <span class="string">'XLim'</span>,<span class="string">'YLim'</span>,<span class="string">'ZLim'</span>});
+0377             
+0378             <span class="comment">% And now, set new axes properties almost equal to the unfrozen</span>
+0379             <span class="comment">% colorbar:</span>
+0380             set(cbh,cbprops)
+0381             
+0382             <span class="comment">% CallBack features:</span>
+0383             set(cbh,<span class="keyword">...</span>
+0384                 <span class="string">'ActivePositionProperty'</span>,<span class="string">'position'</span>,<span class="keyword">...</span>
+0385                 <span class="string">'ButtonDownFcn'</span>         ,@<a href="cbfreeze.html" class="code" title="function CBH = cbfreeze(varargin)">cbfreeze</a>,<span class="keyword">...</span><span class="comment">  % mhh...</span>
+0386                 <span class="string">'DeleteFcn'</span>             ,@<a href="cbfreeze.html" class="code" title="function CBH = cbfreeze(varargin)">cbfreeze</a>)     <span class="comment">% again</span>
+0387             set(peer,<span class="string">'DeleteFcn'</span>        ,@<a href="cbfreeze.html" class="code" title="function CBH = cbfreeze(varargin)">cbfreeze</a>)     <span class="comment">% and again!</span>
+0388             
+0389             <span class="comment">% Do not zoom or pan or rotate:</span>
+0390             <span class="comment">%if isAllowAxesZoom(fig,cbh)</span>
+0391             setAllowAxesZoom  (    zoom(fig),cbh,false)
+0392             <span class="comment">%end</span>
+0393             <span class="comment">%if isAllowAxesPan(fig,cbh)</span>
+0394             setAllowAxesPan   (     pan(fig),cbh,false)
+0395             <span class="comment">%end</span>
+0396             <span class="comment">%if isAllowAxesRotate(fig,cbh)</span>
+0397             setAllowAxesRotate(rotate3d(fig),cbh,false)
+0398             <span class="comment">%end</span>
+0399             
+0400             <span class="comment">% Updates data:</span>
+0401             CBH(icb) = cbh;
+0402             
+0403             <span class="comment">% Saves data for future undo:</span>
+0404             cbdata.peerHandle = peer;
+0405             cbdata.cbHandle   = cbh;
+0406             setappdata(cbh ,appName,cbdata);
+0407             setappdata(peer,appName,cbdata);
+0408             
+0409             <span class="comment">% Returns current axes:</span>
+0410             <span class="keyword">if</span> ishandle(cah)
+0411                 set(fig,<span class="string">'CurrentAxes'</span>,cah)
+0412             <span class="keyword">end</span>
+0413             
+0414     <span class="keyword">end</span> <span class="comment">% switch functionality</span>
+0415     
+0416 <span class="keyword">end</span>  <span class="comment">% MAIN loop</span>
+0417 
+0418 <span class="comment">% Resets the current figure</span>
+0419 <span class="keyword">if</span> ishandle(cfh)
+0420     set(0,<span class="string">'CurrentFigure'</span>,cfh)
+0421 <span class="keyword">end</span>
+0422 
+0423 <span class="comment">% OUTPUTS CHECK-OUT</span>
+0424 <span class="comment">% -------------------------------------------------------------------------</span>
+0425 
+0426 <span class="comment">% Output?:</span>
+0427 <span class="keyword">if</span> ~nargout
+0428     clear CBH
+0429 <span class="keyword">else</span>
+0430     CBH(~ishandle(CBH)) = [];
+0431 <span class="keyword">end</span>
+0432 
+0433 <span class="keyword">end</span>
+0434 
+0435 <span class="comment">% [EOF] CBFREEZE.M by Carlos A. Vargas A.</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

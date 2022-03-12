@@ -1,0 +1,29 @@
+/* Created by mdot for Matlab */
+digraph m2html {
+  Ie_zE2Qz -> Ie_zE_loader;
+  Ie_zE2Qz -> exc_z_of_Ie_zE;
+  Ie_zE2Qz -> get_all_xs;
+  Ie_ztE2Q_zt -> Ie2currents;
+  Ie_ztE2Q_zt -> Ie_ztE_loader;
+  Ie_ztE2Q_zt -> exc_tz_of_Ie_ztE;
+  Ie_ztE2Q_zt -> get_all_xs;
+
+  Contents [URL="Contents.html"];
+  E_levelsOnN2 [URL="E_levelsOnN2.html"];
+  I_lambda_trajectories [URL="I_lambda_trajectories.html"];
+  Ie2currents [URL="Ie2currents.html"];
+  Ie_zE2Qz [URL="Ie_zE2Qz.html"];
+  Ie_zE_loader [URL="Ie_zE_loader.html"];
+  Ie_ztE2Q_zt [URL="Ie_ztE2Q_zt.html"];
+  Ie_ztE_loader [URL="Ie_ztE_loader.html"];
+  animate_auroral_rays [URL="animate_auroral_rays.html"];
+  dt_avgstd [URL="dt_avgstd.html"];
+  e_meanfreepath [URL="e_meanfreepath.html"];
+  e_scattering_depth [URL="e_scattering_depth.html"];
+  exc_tz_of_Ie_zE [URL="exc_tz_of_Ie_zE.html"];
+  exc_tz_of_Ie_ztE [URL="exc_tz_of_Ie_ztE.html"];
+  exc_z_of_Ie_zE [URL="exc_z_of_Ie_zE.html"];
+  get_all_xs [URL="get_all_xs.html"];
+  q2colem [URL="q2colem.html"];
+  v_of_E [URL="v_of_E.html"];
+}

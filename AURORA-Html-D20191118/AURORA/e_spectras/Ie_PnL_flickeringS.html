@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of Ie_PnL_flickeringS</title>
+  <meta name="keywords" content="Ie_PnL_flickeringS">
+  <meta name="description" content="IE_PNL_FLICKERINGS - On-off modulated P-n-L flickering spectra">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html e_spectras -->
+<h1>Ie_PnL_flickeringS
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>IE_PNL_FLICKERINGS - On-off modulated P-n-L flickering spectra</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function Ie = Ie_PnL_flickeringS(t,E,IeEtot,Ein,dEin,w,z0,mu,mu0) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> IE_PNL_FLICKERINGS - On-off modulated P-n-L flickering spectra
+ for electrons. Ie_PnL_flickeringH produces electron spectra with
+ constant number-flux between the lowest and highest energy of Ein
+ with an integrated energy flux of IeEtot. The flux is modulated
+ at w (angular frequency) with a square(w*t-pi/2)^2) wave at all
+ energies at a distance of z0 above, allowing for time-dispersion
+ due to collisionless transport. This Peticolas and Lummerzheim
+ [2000] spectra is modified to have its modulation in phase with
+ Ie_PnL_flickeringH making it suitable to model low-energy-tail  
+ field-aligned flickering precipitation with a harmonically
+ modulated intensity. This to allow for comparisons of harmonic
+ and on-off modulated flux and their corresponding ionospheric
+ responses. 
+ 
+ Calling:
+  Ie = Ie_PnL_flickeringS(t,E,IeEtot,Ein,dEin,w,z0,mu,mu0)
+ Input:
+  t      - time (s), double array [1 x nT]
+  E      - energy (eV), scalar double
+  IeEtot - total energy flux (W/m^2) of the FAB
+  Ein    - energy grid of the FAB (eV), double array [1 x nE]
+  dEin   - size of energy bins (eV), same size as Ein
+  w      - angular frequency of modulation (radians/s), double
+           scalar
+  z0     - distance (m) above &quot;top-of-ionosphere&quot;, double scalar
+  mu     - pitch-angle average of precipitation (radians), double
+           scalar used to calculate time-lag of precipitation
+           relative to electrons at energy max(Ein) with
+           pitch-angle mu0
+  mu0    - reference pitch-angle (radians), scalar double
+ Output:
+  Ie - differential electron flux (#/m^2/s), double array [1 x nT]
+ 
+ NOTE flux is per energy bin!</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/utilities/v_of_E.html" class="code" title="function v = v_of_E(E)">v_of_E</a>	v_of_E - convert electron energy (eV) to velocity (m/s)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/sup-scripts/Loop_finalRun_PnL_flickering10beams.html" class="code" title="">Loop_finalRun_PnL_flickering10beams</a>	% Batch-processing-script for FAB-flickering aurora</li><li><a href="../../AURORA/sup-scripts/Loop_first_example_AURORA.html" class="code" title="">Loop_first_example_AURORA</a>	% Example-script for using AURORA the time-dependent electron-transport code</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Ie = Ie_PnL_flickeringS(t,E,IeEtot,Ein,dEin,w,z0,mu,mu0)</a>
+0002 <span class="comment">% IE_PNL_FLICKERINGS - On-off modulated P-n-L flickering spectra</span>
+0003 <span class="comment">% for electrons. Ie_PnL_flickeringH produces electron spectra with</span>
+0004 <span class="comment">% constant number-flux between the lowest and highest energy of Ein</span>
+0005 <span class="comment">% with an integrated energy flux of IeEtot. The flux is modulated</span>
+0006 <span class="comment">% at w (angular frequency) with a square(w*t-pi/2)^2) wave at all</span>
+0007 <span class="comment">% energies at a distance of z0 above, allowing for time-dispersion</span>
+0008 <span class="comment">% due to collisionless transport. This Peticolas and Lummerzheim</span>
+0009 <span class="comment">% [2000] spectra is modified to have its modulation in phase with</span>
+0010 <span class="comment">% Ie_PnL_flickeringH making it suitable to model low-energy-tail</span>
+0011 <span class="comment">% field-aligned flickering precipitation with a harmonically</span>
+0012 <span class="comment">% modulated intensity. This to allow for comparisons of harmonic</span>
+0013 <span class="comment">% and on-off modulated flux and their corresponding ionospheric</span>
+0014 <span class="comment">% responses.</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% Calling:</span>
+0017 <span class="comment">%  Ie = Ie_PnL_flickeringS(t,E,IeEtot,Ein,dEin,w,z0,mu,mu0)</span>
+0018 <span class="comment">% Input:</span>
+0019 <span class="comment">%  t      - time (s), double array [1 x nT]</span>
+0020 <span class="comment">%  E      - energy (eV), scalar double</span>
+0021 <span class="comment">%  IeEtot - total energy flux (W/m^2) of the FAB</span>
+0022 <span class="comment">%  Ein    - energy grid of the FAB (eV), double array [1 x nE]</span>
+0023 <span class="comment">%  dEin   - size of energy bins (eV), same size as Ein</span>
+0024 <span class="comment">%  w      - angular frequency of modulation (radians/s), double</span>
+0025 <span class="comment">%           scalar</span>
+0026 <span class="comment">%  z0     - distance (m) above &quot;top-of-ionosphere&quot;, double scalar</span>
+0027 <span class="comment">%  mu     - pitch-angle average of precipitation (radians), double</span>
+0028 <span class="comment">%           scalar used to calculate time-lag of precipitation</span>
+0029 <span class="comment">%           relative to electrons at energy max(Ein) with</span>
+0030 <span class="comment">%           pitch-angle mu0</span>
+0031 <span class="comment">%  mu0    - reference pitch-angle (radians), scalar double</span>
+0032 <span class="comment">% Output:</span>
+0033 <span class="comment">%  Ie - differential electron flux (#/m^2/s), double array [1 x nT]</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">% NOTE flux is per energy bin!</span>
+0036 
+0037 <span class="comment">% Copyright � B Gustavsson 20180512, bjorn.gustavsson@uit.no</span>
+0038 <span class="comment">% This is free software, licensed under GNU GPL version 2 or later</span>
+0039 
+0040  
+0041 
+0042 
+0043 
+0044 q_e     = 1.602176620898e-19;
+0045 
+0046 t_shift0 = z0/(mu0*<a href="../../AURORA/utilities/v_of_E.html" class="code" title="function v = v_of_E(E)">v_of_E</a>(Ein(end)));
+0047 t_shift  = z0./(mu*<a href="../../AURORA/utilities/v_of_E.html" class="code" title="function v = v_of_E(E)">v_of_E</a>(E));
+0048 
+0049 t_shifted = t-(t_shift-t_shift0);
+0050 
+0051 IePnL = IeEtot/q_e/sum((Ein+dEin/2).*dEin).*dEin;
+0052 [~,iE] = min(abs(E-Ein));
+0053 
+0054 Ie = IePnL(iE)*(1+square(w*t_shifted-pi/2))/2.*(t_shifted&gt;0)*double(Ein(1)&lt;=E)*double(E&lt;=Ein(end));</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

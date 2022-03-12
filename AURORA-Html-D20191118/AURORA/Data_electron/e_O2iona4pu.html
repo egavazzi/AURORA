@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of e_O2iona4pu</title>
+  <meta name="keywords" content="e_O2iona4pu">
+  <meta name="description" content="Xs = e_O2iona4pu(E)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>e_O2iona4pu
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Xs = e_O2iona4pu(E)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function cross_section = e_O2iona4pu(Energy) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Xs = e_O2iona4pu(E)
+ 
+ e_O2iona4Pu - electron ionisation cross section (m^2) to the
+ first excited state of O2+
+ E electron energy (eV)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function cross_section = e_O2iona4pu(Energy)</a>
+0002 <span class="comment">% Xs = e_O2iona4pu(E)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% e_O2iona4Pu - electron ionisation cross section (m^2) to the</span>
+0005 <span class="comment">% first excited state of O2+</span>
+0006 <span class="comment">% E electron energy (eV)</span>
+0007 
+0008 
+0009 <span class="keyword">for</span> iE = numel(Energy):-1:1
+0010   <span class="keyword">if</span> Energy(iE) &gt; 16.1 &amp; Energy(iE) &lt; 300,
+0011     cross_section(iE) = (1-16.1/Energy(iE))*exp(-49.02795+6.907601*log(Energy(iE))-1.325630*log(Energy(iE))^2+0.08157475*log(Energy(iE))^3-0.0002650063*log(Energy(iE))^4);
+0012   <span class="keyword">elseif</span> Energy(iE) &gt;= 300,
+0013     cross_section(iE) = 4.911588e-15*log(0.024825*Energy(iE))/Energy(iE);
+0014   <span class="keyword">else</span>
+0015     cross_section(iE) = 0;
+0016   <span class="keyword">end</span>
+0017 <span class="keyword">end</span>
+0018 
+0019 cross_section = cross_section/1e4;</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

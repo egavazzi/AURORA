@@ -1,0 +1,16 @@
+/* Created by mdot for Matlab */
+digraph m2html {
+  test_accuracy -> test_factorize;
+  test_all -> test_accuracy;
+  test_all -> test_all;
+  test_all -> test_disp;
+  test_all -> test_errors;
+  test_all -> test_performance;
+
+  test_accuracy [URL="test_accuracy.html"];
+  test_all [URL="test_all.html"];
+  test_disp [URL="test_disp.html"];
+  test_errors [URL="test_errors.html"];
+  test_factorize [URL="test_factorize.html"];
+  test_performance [URL="test_performance.html"];
+}

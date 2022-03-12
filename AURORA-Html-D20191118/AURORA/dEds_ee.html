@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of dEds_ee</title>
+  <meta name="keywords" content="dEds_ee">
+  <meta name="description" content="dEds_ee - suprathermal electron energy loss function in e-e-collisions">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html AURORA -->
+<h1>dEds_ee
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>dEds_ee - suprathermal electron energy loss function in e-e-collisions</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function Le = dEds_ee(E,ne,Te) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> dEds_ee - suprathermal electron energy loss function in e-e-collisions 
+  This function is the electron energy loss function due to
+  electron-electron interaction. This is the analytic form given
+  for the energy-transfer rate from photoelectrons to thermal
+  electrons, given by Schwartz and Nisbeth (1971). The expression
+  fits the classical formulation of Itakawa and Aono (1966) at low
+  energies and gives a  smooth transition to fit the quantum
+  mechanical equation of Schunk and Hays (1971) at higher
+  energies. 
+ 
+ Calling:
+  Le = dEds_ee(E,ne,Te)
+ Input:
+  E  - energy levels [1 x nE] (eV), 
+  ne - ambient electron concentration  [nZ x 1] (/m^3),
+  Te - electron temperature [nZ x 1] (K).
+ Output:
+  Le - electron energy loss-function [eV/m], [nZ x nE]
+ 
+ The paper by Schwartz and Nesbith use electron density in cm^-3,
+ here the constant is rescaled to use m^-3 instead. Further we
+ calculate the loss-function, dEds(E,ne,Te) directly and not as in
+ Schwartz and Nesbith dEds(E,ne,Te)/ne.
+ 
+ References:
+  * Swartz, W. E., J. S. Nisbet, and A. E. S. Green (1971), Analytic
+  expression for the energy$B!&gt;(Btransfer rate from photoelectrons to
+  thermal$B!&gt;(Belectrons, J. Geophys. Res., 76(34), 8425-8426,
+  doi: 10.1029/JA076i034p08425.
+  * Itikawa, Y., and O. Aono (1966), Energy change of a charged particle
+  moving in a plasma, Phys. Fluids, 9, 1259-1261.
+  * Schunk, R. W., and P. B. Hays (1971), Photoelectron-energy
+  losses to thermal electrons, Planet. Space Sci., 19, 113-117.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../AURORA/utilities/v_of_E.html" class="code" title="function v = v_of_E(E)">v_of_E</a>	v_of_E - convert electron energy (eV) to velocity (m/s)</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../AURORA/e_transport_Ms/Ie_M_stream_4_aurora.html" class="code" title="function [Ie_zE,mu_pars_out] = Ie_M_stream_4_aurora(h,mag_ze,E,mu_lims,mu_pars,Ie_primary,p_e_q,ne,Te,varargin)">Ie_M_stream_4_aurora</a>	Ie_M_stream_4_aurora - steady-state multi-stream electron transport</li><li><a href="../AURORA/e_transport_Ms/Ie_Mstream_tz_2_aurora.html" class="code" title="function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora(h,mag_ze,E,mu_lims,mu_pars,t,I0,Ie_primary,p_e_q,ne,Te,OPS,varargin)">Ie_Mstream_tz_2_aurora</a>	Ie_Mstream_tz_2_aurora - time-dependent multi-stream electron transport</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function Le = dEds_ee(E,ne,Te)</a>
+0002 <span class="comment">% dEds_ee - suprathermal electron energy loss function in e-e-collisions</span>
+0003 <span class="comment">%  This function is the electron energy loss function due to</span>
+0004 <span class="comment">%  electron-electron interaction. This is the analytic form given</span>
+0005 <span class="comment">%  for the energy-transfer rate from photoelectrons to thermal</span>
+0006 <span class="comment">%  electrons, given by Schwartz and Nisbeth (1971). The expression</span>
+0007 <span class="comment">%  fits the classical formulation of Itakawa and Aono (1966) at low</span>
+0008 <span class="comment">%  energies and gives a  smooth transition to fit the quantum</span>
+0009 <span class="comment">%  mechanical equation of Schunk and Hays (1971) at higher</span>
+0010 <span class="comment">%  energies.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Calling:</span>
+0013 <span class="comment">%  Le = dEds_ee(E,ne,Te)</span>
+0014 <span class="comment">% Input:</span>
+0015 <span class="comment">%  E  - energy levels [1 x nE] (eV),</span>
+0016 <span class="comment">%  ne - ambient electron concentration  [nZ x 1] (/m^3),</span>
+0017 <span class="comment">%  Te - electron temperature [nZ x 1] (K).</span>
+0018 <span class="comment">% Output:</span>
+0019 <span class="comment">%  Le - electron energy loss-function [eV/m], [nZ x nE]</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% The paper by Schwartz and Nesbith use electron density in cm^-3,</span>
+0022 <span class="comment">% here the constant is rescaled to use m^-3 instead. Further we</span>
+0023 <span class="comment">% calculate the loss-function, dEds(E,ne,Te) directly and not as in</span>
+0024 <span class="comment">% Schwartz and Nesbith dEds(E,ne,Te)/ne.</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% References:</span>
+0027 <span class="comment">%  * Swartz, W. E., J. S. Nisbet, and A. E. S. Green (1971), Analytic</span>
+0028 <span class="comment">%  expression for the energy$B!&gt;(Btransfer rate from photoelectrons to</span>
+0029 <span class="comment">%  thermal$B!&gt;(Belectrons, J. Geophys. Res., 76(34), 8425-8426,</span>
+0030 <span class="comment">%  doi: 10.1029/JA076i034p08425.</span>
+0031 <span class="comment">%  * Itikawa, Y., and O. Aono (1966), Energy change of a charged particle</span>
+0032 <span class="comment">%  moving in a plasma, Phys. Fluids, 9, 1259-1261.</span>
+0033 <span class="comment">%  * Schunk, R. W., and P. B. Hays (1971), Photoelectron-energy</span>
+0034 <span class="comment">%  losses to thermal electrons, Planet. Space Sci., 19, 113-117.</span>
+0035 
+0036 <span class="comment">% Copyright ,A)(B B. Gustavsson 20100527 - 20180528</span>
+0037 <span class="comment">%  This is free software, licensed under GNU GPL version 2 or later</span>
+0038 
+0039 kB    = 1.380662e-23;            <span class="comment">% Boltzmann constant [J/K]</span>
+0040 q_e     = 1.6021773e-19;            <span class="comment">% elementary charge [C]</span>
+0041 
+0042 <span class="keyword">if</span> ( length(E) &gt; 1 )
+0043   
+0044   sz_E = size(E);
+0045   sz_ne = size(ne);
+0046 
+0047   ne = repmat(ne,sz_E);<span class="comment">% *e_dim;</span>
+0048   Te = repmat(Te,sz_E);<span class="comment">% *e_dim;</span>
+0049   E = repmat(E,sz_ne); <span class="comment">% alt_dim*E;</span>
+0050   Ee = kB/q_e*Te;
+0051   
+0052   Le = real(3.0271e-10*ne.^.97.*((E-Ee)./(E-.53*Ee)).^2.36./E.^.44./<a href="../AURORA/utilities/v_of_E.html" class="code" title="function v = v_of_E(E)">v_of_E</a>(E));
+0053   
+0054   Le = Le.*double(E&gt;=Ee);
+0055 <span class="keyword">else</span>
+0056   
+0057   Ee = 8.618e-5*Te;
+0058   
+0059   Le = real(3.0271e-10*ne.^.97.*((E-Ee)./(E-.53*Ee)).^2.36./E.^.44./<a href="../AURORA/utilities/v_of_E.html" class="code" title="function v = v_of_E(E)">v_of_E</a>(E));
+0060   Le(E&lt;Ee) = 0;
+0061   
+0062 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

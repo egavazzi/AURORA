@@ -1,0 +1,596 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of cmjoin</title>
+  <meta name="keywords" content="cmjoin">
+  <meta name="description" content="CMJOIN   Joins colormaps at certain levels.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html AURORA --><!-- ../menu.html tools --><!-- menu.html cm_and_cb_utilities -->
+<h1>cmjoin
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>CMJOIN   Joins colormaps at certain levels.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [CMAP,LEV,WID,CLIM] = cmjoin(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">CMJOIN   Joins colormaps at certain levels.
+
+   SYNTAX:
+                           cmjoin(CMAPS)
+                           cmjoin(CMAPS,LEV)
+                           cmjoin(CMAPS,LEV,WID)
+                           cmjoin(CMAPS,LEV,WID,CLIM)
+                           cmjoin(AX,...)
+     [CMAP,LEV,WID,CLIM] = cmjoin(...);
+
+   INPUT:
+     CMAPS - Cell with the N colormaps handles, names or RGB colors to be
+             joined. See NOTE below.
+     LEV   - One of:
+               a) N-1 scalars specifying the color levels where the
+                  colormaps will be joined (uses CAXIS). See NOTE below.
+               b) N integers specifying the number of colors for each
+                  colormap.
+               c) N+1 scalars specifying the color limits for each
+                  colormap (sets CAXIS). See NOTE below.
+             DEFAULT: Tries to generate a CMAP with default length.
+     WID   - May be one (or N) positive scalar specifying the width for
+             every (or each) color band. See NOTE below.
+             DEFAULT: uses CAXIS and LEV to estimate it.  
+     CLIM  - 2 elements row vector specifying the color limits values. May
+             be changed at the end, because of the discretization of the
+             colormaps.
+             DEFAULT: uses CAXIS or [0 1] if there are no axes.
+     AX    - Uses the specified axes handle to get/set the CMAPS. If used,
+             must be the first input.
+             DEFAULT: gca
+
+   OUTPUT (all optional):
+     CMAP - RGB colormap output matrix, M-by-3.
+     LEV  - Final levels used.
+     WID  - Final widths used.
+     CLIM - Final color limits used.
+
+   DESCRIPTION:
+     This function join two colormaps at specific level. Useful for
+     joining colormaps at zero (for example) and distinguish from positive
+     and negative values.
+
+   NOTE:
+     * Optional inputs use its DEFAULT value when not given or [].
+     * Optional outputs may or not be called.
+     * If no output is required or an axes handle were given, the current
+       COLORMAP and CAXIS are changed.
+     * If any of the inputs on CMAPS is a function name, 'jet', for
+       example, it can be used backwards (because CMAPPING is used) if
+       added a '-' at the beggining of its name: '-jet'.
+     * When LEV is type b) and WID is specifyed, the latter is taken as
+       relative colorbans widths between colormaps.
+
+   EXAMPLE:
+     figure(1), clf, surf(peaks)
+     cmjoin({'copper','-summer'},2.5)
+      shading interp, colorbar, axis tight, zlabel('Meters')
+      title('Union at 2.5 m')
+     %
+     figure(2), clf, surf(peaks) 
+     cmjoin({'copper','-summer'},2.5,0.5)
+      shading interp, colorbar, axis tight, zlabel('Meters')
+      title('Union at 2.5 m and different color for each 0.5 m band')
+     %
+     figure(3), clf, surf(peaks)
+     cmjoin({'copper','summer'},2.5,[2 0.5])
+      shading interp, colorbar, axis tight, zlabel('Metros')
+      title('Union at 2.5 m with lengths 2 and 0.5')
+     %
+     figure(4), clf, surf(peaks)
+     cmjoin({'copper','summer'},[-10 2.5 10],[2 0.5])
+      shading interp, colorbar, axis tight, zlabel('Metros')
+      title('Union at 2.5 m with lengths 2 and 0.5 and specified levels')
+     %
+     figure(5), clf, surf(peaks)
+     cmjoin({'copper','summer'},[10 8],[4 1])
+      shading interp, colorbar, axis tight, zlabel('Metros')
+      title('Union at 2.5 m with specified levels number of colors and widths 4:1')
+    
+   SEE ALSO:
+     COLORMAP, COLORMAPEDITOR
+     and
+     <a href="cmapping.html" class="code" title="function RGB = cmapping(varargin)">CMAPPING</a> by Carlos Vargas
+     at http://www.mathworks.com/matlabcentral/fileexchange
+
+
+   ---
+   MFILE:   <a href="cmjoin.html" class="code" title="function [CMAP,LEV,WID,CLIM] = cmjoin(varargin)">cmjoin</a>.m
+   VERSION: 2.0 (Jun 08, 2009) (&lt;a href=&quot;matlab:web('http://www.mathworks.com/matlabcentral/fileexchange/authors/11258')&quot;&gt;download&lt;/a&gt;)
+   MATLAB:  7.7.0.471 (R2008b)
+   AUTHOR:  Carlos Adrian Vargas Aguilera (MEXICO)
+   CONTACT: nubeobscura@hotmail.com</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="cmapping.html" class="code" title="function RGB = cmapping(varargin)">cmapping</a>	CMAPPING   Colormap linear mapping/interpolation.</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [CMAP,LEV,WID,CLIM] = cmjoin(varargin)</a>
+0002 <span class="comment">%CMJOIN   Joins colormaps at certain levels.</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">%   SYNTAX:</span>
+0005 <span class="comment">%                           cmjoin(CMAPS)</span>
+0006 <span class="comment">%                           cmjoin(CMAPS,LEV)</span>
+0007 <span class="comment">%                           cmjoin(CMAPS,LEV,WID)</span>
+0008 <span class="comment">%                           cmjoin(CMAPS,LEV,WID,CLIM)</span>
+0009 <span class="comment">%                           cmjoin(AX,...)</span>
+0010 <span class="comment">%     [CMAP,LEV,WID,CLIM] = cmjoin(...);</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%   INPUT:</span>
+0013 <span class="comment">%     CMAPS - Cell with the N colormaps handles, names or RGB colors to be</span>
+0014 <span class="comment">%             joined. See NOTE below.</span>
+0015 <span class="comment">%     LEV   - One of:</span>
+0016 <span class="comment">%               a) N-1 scalars specifying the color levels where the</span>
+0017 <span class="comment">%                  colormaps will be joined (uses CAXIS). See NOTE below.</span>
+0018 <span class="comment">%               b) N integers specifying the number of colors for each</span>
+0019 <span class="comment">%                  colormap.</span>
+0020 <span class="comment">%               c) N+1 scalars specifying the color limits for each</span>
+0021 <span class="comment">%                  colormap (sets CAXIS). See NOTE below.</span>
+0022 <span class="comment">%             DEFAULT: Tries to generate a CMAP with default length.</span>
+0023 <span class="comment">%     WID   - May be one (or N) positive scalar specifying the width for</span>
+0024 <span class="comment">%             every (or each) color band. See NOTE below.</span>
+0025 <span class="comment">%             DEFAULT: uses CAXIS and LEV to estimate it.</span>
+0026 <span class="comment">%     CLIM  - 2 elements row vector specifying the color limits values. May</span>
+0027 <span class="comment">%             be changed at the end, because of the discretization of the</span>
+0028 <span class="comment">%             colormaps.</span>
+0029 <span class="comment">%             DEFAULT: uses CAXIS or [0 1] if there are no axes.</span>
+0030 <span class="comment">%     AX    - Uses the specified axes handle to get/set the CMAPS. If used,</span>
+0031 <span class="comment">%             must be the first input.</span>
+0032 <span class="comment">%             DEFAULT: gca</span>
+0033 <span class="comment">%</span>
+0034 <span class="comment">%   OUTPUT (all optional):</span>
+0035 <span class="comment">%     CMAP - RGB colormap output matrix, M-by-3.</span>
+0036 <span class="comment">%     LEV  - Final levels used.</span>
+0037 <span class="comment">%     WID  - Final widths used.</span>
+0038 <span class="comment">%     CLIM - Final color limits used.</span>
+0039 <span class="comment">%</span>
+0040 <span class="comment">%   DESCRIPTION:</span>
+0041 <span class="comment">%     This function join two colormaps at specific level. Useful for</span>
+0042 <span class="comment">%     joining colormaps at zero (for example) and distinguish from positive</span>
+0043 <span class="comment">%     and negative values.</span>
+0044 <span class="comment">%</span>
+0045 <span class="comment">%   NOTE:</span>
+0046 <span class="comment">%     * Optional inputs use its DEFAULT value when not given or [].</span>
+0047 <span class="comment">%     * Optional outputs may or not be called.</span>
+0048 <span class="comment">%     * If no output is required or an axes handle were given, the current</span>
+0049 <span class="comment">%       COLORMAP and CAXIS are changed.</span>
+0050 <span class="comment">%     * If any of the inputs on CMAPS is a function name, 'jet', for</span>
+0051 <span class="comment">%       example, it can be used backwards (because CMAPPING is used) if</span>
+0052 <span class="comment">%       added a '-' at the beggining of its name: '-jet'.</span>
+0053 <span class="comment">%     * When LEV is type b) and WID is specifyed, the latter is taken as</span>
+0054 <span class="comment">%       relative colorbans widths between colormaps.</span>
+0055 <span class="comment">%</span>
+0056 <span class="comment">%   EXAMPLE:</span>
+0057 <span class="comment">%     figure(1), clf, surf(peaks)</span>
+0058 <span class="comment">%     cmjoin({'copper','-summer'},2.5)</span>
+0059 <span class="comment">%      shading interp, colorbar, axis tight, zlabel('Meters')</span>
+0060 <span class="comment">%      title('Union at 2.5 m')</span>
+0061 <span class="comment">%     %</span>
+0062 <span class="comment">%     figure(2), clf, surf(peaks)</span>
+0063 <span class="comment">%     cmjoin({'copper','-summer'},2.5,0.5)</span>
+0064 <span class="comment">%      shading interp, colorbar, axis tight, zlabel('Meters')</span>
+0065 <span class="comment">%      title('Union at 2.5 m and different color for each 0.5 m band')</span>
+0066 <span class="comment">%     %</span>
+0067 <span class="comment">%     figure(3), clf, surf(peaks)</span>
+0068 <span class="comment">%     cmjoin({'copper','summer'},2.5,[2 0.5])</span>
+0069 <span class="comment">%      shading interp, colorbar, axis tight, zlabel('Metros')</span>
+0070 <span class="comment">%      title('Union at 2.5 m with lengths 2 and 0.5')</span>
+0071 <span class="comment">%     %</span>
+0072 <span class="comment">%     figure(4), clf, surf(peaks)</span>
+0073 <span class="comment">%     cmjoin({'copper','summer'},[-10 2.5 10],[2 0.5])</span>
+0074 <span class="comment">%      shading interp, colorbar, axis tight, zlabel('Metros')</span>
+0075 <span class="comment">%      title('Union at 2.5 m with lengths 2 and 0.5 and specified levels')</span>
+0076 <span class="comment">%     %</span>
+0077 <span class="comment">%     figure(5), clf, surf(peaks)</span>
+0078 <span class="comment">%     cmjoin({'copper','summer'},[10 8],[4 1])</span>
+0079 <span class="comment">%      shading interp, colorbar, axis tight, zlabel('Metros')</span>
+0080 <span class="comment">%      title('Union at 2.5 m with specified levels number of colors and widths 4:1')</span>
+0081 <span class="comment">%</span>
+0082 <span class="comment">%   SEE ALSO:</span>
+0083 <span class="comment">%     COLORMAP, COLORMAPEDITOR</span>
+0084 <span class="comment">%     and</span>
+0085 <span class="comment">%     CMAPPING by Carlos Vargas</span>
+0086 <span class="comment">%     at http://www.mathworks.com/matlabcentral/fileexchange</span>
+0087 <span class="comment">%</span>
+0088 <span class="comment">%</span>
+0089 <span class="comment">%   ---</span>
+0090 <span class="comment">%   MFILE:   cmjoin.m</span>
+0091 <span class="comment">%   VERSION: 2.0 (Jun 08, 2009) (&lt;a href=&quot;matlab:web('http://www.mathworks.com/matlabcentral/fileexchange/authors/11258')&quot;&gt;download&lt;/a&gt;)</span>
+0092 <span class="comment">%   MATLAB:  7.7.0.471 (R2008b)</span>
+0093 <span class="comment">%   AUTHOR:  Carlos Adrian Vargas Aguilera (MEXICO)</span>
+0094 <span class="comment">%   CONTACT: nubeobscura@hotmail.com</span>
+0095 
+0096 <span class="comment">%   REVISIONS:</span>
+0097 <span class="comment">%   1.0       Released as SETCOLORMAP. (Nov 07, 2006)</span>
+0098 <span class="comment">%   1.1       English translation. (Nov 11, 2006)</span>
+0099 <span class="comment">%   2.0       Rewritten and renamed code (from SETCOLORMAPS to CMJOIN. Now</span>
+0100 <span class="comment">%             joins multiple colormaps. Inputs changed. (Jun 08, 2009)</span>
+0101 
+0102 <span class="comment">%   DISCLAIMER:</span>
+0103 <span class="comment">%   cmjoin.m is provided &quot;as is&quot; without warranty of any kind, under the</span>
+0104 <span class="comment">%   revised BSD license.</span>
+0105 
+0106 <span class="comment">%   Copyright (c) 2006,2009 Carlos Adrian Vargas Aguilera</span>
+0107 
+0108 <span class="comment">% INPUTS CHECK-IN</span>
+0109 <span class="comment">% -------------------------------------------------------------------------</span>
+0110 
+0111 <span class="comment">% Parameters:</span>
+0112 tol  = 1;            <span class="comment">% When rounding the levels.</span>
+0113 
+0114 <span class="comment">% Checks inputs and outputs number:</span>
+0115 <span class="keyword">if</span> nargin&lt;1
+0116  error(<span class="string">'CVARGAS:cmjoin:notEnoughInputs'</span>,<span class="keyword">...</span>
+0117   <span class="string">'At least 1 input is required.'</span>)
+0118 <span class="keyword">end</span>
+0119 <span class="keyword">if</span> nargin&gt;5
+0120  error(<span class="string">'CVARGAS:cmjoin:tooManyInputs'</span>,<span class="keyword">...</span>
+0121   <span class="string">'At most 5 inputs are allowed.'</span>)
+0122 <span class="keyword">end</span>
+0123 <span class="keyword">if</span> nargout&gt;4
+0124  error(<span class="string">'CVARGAS:cmjoin:tooManyOutputs'</span>,<span class="keyword">...</span>
+0125   <span class="string">'At most 4 outputs are allowed.'</span>)
+0126 <span class="keyword">end</span>
+0127 
+0128 <span class="comment">% Checks AX:</span>
+0129 AX = {get(get(0,<span class="string">'CurrentFigure'</span>),<span class="string">'CurrentAxes'</span>)};
+0130 <span class="keyword">if</span> isempty(AX{1})
+0131  AX = {};
+0132 <span class="keyword">end</span>
+0133 <span class="keyword">if</span> (length(varargin{1})==1) &amp;&amp; ishandle(varargin{1}) &amp;&amp; <span class="keyword">...</span>
+0134   strcmp(get(varargin{1},<span class="string">'Type'</span>),<span class="string">'axes'</span>)
+0135  AX = varargin(1);
+0136  varargin(1) = [];
+0137  <span class="keyword">if</span> isempty(varargin)
+0138   error(<span class="string">'CVARGAS:cmjoin:notEnoughInputs'</span>,<span class="keyword">...</span>
+0139    <span class="string">'CMAPS input must be given.'</span>)
+0140  <span class="keyword">end</span>
+0141 <span class="keyword">end</span>
+0142 
+0143 <span class="comment">% Checks CMAPS:</span>
+0144 CMAPS  = varargin{1};
+0145 Ncmaps = length(CMAPS);
+0146 <span class="keyword">if</span> ~iscell(CMAPS) || (Ncmaps&lt;2)
+0147  error(<span class="string">'CVARGAS:cmjoin:incorrectCmapsType'</span>,<span class="keyword">...</span>
+0148   <span class="string">'CMAPS must be a cell input with at least 2 colormaps.'</span>)
+0149 <span class="keyword">end</span>
+0150 varargin(1) = [];
+0151 Nopt        = length(varargin);
+0152 
+0153 <span class="comment">% Checks LEV and sets Ncol and Jlev:</span>
+0154 Ncol = []; <span class="comment">% Number of colors for each colormap.</span>
+0155 Jlev = []; <span class="comment">% Join levels.</span>
+0156 LEV  = []; <span class="comment">% Levels at which each CMAPS begins and ends.</span>
+0157 <span class="keyword">if</span> (Nopt&lt;1) || isempty(varargin{1})
+0158  <span class="comment">% continue as empty</span>
+0159 <span class="keyword">elseif</span> ~all(isfinite(varargin{1}(:)))
+0160  error(<span class="string">'CVARGAS:cmjoin:incorrectLevValue'</span>,<span class="keyword">...</span>
+0161   <span class="string">'LEV must be integers or scalars.'</span>)
+0162 <span class="keyword">else</span>
+0163  Nopt1 = length(varargin{1}(:));
+0164  <span class="keyword">if</span> (Nopt1==Ncmaps)
+0165   <span class="comment">% Specifies number of colors:</span>
+0166   Ncol = varargin{1}(:);
+0167   <span class="keyword">if</span> ~all(Ncol==round(Ncol))
+0168    error(<span class="string">'CVARGAS:cmjoin:incorrectLevInput'</span>,<span class="keyword">...</span>
+0169     <span class="string">'LEV must be integers when defines number of colors.'</span>)
+0170   <span class="keyword">end</span>
+0171  <span class="keyword">elseif</span> ~all(sort(varargin{1})==varargin{1})
+0172   error(<span class="string">'CVARGAS:cmjoin:incorrectLevInput'</span>,<span class="keyword">...</span>
+0173    <span class="string">'LEV must be monotonically increasing.'</span>)
+0174  <span class="keyword">elseif</span> Nopt1==(Ncmaps-1) 
+0175   Jlev = varargin{1}(:);
+0176  <span class="keyword">elseif</span> Nopt1==(Ncmaps+1)
+0177   LEV = varargin{1}(:);
+0178  <span class="keyword">else</span>
+0179   error(<span class="string">'CVARGAS:cmjoin:incorrectLevLength'</span>,<span class="keyword">...</span>
+0180    <span class="string">'LEV must have any of length(CMAPS)+[-1 0 1] elements.'</span>)
+0181  <span class="keyword">end</span>
+0182 <span class="keyword">end</span>
+0183 
+0184 <span class="comment">% Checks WID:</span>
+0185 Tcol = []; <span class="comment">% Total number of colors for output colormap.</span>
+0186 <span class="keyword">if</span> (Nopt&lt;2) || isempty(varargin{2})
+0187  <span class="comment">% Tries to generate a colormap with default length with every colorband</span>
+0188  <span class="comment">% of the same width:</span>
+0189  WID = [];
+0190  <span class="keyword">if</span> ~isempty(AX)
+0191   Tcol = size(colormap(AX{:}),1);
+0192  <span class="keyword">else</span>
+0193   Tcol = size(get(0,<span class="string">'DefaultFigureColormap'</span>),1);
+0194  <span class="keyword">end</span>
+0195 <span class="keyword">else</span>
+0196  WID = varargin{2}(:);
+0197  WID(~isfinite(WID) | (WID&lt;0)) = 0;
+0198  <span class="keyword">if</span> ~any(WID&gt;0)
+0199   error(<span class="string">'CVARGAS:cmjoin:incorrectWidInput'</span>,<span class="keyword">...</span>
+0200    <span class="string">'At least one WID must be positive.'</span>)
+0201  <span class="keyword">end</span>
+0202  <span class="keyword">if</span> length(WID)==1
+0203   WID = repmat(abs(varargin{2}),Ncmaps,1);
+0204  <span class="keyword">elseif</span> length(WID)~=Ncmaps
+0205   error(<span class="string">'CVARGAS:cmjoin:incorrectWidLength'</span>,<span class="keyword">...</span>
+0206    <span class="string">'WID must have length 1 or same as CMAPS.'</span>)
+0207  <span class="keyword">end</span>
+0208 <span class="keyword">end</span>
+0209 
+0210 <span class="comment">% Checks CLIM:</span>
+0211 <span class="keyword">if</span> (Nopt&lt;3) || isempty(varargin{3})
+0212  <span class="comment">% Sets default CLIM:</span>
+0213  <span class="keyword">if</span> ~isempty(LEV)
+0214   CLIM = [LEV(1) LEV(end)];
+0215  <span class="keyword">elseif</span> ~isempty(AX)
+0216   CLIM = caxis(AX{:});
+0217  <span class="keyword">else</span>
+0218   CLIM = [0 1];
+0219  <span class="keyword">end</span>
+0220 <span class="keyword">else</span>
+0221  CLIM = varargin{3}(:).';
+0222  <span class="keyword">if</span> (length(CLIM)==2) &amp;&amp; (diff(CLIM)&gt;0) &amp;&amp; isfinite(diff(CLIM))
+0223   <span class="comment">% continue</span>
+0224  <span class="keyword">else</span>
+0225   error(<span class="string">'CVARGAS:cmjoin:incorrectClimInput'</span>,<span class="keyword">...</span>
+0226    <span class="string">'CLIM must be a valid color limits. See CAXIS for details.'</span>)
+0227  <span class="keyword">end</span>
+0228 <span class="keyword">end</span>
+0229 
+0230 
+0231 <span class="comment">% -------------------------------------------------------------------------</span>
+0232 <span class="comment">% MAIN</span>
+0233 <span class="comment">% -------------------------------------------------------------------------</span>
+0234 
+0235 <span class="comment">% Gets rounding precision:</span>
+0236 temp = warning(<span class="string">'off'</span>,<span class="string">'MATLAB:log:logOfZero'</span>);
+0237 <span class="keyword">if</span> ~isempty(WID)
+0238  tempp               = WID;
+0239  precision           = floor(log10(abs(tempp)));
+0240  precision(tempp==0) = 0;
+0241  precision           = min(precision)-tol;
+0242  <span class="comment">% Rounds:</span>
+0243  WID   = round(WID*10^(-precision))*10^precision;
+0244  <span class="keyword">if</span> ~isempty(LEV)
+0245   LEV(1)        = floor(LEV(1)       *10^(-precision))*10^precision;
+0246   LEV(2:end-1)  = round(LEV(2:end-1) *10^(-precision))*10^precision;
+0247   LEV(end)      = ceil(LEV(end)      *10^(-precision))*10^precision;
+0248  <span class="keyword">elseif</span> ~isempty(Jlev)
+0249   Jlev(1)       = floor(Jlev(1)      *10^(-precision))*10^precision;
+0250   Jlev(2:end-1) = round(Jlev(2:end-1)*10^(-precision))*10^precision;
+0251   Jlev(end)     = ceil(Jlev(end)     *10^(-precision))*10^precision;
+0252  <span class="keyword">end</span>
+0253 <span class="keyword">elseif</span> ~isempty(LEV)
+0254  tempp               = diff(LEV);
+0255  precision           = floor(log10(abs(tempp)));
+0256  precision(tempp==0) = 0;
+0257  precision           = min(precision)-tol;
+0258  <span class="comment">% Rounds:</span>
+0259  LEV(1)       = floor(LEV(1)      *10^(-precision))*10^precision;
+0260  LEV(2:end-1) = round(LEV(2:end-1)*10^(-precision))*10^precision;
+0261  LEV(end)     = ceil(LEV(end)     *10^(-precision))*10^precision;
+0262 <span class="keyword">elseif</span> ~isempty(Jlev)
+0263  tempp               = diff(Jlev);
+0264  <span class="keyword">if</span> isempty(tempp)
+0265   tempp              = Jlev;
+0266  <span class="keyword">end</span>
+0267  precision           = floor(log10(abs(tempp)));
+0268  precision(tempp==0) = 0;
+0269  precision           = min(precision)-tol;
+0270  <span class="comment">% Rounds:</span>
+0271  <span class="keyword">if</span> length(Jlev)==1
+0272   Jlev          = round(Jlev*10^(-precision))*10^precision;
+0273  <span class="keyword">else</span>
+0274   Jlev(1)       = floor(Jlev(1)      *10^(-precision))*10^precision;
+0275   Jlev(2:end-1) = round(Jlev(2:end-1)*10^(-precision))*10^precision;
+0276   Jlev(end)     = ceil(Jlev(end)     *10^(-precision))*10^precision;
+0277  <span class="keyword">end</span>
+0278 <span class="keyword">else</span>
+0279  tempp               = CLIM;
+0280  precision           = floor(log10(abs(tempp)));
+0281  precision(tempp==0) = 0;
+0282  precision           = min(precision)-tol;
+0283 <span class="keyword">end</span>
+0284 <span class="comment">% Rounds:</span>
+0285 CLIM(1) = floor(CLIM(1)*10^(-precision))*10^precision;
+0286 CLIM(2) =  ceil(CLIM(2)*10^(-precision))*10^precision;
+0287 warning(temp.state,<span class="string">'MATLAB:log:logOfZero'</span>)
+0288 
+0289 <span class="comment">% Completes levels when only join levels are specified:</span>
+0290 <span class="keyword">if</span> ~isempty(Jlev)
+0291  cedge = CLIM;
+0292  <span class="comment">% First limit:</span>
+0293  <span class="keyword">if</span> cedge(1)&lt;=Jlev(1)
+0294   <span class="keyword">if</span> ~isempty(WID)
+0295    cedge(1) = Jlev(1);
+0296    <span class="keyword">if</span> WID(1)~=0
+0297     cedge(1) = cedge(1) - WID(1)*ceil((Jlev(1)-CLIM(1))/WID(1));
+0298    <span class="keyword">end</span>
+0299   <span class="keyword">else</span>
+0300    <span class="comment">% continue</span>
+0301   <span class="keyword">end</span>
+0302  <span class="keyword">else</span>
+0303   <span class="keyword">if</span> (Ncmaps==2)
+0304    cedge(1) = Jlev(1);
+0305   <span class="keyword">else</span>
+0306    <span class="keyword">for</span> k = 2:length(Jlev)
+0307     <span class="keyword">if</span> cedge(1)&lt;=Jlev(k)
+0308      cedge(1) = Jlev(k-1);
+0309      <span class="keyword">break</span>
+0310     <span class="keyword">else</span>
+0311      Jlev(k-1) = Jlev(k);
+0312     <span class="keyword">end</span>
+0313    <span class="keyword">end</span>
+0314   <span class="keyword">end</span>
+0315  <span class="keyword">end</span>
+0316  <span class="comment">% Last limit:</span>
+0317  <span class="keyword">if</span> cedge(2)&gt;=Jlev(end)
+0318   <span class="keyword">if</span> ~isempty(WID)
+0319    cedge(2) = Jlev(end);
+0320    <span class="keyword">if</span> WID(end)~=0
+0321     cedge(2) = cedge(2) + WID(end)*ceil((CLIM(2)-Jlev(end))/WID(end));
+0322    <span class="keyword">end</span>
+0323   <span class="keyword">else</span>
+0324    <span class="comment">% continue</span>
+0325   <span class="keyword">end</span>
+0326  <span class="keyword">else</span>
+0327   <span class="keyword">if</span> (Ncmaps==2)
+0328    cedge(2) = Jlev(end);
+0329   <span class="keyword">else</span>
+0330    <span class="keyword">for</span> k = length(Jlev)-1:-1:1
+0331     <span class="keyword">if</span> cedge(2)&gt;=Jlev(k)
+0332      cedge(2) = Jlev(k+1);
+0333      <span class="keyword">break</span>
+0334     <span class="keyword">else</span>
+0335      Jlev(k+1) = Jlev(k);
+0336     <span class="keyword">end</span>
+0337    <span class="keyword">end</span>
+0338   <span class="keyword">end</span>
+0339  <span class="keyword">end</span>
+0340  <span class="comment">% New Levels:</span>
+0341  LEV = [cedge(1); Jlev; cedge(2)];
+0342  
+0343 <span class="keyword">end</span>
+0344 
+0345 <span class="comment">% Gets colorband width and sets WID:</span>
+0346 <span class="keyword">if</span> ~isempty(Ncol)
+0347  <span class="keyword">if</span> isempty(WID)
+0348   <span class="comment">% Treats all colorbands with equal widths:</span>
+0349   Cwid = diff(CLIM)/sum(abs(Ncol));
+0350   Cwid = round(Cwid*10^(-(precision-1)))*10^(precision-1);
+0351   WID  = repmat(Cwid,Ncmaps,1);
+0352   LEV  = [CLIM(1); CLIM(1)+cumsum(abs(Ncol))*Cwid];
+0353  <span class="keyword">else</span>
+0354   <span class="comment">% Treats WID as colorbands withs relations:</span>
+0355   WID   = WID/min(WID(WID~=0));
+0356   Ncol2 = WID.*Ncol;
+0357   Cwid  = diff(CLIM)/sum(abs(Ncol2));
+0358   Cwid  = round(Cwid*10^(-(precision-1)))*10^(precision-1);
+0359   WID   = WID*Cwid;
+0360   LEV   = [CLIM(1); CLIM(1)+cumsum(abs(Ncol2))*Cwid];
+0361  <span class="keyword">end</span>
+0362 <span class="keyword">elseif</span> ~isempty(WID)
+0363  <span class="comment">% Gets colorband width:</span>
+0364  Cwid  = WID(1)*10^(-precision);
+0365  <span class="keyword">for</span> k = 2:Ncmaps
+0366   Cwid = gcd(Cwid,WID(k)*10^(-precision));
+0367  <span class="keyword">end</span>
+0368  Cwid  = Cwid*10^precision;
+0369 <span class="keyword">else</span>
+0370  <span class="comment">% Gets relation between colomaps width:</span>
+0371  <span class="keyword">if</span> isempty(LEV)
+0372   r    = ones(Ncmaps,1);
+0373   d    = diff(CLIM);
+0374  <span class="keyword">else</span>
+0375   r         = diff(LEV);
+0376   temp      = warning(<span class="string">'off'</span>,<span class="string">'MATLAB:log:logOfZero'</span>);
+0377   precision = floor(log10(abs(r))); <span class="comment">% r = Str.XXX x 10^precision.</span>
+0378   precision(r==0) = 0; <span class="comment">% precision=0 if Ncol=0.</span>
+0379   warning(temp.state,<span class="string">'MATLAB:log:logOfZero'</span>)
+0380   precision = min(precision)-tol;
+0381   r  = round(r*10^(-precision));
+0382   rgcd  = r(1);
+0383   <span class="keyword">for</span> k = 2:Ncmaps
+0384    rgcd = gcd(rgcd,r(k));
+0385   <span class="keyword">end</span>
+0386   r = r/rgcd;
+0387   d = (LEV(end)-LEV(1));
+0388  <span class="keyword">end</span>
+0389  <span class="comment">% Gets colorband width:</span>
+0390  r    = r*ceil(Tcol/sum(r));
+0391  Cwid = d/sum(r);
+0392  WID  = repmat(Cwid,Ncmaps,1);
+0393 <span class="keyword">end</span>
+0394 
+0395 <span class="comment">% Sets LEV when empty:</span>
+0396 <span class="keyword">if</span> isempty(LEV)
+0397  LEV = linspace(CLIM(1),CLIM(2),Ncmaps+1)';
+0398 <span class="keyword">end</span>
+0399 
+0400 <span class="comment">% Gets number of colors for each colormap:</span>
+0401 Ncol2 = round(diff(LEV)/Cwid);
+0402 <span class="keyword">if</span> ~isempty(Ncol)
+0403  <span class="comment">% continue</span>
+0404 <span class="keyword">else</span>
+0405  Ncol = round(diff(LEV)./WID);
+0406  Ncol(~isfinite(Ncol)) = 0;
+0407  <span class="keyword">if</span> ~all(Ncol==round(Ncol))
+0408   error(<span class="string">'CVARGAS:cmjoin:incorrectWidColor'</span>,<span class="keyword">...</span>
+0409    <span class="string">'Colorband do not match each colormap width. Modify LEV or WID.'</span>)
+0410  <span class="keyword">end</span>
+0411 <span class="keyword">end</span>
+0412 
+0413 <span class="comment">% Generates the colormaps:</span>
+0414 CMAP  = zeros(sum(abs(Ncol2)),3);
+0415 xband = zeros(sum(abs(Ncol2))+1,1);
+0416 tempr = [];
+0417 <span class="keyword">for</span> k = 1:Ncmaps
+0418  <span class="keyword">if</span> Ncol(k)
+0419   r          = sum(abs(Ncol2(1:k-1)))+(1:abs(Ncol2(k)));
+0420   <span class="keyword">if</span> Ncol(k)~=Ncol2(k)
+0421    CMAP(r,:) = <a href="cmapping.html" class="code" title="function RGB = cmapping(varargin)">cmapping</a>(Ncol2(k),<a href="cmapping.html" class="code" title="function RGB = cmapping(varargin)">cmapping</a>(Ncol(k),CMAPS{k}),<span class="string">'discrete'</span>);
+0422   <span class="keyword">else</span>
+0423    CMAP(r,:) = <a href="cmapping.html" class="code" title="function RGB = cmapping(varargin)">cmapping</a>(Ncol(k),CMAPS{k});
+0424   <span class="keyword">end</span>
+0425   tempr      = linspace(LEV(k),LEV(k+1),abs(Ncol2(k))+1)';
+0426   xband(r)   = tempr(1:end-1); 
+0427  <span class="keyword">end</span>
+0428 <span class="keyword">end</span>
+0429 <span class="keyword">if</span> ~isempty(tempr)
+0430  xband(end) = tempr(end);
+0431 <span class="keyword">end</span>
+0432 
+0433 <span class="comment">% Cuts edges:</span>
+0434 ind = find((xband&gt;=CLIM(1)) &amp; (xband&lt;=CLIM(2)));
+0435 <span class="keyword">if</span> (ind(1)~=1) &amp;&amp; ~(any(xband==CLIM(1)))
+0436  ind = [ind(1)-1; ind];
+0437 <span class="keyword">end</span>
+0438 <span class="keyword">if</span> (ind(end)~=length(ind)) &amp;&amp; ~(any(xband==CLIM(2)))
+0439  ind = [ind; ind(end)+1];
+0440 <span class="keyword">end</span>
+0441 CMAP  = CMAP(ind(1:end-1),:);
+0442 clim2 = xband(ind([1 end]));
+0443 
+0444 
+0445 <span class="comment">% OUTPUTS CHECK-OUT</span>
+0446 <span class="comment">% -------------------------------------------------------------------------</span>
+0447 
+0448 <span class="keyword">if</span> ~nargout
+0449  colormap(AX{:},CMAP)
+0450  caxis(AX{:},clim2(:)');
+0451  clear CMAP
+0452 <span class="keyword">else</span>
+0453  <span class="keyword">if</span> ~isempty(AX)
+0454   colormap(AX{:},CMAP)
+0455   caxis(AX{:},clim2(:)');
+0456  <span class="keyword">end</span>
+0457  CLIM = clim2;
+0458  WID  = diff(LEV)./max([Ncol ones(Ncmaps,1)],[],2);
+0459 <span class="keyword">end</span>
+0460 
+0461 
+0462 <span class="comment">% [EOF]   cmjoin.m</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

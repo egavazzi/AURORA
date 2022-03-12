@@ -1,0 +1,14 @@
+% (eV)  % state abr.    source
+15.581  N2_ion        (*)
+15.581  N2_ion_X2Sgp  (*)
+16.699  N2_ion_A2Piup (*)
+18.751  N2_ion_B2Sup  (*)
+23.583  N2_ion_C2Sup  (*)
+39.622  N2_ion_G2Sgp  (*)
+27.02   N2_ion_F2Sgp  (**)
+34.881  N2_ion_2Sg    (**)
+24.000  N2_dion       (***)
+% 
+% (*) From Itikawa et al 1986
+% (**) Estimated from Gallagher et al 1987
+% (***) Approximately estimated from Gallagher et al 1987

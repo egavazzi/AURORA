@@ -1,0 +1,23 @@
+/* Created by mdot for Matlab */
+digraph m2html {
+  inferno -> labinterp;
+  legendflex -> getpos;
+
+  Contents [URL="Contents.html"];
+  backup1000filesversions [URL="backup1000filesversions.html"];
+  cline [URL="cline.html"];
+  colorbar_labeled [URL="colorbar_labeled.html"];
+  d2M [URL="d2M.html"];
+  getpos [URL="getpos.html"];
+  gridLegend [URL="gridLegend.html"];
+  in_def2 [URL="in_def2.html"];
+  inferno [URL="inferno.html"];
+  labinterp [URL="labinterp.html"];
+  legendflex [URL="legendflex.html"];
+  plotCube [URL="plotCube.html"];
+  plot_pars_n_pars [URL="plot_pars_n_pars.html"];
+  py_D_cmap [URL="py_D_cmap.html"];
+  steadystate_ionprof_cmp [URL="steadystate_ionprof_cmp.html"];
+  strim [URL="strim.html"];
+  unplot [URL="unplot.html"];
+}

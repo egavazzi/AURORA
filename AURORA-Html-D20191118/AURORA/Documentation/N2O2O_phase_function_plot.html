@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of N2O2O_phase_function_plot</title>
+  <meta name="keywords" content="N2O2O_phase_function_plot">
+  <meta name="description" content="% Phase-function-plots">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Documentation -->
+<h1>N2O2O_phase_function_plot
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>% Phase-function-plots</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">% Phase-function-plots
+ Script requires an energy-grid, suitably produced with the
+ set-up-scripts</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/Data_electron/phase_fcn_N2.html" class="code" title="function [phfcnE,phfcnI] = phase_fcn_N2(E,theta)">phase_fcn_N2</a>	PHASE_FCN_N2 -</li><li><a href="../../AURORA/Data_electron/phase_fcn_O.html" class="code" title="function [phfcnE,phfcnI] = phase_fcn_O(E,theta)">phase_fcn_O</a>	PHASE_FCN_N2 -</li><li><a href="../../AURORA/Data_electron/phase_fcn_O2.html" class="code" title="function [phfcnE,phfcnI] = phase_fcn_O2(E,theta)">phase_fcn_O2</a>	PHASE_FCN_N2 -</li><li><a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>	COLORBAR_LABELED - colorbar with label for range linear or log</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%% Phase-function-plots</span>
+0002 <span class="comment">% Script requires an energy-grid, suitably produced with the</span>
+0003 <span class="comment">% set-up-scripts</span>
+0004 
+0005 <span class="keyword">if</span> ~exist(<span class="string">'phfcnE_N2'</span>,<span class="string">'var'</span>)
+0006   [phfcnE_N2,phfcnI_N2] = <a href="../../AURORA/Data_electron/phase_fcn_N2.html" class="code" title="function [phfcnE,phfcnI] = phase_fcn_N2(E,theta)">phase_fcn_N2</a>(E,(0:180)'*pi/180);
+0007   [phfcnE_O2,phfcnI_O2] = <a href="../../AURORA/Data_electron/phase_fcn_O2.html" class="code" title="function [phfcnE,phfcnI] = phase_fcn_O2(E,theta)">phase_fcn_O2</a>(E,(0:180)'*pi/180);
+0008   [phfcnE_O,phfcnI_O] = <a href="../../AURORA/Data_electron/phase_fcn_O.html" class="code" title="function [phfcnE,phfcnI] = phase_fcn_O(E,theta)">phase_fcn_O</a>(E,(0:180)'*pi/180);
+0009 <span class="keyword">end</span>
+0010 
+0011 Tftsz = 15;
+0012 Lftsz = 14;
+0013 
+0014 sth = suptitle(<span class="string">'Phase-functions'</span>);
+0015 set(sth,<span class="string">'fontsize'</span>,Tftsz)
+0016 
+0017 <span class="comment">%% N2</span>
+0018 sph = subplot(3,2,1);
+0019 pcolor(E,(0:180),log10(phfcnE_N2)),shading flat
+0020 set(gca,<span class="string">'ytick'</span>,[0:30:180])
+0021 set(gca,<span class="string">'xscale'</span>,<span class="string">'log'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>)
+0022 axis([5 1e4 0 180])
+0023 title(<span class="string">'N_2 elastic collisions'</span>,<span class="string">'fontsize'</span>,Tftsz)
+0024 ylabel(<span class="string">'scattering angle (^\circ)'</span>,<span class="string">'fontsize'</span>,Lftsz)
+0025 cblh = <a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>(<span class="string">''</span>,<span class="string">'log'</span>);
+0026 
+0027 sph(2) = subplot(3,2,2);
+0028 pcolor(E,(0:180),log10(phfcnI_N2)),shading flat
+0029 set(gca,<span class="string">'ytick'</span>,[0:30:180])
+0030 set(gca,<span class="string">'xscale'</span>,<span class="string">'log'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>)
+0031 title(<span class="string">'N_2 inelastic collisions'</span>,<span class="string">'fontsize'</span>,Tftsz)
+0032 cblh(2) = <a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>(<span class="string">''</span>,<span class="string">'log'</span>);
+0033 
+0034 <span class="comment">%% O2</span>
+0035 sph(3) = subplot(3,2,3);
+0036 pcolor(E,(0:180),log10(phfcnE_O2)),shading flat
+0037 set(gca,<span class="string">'ytick'</span>,[0:30:180])
+0038 set(gca,<span class="string">'xscale'</span>,<span class="string">'log'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>)
+0039 axis([5 1e4 0 180])
+0040 title(<span class="string">'O_2 elastic collisions'</span>,<span class="string">'fontsize'</span>,Tftsz)
+0041 ylabel(<span class="string">'scattering angle (^\circ)'</span>,<span class="string">'fontsize'</span>,Lftsz)
+0042 cblh(3) = <a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>(<span class="string">''</span>,<span class="string">'log'</span>);
+0043 
+0044 sph(4) = subplot(3,2,4);
+0045 pcolor(E,(0:180),log10(phfcnI_O2)),shading flat
+0046 set(gca,<span class="string">'ytick'</span>,[0:30:180])
+0047 set(gca,<span class="string">'xscale'</span>,<span class="string">'log'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>)
+0048 title(<span class="string">'O_2 inelastic collisions'</span>,<span class="string">'fontsize'</span>,Tftsz)
+0049 cblh(4) = <a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>(<span class="string">''</span>,<span class="string">'log'</span>);
+0050 
+0051 <span class="comment">%% O</span>
+0052 sph(5) = subplot(3,2,5);
+0053 pcolor(E,(0:180),log10(phfcnE_O)),shading flat
+0054 set(gca,<span class="string">'ytick'</span>,[0:30:180])
+0055 set(gca,<span class="string">'xscale'</span>,<span class="string">'log'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>)
+0056 axis([4 1e4 0 180])
+0057 title(<span class="string">'O elastic collisions'</span>,<span class="string">'fontsize'</span>,Tftsz)
+0058 ylabel(<span class="string">'scattering angle (^\circ)'</span>,<span class="string">'fontsize'</span>,Lftsz)
+0059 xlabel(<span class="string">'Energy (eV)'</span>,<span class="string">'fontsize'</span>,Lftsz)
+0060 cblh(5) = <a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>(<span class="string">''</span>,<span class="string">'log'</span>);
+0061 
+0062 sph(6) = subplot(3,2,6);
+0063 pcolor(E,(0:180),log10(phfcnI_O)),shading flat
+0064 set(gca,<span class="string">'ytick'</span>,[0:30:180])
+0065 set(gca,<span class="string">'xscale'</span>,<span class="string">'log'</span>,<span class="string">'tickdir'</span>,<span class="string">'out'</span>)
+0066 title(<span class="string">'O inelastic collisions'</span>,<span class="string">'fontsize'</span>,Tftsz)
+0067 xlabel(<span class="string">'Energy (eV)'</span>,<span class="string">'fontsize'</span>,Lftsz)
+0068 cblh(6) = <a href="../../AURORA/tools/colorbar_labeled.html" class="code" title="function handle=colorbar_labeled(label,lg,varargin)">colorbar_labeled</a>(<span class="string">''</span>,<span class="string">'log'</span>);
+0069 
+0070 drawnow
+0071 
+0072 <span class="keyword">for</span> i1 = 1:6,
+0073   axpos = get(sph(i1),<span class="string">'position'</span>);
+0074   cblp = get(cblh(i1),<span class="string">'position'</span>);
+0075   set(cblh(i1),<span class="string">'position'</span>,[cblp(1:3),axpos(4)])
+0076 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

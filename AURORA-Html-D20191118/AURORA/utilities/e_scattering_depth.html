@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of e_scattering_depth</title>
+  <meta name="keywords" content="e_scattering_depth">
+  <meta name="description" content="E_SCATTERING_DEPTH - electron scattering depth">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html utilities -->
+<h1>e_scattering_depth
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>E_SCATTERING_DEPTH - electron scattering depth</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function tau = e_scattering_depth(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> E_SCATTERING_DEPTH - electron scattering depth
+   
+ Calling:
+  tau = e_scattering_depth(z,nA,xsA,nB,xsB,...,nX,xsX)
+ Input:
+  nA  - number-density of species A, double array [nA x 1]
+  xsA - collision cross-section array, double array [nLevelsA x nE],
+        all collision cross-sections for electrons with
+        atoms/moelcules of species A, ellastic, inellastic,
+        ionization etc.
+  nB  - number-density of next species, double array [nA x 1]
+  xsB - collision-cross-sections for electrons with
+        atoms/molecules of species B, double array [nLevelsB x nE]
+  :
+  :     and so on...
+ Output:
+  l_meanfree - mean-free-path, double array [nA x nE]
+ 
+ Units should match to give sensible dimension of mean-free-path,
+ i.e. m^-3 and m^2 for number-density and cross-section giving
+ l_meanfree the unit of m.
+ 
+ The function will calculate the mean-free-path at all levels of
+ the neutral density, typically altitude-profiles at all energies
+ giving a 2-D array of mean-free-paths.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function tau = e_scattering_depth(varargin)</a>
+0002 <span class="comment">% E_SCATTERING_DEPTH - electron scattering depth</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% Calling:</span>
+0005 <span class="comment">%  tau = e_scattering_depth(z,nA,xsA,nB,xsB,...,nX,xsX)</span>
+0006 <span class="comment">% Input:</span>
+0007 <span class="comment">%  nA  - number-density of species A, double array [nA x 1]</span>
+0008 <span class="comment">%  xsA - collision cross-section array, double array [nLevelsA x nE],</span>
+0009 <span class="comment">%        all collision cross-sections for electrons with</span>
+0010 <span class="comment">%        atoms/moelcules of species A, ellastic, inellastic,</span>
+0011 <span class="comment">%        ionization etc.</span>
+0012 <span class="comment">%  nB  - number-density of next species, double array [nA x 1]</span>
+0013 <span class="comment">%  xsB - collision-cross-sections for electrons with</span>
+0014 <span class="comment">%        atoms/molecules of species B, double array [nLevelsB x nE]</span>
+0015 <span class="comment">%  :</span>
+0016 <span class="comment">%  :     and so on...</span>
+0017 <span class="comment">% Output:</span>
+0018 <span class="comment">%  l_meanfree - mean-free-path, double array [nA x nE]</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% Units should match to give sensible dimension of mean-free-path,</span>
+0021 <span class="comment">% i.e. m^-3 and m^2 for number-density and cross-section giving</span>
+0022 <span class="comment">% l_meanfree the unit of m.</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% The function will calculate the mean-free-path at all levels of</span>
+0025 <span class="comment">% the neutral density, typically altitude-profiles at all energies</span>
+0026 <span class="comment">% giving a 2-D array of mean-free-paths.</span>
+0027 
+0028 <span class="comment">% Copyright � 20190502 B. Gustavsson, &lt;bjorn.gustavsson@uit.no&gt;</span>
+0029 <span class="comment">%   This is free software, GPL version 3 or later applies</span>
+0030 
+0031 dSC = 0;
+0032 
+0033 <span class="keyword">for</span> i1 = 2:2:nargin
+0034   
+0035   n_i = varargin{i1};   <span class="comment">% Neutral density</span>
+0036   xs_i = varargin{i1+1};<span class="comment">% Array with colission cross sections</span>
+0037   
+0038   dSC = dSC + n_i*xs_i(1,:);
+0039   <span class="comment">% add the inelastic colissions to the total</span>
+0040   <span class="keyword">for</span> j2 = 2:size(xs_i,1)-1,
+0041     
+0042     dSC = dSC + n_i*xs_i(j2,:);
+0043     
+0044   <span class="keyword">end</span>
+0045   
+0046 <span class="keyword">end</span>
+0047 
+0048 z = varargin{1};
+0049 tau = -flipud(cumtrapz(flipud(z),flipud(dSC)));</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

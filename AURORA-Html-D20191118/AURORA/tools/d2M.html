@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of d2M</title>
+  <meta name="keywords" content="d2M">
+  <meta name="description" content="D2M - second-order differentiation matrix for non-uniform grid">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html tools -->
+<h1>d2M
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>D2M - second-order differentiation matrix for non-uniform grid</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function D2M = d2M(z) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> D2M - second-order differentiation matrix for non-uniform grid
+   D2M calculates the second-order differentiation-matrix for data
+   on a non-uniform one-dimensional grid. This is the properly
+   weighted differential operator centred at the grid-points. The
+   first and last rows of the differentiation matrix is set to
+   zero, so the first and last element of the second derivatives
+   are returned as zeroes.
+ 
+ Calling:
+   D2M = d2M(z)
+ Input:
+   z   - grid coordinate vector, double array [n_z x 1] or [1 x n_z]
+ Output:
+   D2M - differentiation matrix, double array [n_z x n_z]
+ Example:
+  x = [1.9;2;2.2;2.5]; % non-uniform grid, advanced stuff!
+  D2M = d2M(x)
+  y = x.^2;
+  d2ydx2 = D2M*y
+  % analytical solution:
+  % dydx = 2*x
+  % d2ydx2 = 2
+  y = x.^3;
+  d2ydx2 = D2M*y
+  % Analytical solution
+  % dydx = 3*x^2
+  % d2ydx2 = 2*3*x
+  % Comparison:
+  [d2ydx2(2:end-1)./(2*3*x(2:end-1))]
+  % First order accurate in gradient-of-grid-spacing, see below
+
+ No argument checks or error-controls, if you want that you have
+ to pay me good money.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/e_transport_Ms/de_M_stream_CNztusD.html" class="code" title="function [Ie_zt] = de_M_stream_CNztusD(h_atm,t_in,mu,I_top_of_t,I0,v,QC_mu,A,B_b2b,Dz,lowerBvals)">de_M_stream_CNztusD</a>	de_M_stream_CNztusD - multistream Crank-Nicholson electron transport</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function D2M = d2M(z)</a>
+0002 <span class="comment">% D2M - second-order differentiation matrix for non-uniform grid</span>
+0003 <span class="comment">%   D2M calculates the second-order differentiation-matrix for data</span>
+0004 <span class="comment">%   on a non-uniform one-dimensional grid. This is the properly</span>
+0005 <span class="comment">%   weighted differential operator centred at the grid-points. The</span>
+0006 <span class="comment">%   first and last rows of the differentiation matrix is set to</span>
+0007 <span class="comment">%   zero, so the first and last element of the second derivatives</span>
+0008 <span class="comment">%   are returned as zeroes.</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% Calling:</span>
+0011 <span class="comment">%   D2M = d2M(z)</span>
+0012 <span class="comment">% Input:</span>
+0013 <span class="comment">%   z   - grid coordinate vector, double array [n_z x 1] or [1 x n_z]</span>
+0014 <span class="comment">% Output:</span>
+0015 <span class="comment">%   D2M - differentiation matrix, double array [n_z x n_z]</span>
+0016 <span class="comment">% Example:</span>
+0017 <span class="comment">%  x = [1.9;2;2.2;2.5]; % non-uniform grid, advanced stuff!</span>
+0018 <span class="comment">%  D2M = d2M(x)</span>
+0019 <span class="comment">%  y = x.^2;</span>
+0020 <span class="comment">%  d2ydx2 = D2M*y</span>
+0021 <span class="comment">%  % analytical solution:</span>
+0022 <span class="comment">%  % dydx = 2*x</span>
+0023 <span class="comment">%  % d2ydx2 = 2</span>
+0024 <span class="comment">%  y = x.^3;</span>
+0025 <span class="comment">%  d2ydx2 = D2M*y</span>
+0026 <span class="comment">%  % Analytical solution</span>
+0027 <span class="comment">%  % dydx = 3*x^2</span>
+0028 <span class="comment">%  % d2ydx2 = 2*3*x</span>
+0029 <span class="comment">%  % Comparison:</span>
+0030 <span class="comment">%  [d2ydx2(2:end-1)./(2*3*x(2:end-1))]</span>
+0031 <span class="comment">%  % First order accurate in gradient-of-grid-spacing, see below</span>
+0032 <span class="comment">%</span>
+0033 <span class="comment">% No argument checks or error-controls, if you want that you have</span>
+0034 <span class="comment">% to pay me good money.</span>
+0035 
+0036 <span class="comment">% Copyright � 20190506 B. Gustavsson, &lt;bjorn.gustavsson@uit.no&gt;</span>
+0037 <span class="comment">%   This is free software, GPL version 3 or later applies</span>
+0038 
+0039 dzd = z(2:end-1) - z(1:end-2);
+0040 dzu = z(3:end)   - z(2:end-1);
+0041 
+0042 
+0043 dsup  = [2./(dzd(:).*(dzu(:)+dzd(:)));0];
+0044 dMain = [0;-2./(dzd(:).*dzu(:));0];
+0045 dsub  = [0;2./((dzd(:)+dzu(:)).*dzu(:))];
+0046 
+0047 D2M = diag(dMain) + diag(dsub,1) + diag(dsup,-1);
+0048 
+0049 <span class="comment">%%  Derivation using the matlab symbolic toolbox</span>
+0050 <span class="comment">% syms dxu dxd</span>
+0051 <span class="comment">% syms f fu fd</span>
+0052 <span class="comment">% syms dfdx d2fdx2</span>
+0053 <span class="comment">% qwe = solve(fu == f + dxu*dfdx + (dxu)^2/2*d2fdx2,fd == f - dxd*dfdx + (dxd)^2/2*d2fdx2,dfdx,d2fdx2);</span>
+0054 <span class="comment">% qwe.d2fdx2 = -(2*(dxd*f + dxu*f - dxu*fd - dxd*fu))/(dxd*dxu*(dxd + dxu))</span>
+0055 <span class="comment">% pretty(simplify(expand(qwe.d2fdx2)))</span>
+0056 <span class="comment">%</span>
+0057 <span class="comment">%    2 (dxd f + dxu f - dxu fd - dxd fu)</span>
+0058 <span class="comment">%  - -----------------------------------</span>
+0059 <span class="comment">%            dxd dxu (dxd + dxu)</span>
+0060 <span class="comment">%Manual reordering</span>
+0061 <span class="comment">%</span>
+0062 <span class="comment">%    2 dxd f + 2 dxu f - 2 dxu fd - 2 dxd fu</span>
+0063 <span class="comment">%  - ---------------------------------------</span>
+0064 <span class="comment">%              dxd dxu (dxd + dxu)</span>
+0065 <span class="comment">%</span>
+0066 <span class="comment">%     - 2 dxu fd + 2 dxd f + 2 dxu f - 2 dxd fu</span>
+0067 <span class="comment">%  - ---------------------------------------</span>
+0068 <span class="comment">%              dxd dxu (dxd + dxu)</span>
+0069 <span class="comment">%</span>
+0070 <span class="comment">%      2 dxu fd - 2 (dxd + dxu) f + 2 dxd fu</span>
+0071 <span class="comment">%    ---------------------------------------</span>
+0072 <span class="comment">%              dxd dxu (dxd + dxu)</span>
+0073 <span class="comment">%</span>
+0074 <span class="comment">%      2 dxu fd             2 (dxd + dxu) f       2 dxd fu</span>
+0075 <span class="comment">%    ------------------- - ------------------ + ---------------</span>
+0076 <span class="comment">%    dxd dxu (dxd + dxu)   dxd dxu (dxd + dxu)  dxd dxu (dxd + dxu)</span>
+0077 <span class="comment">%</span>
+0078 <span class="comment">%      2 fd             2  f       2  fu</span>
+0079 <span class="comment">%    --------------- - -------- + ---------------</span>
+0080 <span class="comment">%    dxd (dxd + dxu)   dxd dxu    dxu (dxd + dxu)</span>
+0081 <span class="comment">%</span>
+0082 <span class="comment">% % Error-order-estimate:</span>
+0083 <span class="comment">% syms d3fdx3</span>
+0084 <span class="comment">% asd = solve(fu == f + dxu*dfdx + (dxu)^2/2*d2fdx2 + (dxu)^3/6*d3fdx3,...</span>
+0085 <span class="comment">%             fd == f - dxd*dfdx + (dxd)^2/2*d2fdx2 - (dxd)^3/6*d3fdx3,dfdx,d2fdx2);</span>
+0086 <span class="comment">%</span>
+0087 <span class="comment">% Leading error term:</span>
+0088 <span class="comment">%</span>
+0089 <span class="comment">% pretty(simplify(expand(asd.d2fdx2 - qwe.d2fdx2)))</span>
+0090 <span class="comment">%</span>
+0091 <span class="comment">%  d3fdx3 (dxd - dxu)</span>
+0092 <span class="comment">%  ------------------</span>
+0093 <span class="comment">%          3</span></pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>

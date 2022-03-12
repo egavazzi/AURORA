@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of exc_8446_O2</title>
+  <meta name="keywords" content="exc_8446_O2">
+  <meta name="description" content="Xs = exc_8446_O2(E)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2003 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html AURORA --><!-- menu.html Data_electron -->
+<h1>exc_8446_O2
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>Xs = exc_8446_O2(E)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function sigma = exc_8446_O2(E) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Xs = exc_8446_O2(E)
+ 
+ exc_8446 - emission cross section (m^2) for 8446 AA
+ from molecular oxygen. E electron energy (eV)
+
+ Electron-impact production of OI 3p 3P 8446 A transition
+ in the dissociative ionization/excitation of O2
+ Schulman et al, Phys. Rev. A, 32, 2100, 1985
+ 
+ Digitised from fig.7 by DKW March 2009. Value in paper is 2 +/- 15% @ 100eV.
+ parent       O2
+ products     0    (emission)
+ threshold    15.9   (???) - seems low, dissociation energy of O2
+                             is 5.16 eV and the energy-level of
+                             O(3p3P) is 10.99 eV, so threshold has
+                             to  be 16.15 eV /BG 20180529
+ units        eV
+ valid from   0.0   Remove this eventually - or replace with other comments ...
+ valid to     0.0
+ points       39</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../AURORA/utilities/Ie_zE2Qz.html" class="code" title="function ThatWentOK = Ie_zE2Qz(nN2,nO2,nO,h_atm)">Ie_zE2Qz</a>	IE_ZE2Q_Z - Calculate the volume emission/excitation rates</li><li><a href="../../AURORA/utilities/Ie_ztE2Q_zt.html" class="code" title="function ThatWentOK = Ie_ztE2Q_zt(nN2,nO2,nO,h_atm)">Ie_ztE2Q_zt</a>	IE_ZTE2Q_ZT - Calculate the volume emission/excitation rates</li></ul>
+<!-- crossreference -->
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function sigma = exc_8446_O2(E)</a>
+0002 <span class="comment">% Xs = exc_8446_O2(E)</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% exc_8446 - emission cross section (m^2) for 8446 AA</span>
+0005 <span class="comment">% from molecular oxygen. E electron energy (eV)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% Electron-impact production of OI 3p 3P 8446 A transition</span>
+0008 <span class="comment">% in the dissociative ionization/excitation of O2</span>
+0009 <span class="comment">% Schulman et al, Phys. Rev. A, 32, 2100, 1985</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% Digitised from fig.7 by DKW March 2009. Value in paper is 2 +/- 15% @ 100eV.</span>
+0012 <span class="comment">% parent       O2</span>
+0013 <span class="comment">% products     0    (emission)</span>
+0014 <span class="comment">% threshold    15.9   (???) - seems low, dissociation energy of O2</span>
+0015 <span class="comment">%                             is 5.16 eV and the energy-level of</span>
+0016 <span class="comment">%                             O(3p3P) is 10.99 eV, so threshold has</span>
+0017 <span class="comment">%                             to  be 16.15 eV /BG 20180529</span>
+0018 <span class="comment">% units        eV</span>
+0019 <span class="comment">% valid from   0.0   Remove this eventually - or replace with other comments ...</span>
+0020 <span class="comment">% valid to     0.0</span>
+0021 <span class="comment">% points       39</span>
+0022 
+0023 EnX = [ 15.9877      0.00888889
+0024         16.3801      0.124444
+0025         16.7724      0.24
+0026         17.1341      0.377778
+0027         18.1027      0.475556
+0028         19.0345      0.6
+0029         21.5111      0.804444
+0030         24.0429      0.968889
+0031         26.5992      1.11556
+0032         31.3502      1.27111
+0033         34.5563      1.34667
+0034         37.787       1.40444
+0035         41.5816      1.45333
+0036         42.6299      1.49333
+0037         44.7387      1.56444
+0038         48.4843      1.64889
+0039         51.1387      1.72444
+0040         57.6123      1.83111
+0041         64.6682      1.91556
+0042         70.6697      1.96444
+0043         77.2536      1.99111
+0044         84.9594      2.00444
+0045         93.2475      1.99556
+0046         103.767      1.96889
+0047         114.863      1.92444
+0048         130.973      1.84444
+0049         147.09       1.76
+0050         159.877      1.68889
+0051         178.207      1.6
+0052         195.96       1.52889
+0053         215.375      1.45333
+0054         231.448      1.4
+0055         253.051      1.33778
+0056         279.08       1.26667
+0057         301.769      1.21778
+0058         327.221      1.16444
+0059         348.794      1.12444
+0060         375.344      1.07556
+0061         398.572      1.03556
+0062         1e3          0.58735   <span class="comment">% The last 3 rows added by B Gustavsson</span>
+0063         1e4          0.14193   <span class="comment">% 201806 25 to make extrapolation to</span>
+0064         1e5          0.034298];<span class="comment">% higher energies well-behaved</span>
+0065 <span class="comment">% These values are based on polynomial etrapolation of log of cross-section</span>
+0066 <span class="comment">% vs log of energy</span>
+0067 
+0068 sigma = exp(interp1(log(EnX(:,1)),log(EnX(:,2)),log(E),<span class="string">'pchip'</span>));
+0069 sigma(E&lt;16.15) = 0;
+0070 sigma = sigma*1e-22;</pre></div>
+<hr><address>Generated on Mon 18-Nov-2019 14:53:30 by <strong>B.&nbsp;Gustavsson</strong> with <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2003</address>
+</body>
+</html>
