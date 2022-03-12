@@ -1,7 +1,7 @@
 function [t_delay,mu_end] = dt_of_z_mirror(v0,z0,z_end,mu_avg,B,zB)
 % dt_of_z_mirror - travel-time along magnetic field with mirror-force 
 % This function calculates electron-travel-time and change in 
-% pitch-angle-cosine between star-altitude and a
+% pitch-angle-cosine between start-altitude and a
 % end-altitude. (Typically from the top of the ionosphere to a
 % source-altitude)
 % 
@@ -38,7 +38,7 @@ function [t_delay,mu_end] = dt_of_z_mirror(v0,z0,z_end,mu_avg,B,zB)
 %  xlabel('Pitch-angle at z0')
 %  ylabel('Pitch-angle at z_end')
 
-%   Copyright © 2020 Bjorn Gustavsson, <bjorn.gustavsson@uit.no>
+%   Copyright ï¿½ 2020 Bjorn Gustavsson, <bjorn.gustavsson@uit.no>
 %   This is free software, licensed under GNU GPL version 2 or later
 
 m_e = 9.1093835611e-31;    % Electron-mass (kg)
