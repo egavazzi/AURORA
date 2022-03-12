@@ -12,18 +12,17 @@
 
 %% Root result-directories
 if ~exist('results_dir','var') || isempty(results_dir)
-  results_dir = '/media/bgu001/5f5e8978-a828-4fd4-aabf-2032a3fb895b/Data/Bjorns-panic-repository/Etrp-tdms';
+  disp('Please enter a "results_dir"')
+  return
 end
 
 %% Run-directories:
 if ~exist('RunDirs','var') || isempty(RunDirs)
-  RunDirs = {'Run_PnL20190828';
-             'Run_AWA20190920';
-             'Run_PnL20190916';
-             'Run_PnL20191018'};
+  disp('Please enter one or several "RunDirs"')
+  return
 end
 if ~exist('movies2make')
-  movies2make = [1 1 1 1 0];
+  movies2make = [1 1 1 1 1];
 end
 
 %% This sub-plot layout might need to be modified to adapt to layouts
@@ -135,7 +134,7 @@ for i2 = 1:numel(RunDirs)
             [dh,i175] = min(abs(h_atm/1e3-325));
             [dh,i300] = min(abs(h_atm/1e3-450));
             [dh,i600] = min(abs(h_atm/1e3-600));
-            iZ = [i115,i175,i300,i600]
+            iZ = [i115,i175,i300,i600];
             set(gcf,'position',figPsquare)
             animate_IeztE_pitchangleflux(t,h_atm/1e3,...
                                          E,dE,...
@@ -143,7 +142,7 @@ for i2 = 1:numel(RunDirs)
                                          BeamW,mu_lims,...
                                          iZ,...
                                          filename,...
-                                         [-3.5 0]+max(cxmax(min(end,iRF),:)))
+                                         [-3.5 0]+max(cxmax(min(end,iRF),:)));
           end
         catch
           ERR_MSG{iFaulties} = lasterr;
@@ -183,5 +182,5 @@ for i2 = 1:numel(RunDirs)
 end
 
 
-%   Copyright © 2019 Bjorn Gustavsson, <bjorn.gustavsson@irf.se>
+%   Copyright ï¿½ 2019 Bjorn Gustavsson, <bjorn.gustavsson@irf.se>
 %   This is free software, licensed under GNU GPL version 2 or later

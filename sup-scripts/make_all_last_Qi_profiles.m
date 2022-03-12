@@ -5,15 +5,14 @@
 
 %% Root result-directories
 if ~exist('results_dir','var') || isempty(results_dir)
-  results_dir = '/media/bgu001/5f5e8978-a828-4fd4-aabf-2032a3fb895b/Data/Bjorns-panic-repository/Etrp-tdms';
+  disp('Please enter a "results_dir"')
+  return
 end
 
 %% Run-directories:
 if ~exist('RunDirs','var') || isempty(RunDirs)
-  RunDirs = {'Run_PnL20190828';
-             'Run_AWA20190920';
-             'Run_PnL20190916';
-             'Run_PnL20191018'};
+  disp('Please enter one or several "RunDirs"')
+  return
 end
 
 %% Optional setting of legend location:
