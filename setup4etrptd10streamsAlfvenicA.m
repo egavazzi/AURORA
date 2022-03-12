@@ -417,9 +417,9 @@ idxOlevels = 1:size(O_levels,1);
   
 end
 %% Pre-calculations of cascadning electron-spectra for ionizations
-S2ndO = O_e_2nd_dist(E,E(end),O_levels(end,1),'c');
-S2ndO2 = O2_e_2nd_dist(E,E(end),O2_levels(end,1),'c');
-S2ndN2 = N2_e_2nd_dist(E,E(end),N2_levels(end,1),'c');
+S2ndO = O_e_2nd_dist(E,E(end),O_levels(end,1),'c',AURORA_root_directory);
+S2ndO2 = O2_e_2nd_dist(E,E(end),O2_levels(end,1),'c',AURORA_root_directory);
+S2ndN2 = N2_e_2nd_dist(E,E(end),N2_levels(end,1),'c',AURORA_root_directory);
 
 
 %% 10-stream mu-limits:
