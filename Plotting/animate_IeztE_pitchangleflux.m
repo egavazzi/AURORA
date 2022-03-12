@@ -27,7 +27,7 @@ function output = animate_IeztE_pitchangleflux(t,h_atm,E,dE,IeZTE,BeamW,mu_lims,
 %  M     - Matlab-movie with the displayed sequence.
 
 
-%   Copyright © 20190506 Björn Gustavsson, <bjorn.gustavsson@uit.no>
+%   Copyright ï¿½ 20190506 Bjï¿½rn Gustavsson, <bjorn.gustavsson@uit.no>
 %   This is free software, licensed under GNU GPL version 2 or later
 
 doMovie = 0;
@@ -73,7 +73,7 @@ for it = 1:numel(t),
   for ip = 1:4
     IePAD{ip}(:,:,it) = squeeze(Ie_alts{5-ip}([1:end,end],it,:))./...
                           (dE(1:size(IeZTE,3))'*BeamW([1:end,end]))';
-    mysubplot(2,2,ip)
+    subplot(2,2,ip)
     polarPcolor(log10(E(1:size(IeZTE,3))),...
                 acos(mu_lims)*180/pi,...
                 log10(max(cx2use(1),squeeze(Ie_alts{5-ip}([1:end,end],it,:))./...
