@@ -1,4 +1,4 @@
-function Xs = N2_e_2nd_dist(Es,E0in,Eionization,s_or_c)
+function Xs = N2_e_2nd_dist(Es,E0in,Eionization,s_or_c,AURORA_root_directory)
 % N2_e_2nd_dist - 2nd:ary electron energy spectra ionisation of N2.
 %
 % Calling:
@@ -20,20 +20,46 @@ function Xs = N2_e_2nd_dist(Es,E0in,Eionization,s_or_c)
 % 
 % Equation from Ittikawa 1986 J. Phys. Chem. Ref. Data
 
-%  Copyright © Bjorn Gustavsson 20190408, bjorn.gustavsson@uit.no
+%  Copyright ï¿½ Bjorn Gustavsson 20190408, bjorn.gustavsson@uit.no
 %  This is free software, licensed under GNU GPL version 2 or later
 
 
 persistent Q E4Q Eionizations
+if nargin < 5
+  disp('Error with the N2_e_2nd_dist function, lacks the AURORA root directory argument')
+end
+
+% trying to find a cascading spectra file with matching energy grid Es 
 if isempty(Q)
   try
-    % TODO: In med "data-bas-sök över tidigare körningar
-    % CascadeDir = 
-    % Cfiles = dir(CascadeDir)
-    % For iF = 1:
-    % 
-    load CascadingSpecN2ionization.mat Q E4Q Eionizations
-    % Cmp with E4Q with Es
+    e_2nd_s_files = dir(fullfile(AURORA_root_directory,'E_cascadings','N2'));
+    for i1 = 1:numel(e_2nd_s_files),
+      if ~ e_2nd_s_files(i1).isdir
+        try
+          load(fullfile(AURORA_root_directory,...
+                        'E_cascadings','N2',...
+                        e_2nd_s_files(i1).name),...
+               'E4Q')
+          if isequal(E4Q,Es)
+            % then we have found a match, so load
+            fprintf('Loading cascading-matrices from file: %s\n',e_2nd_s_files(i1).name)
+            load(fullfile(AURORA_root_directory,...
+                         'E_cascadings','N2',...
+                         e_2nd_s_files(i1).name),...
+                'E4Q',...
+                'Q',...
+                'Eionizations')
+            foundem = 1;
+            % And break the loop already
+            break
+          end
+        catch
+        end
+      end
+    end
+  catch
+  fprintf('Could not find file with matching energy grid\n')
+  fprintf('Starting to calculate the requested cascading-matrices')
   end
 end
 
@@ -79,7 +105,16 @@ if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel
     end
     disp(['Done with level ',num2str(i3),' at: ',datestr(now,'HH:MM:SS')])
   end
-  save CascadingSpecN2ionization.mat Q E4Q Eionizations
+
+  % Save the results for future use
+  save_filename = sprintf('CascadingSpecN2ionization_%s.mat',...
+  datestr(now,'yyyymmdd-HHMMSS'));
+  save(fullfile(AURORA_root_directory,...
+  'E_cascadings','N2',...
+  save_filename),...
+  'Q',...
+  'E4Q',...
+  'Eionizations')
 end
 
 % $$$         funH = @(E1,E2) heaviside(E2-Eionizations(i3)-E1)./((E2-Eionizations(i3)-E1).^2+E_hat^2);

@@ -1,4 +1,4 @@
-function Xs = O2_e_2nd_dist(Es,E0in,Eionization,s_or_c)
+function Xs = O2_e_2nd_dist(Es,E0in,Eionization,s_or_c,AURORA_root_directory)
 % O2_e_2nd_dist - 2nd:ary electron energy spectra ionisation of O2.
 %
 % Calling:
@@ -24,13 +24,40 @@ function Xs = O2_e_2nd_dist(Es,E0in,Eionization,s_or_c)
 
 persistent Q E4Q Eionizations
 
-if nargin ~= 4
-  error('Wrong number of input arguments')
+if nargin < 5
+  disp('Error with the O2_e_2nd_dist function, lacks the AURORA root directory argument')
 end
 
-if isempty(Q)
+if isempty(Q)  
   try
-    load CascadingSpecO2ionization.mat Q E4Q Eionizations
+    e_2nd_s_files = dir(fullfile(AURORA_root_directory,'E_cascadings','O2'));
+    for i1 = 1:numel(e_2nd_s_files),
+      if ~ e_2nd_s_files(i1).isdir
+        try
+          load(fullfile(AURORA_root_directory,...
+                        'E_cascadings','O2',...
+                        e_2nd_s_files(i1).name),...
+               'E4Q')
+          if isequal(E4Q,Es)
+            % then we have found a match, so load
+            fprintf('Loading cascading-matrices from file: %s\n',e_2nd_s_files(i1).name)
+            load(fullfile(AURORA_root_directory,...
+                         'E_cascadings','O2',...
+                         e_2nd_s_files(i1).name),...
+                'E4Q',...
+                'Q',...
+                'Eionizations')
+            foundem = 1;
+            % And break the loop already
+            break
+          end
+        catch
+        end
+      end
+    end
+  catch
+  fprintf('Could not find file with matching energy grid\n')
+  fprintf('Starting to calculate the requested cascading-matrices\n')
   end
 end
 
@@ -70,7 +97,16 @@ if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel
     end
     disp(['Done with level ',num2str(i3),' at: ',datestr(now,'HH:MM:SS')])
   end
-  save CascadingSpecO2ionization.mat Q E4Q Eionizations
+    
+  % Save the results for future use
+  save_filename = sprintf('CascadingSpecO2ionization_%s.mat',...
+  datestr(now,'yyyymmdd-HHMMSS'));
+  save(fullfile(AURORA_root_directory,...
+  'E_cascadings','O2',...
+  save_filename),...
+  'Q',...
+  'E4Q',...
+  'Eionizations'))
 end
 % save Q_both_O2.mat Q Q2
 if isempty(Eionization)

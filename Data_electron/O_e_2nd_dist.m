@@ -1,4 +1,4 @@
-function Xs = O_e_2nd_dist(Es,E0in,Eionization,s_or_c)
+function Xs = O_e_2nd_dist(Es,E0in,Eionization,s_or_c,AURORA_root_directory)
 % O_e_2nd_dist - 2nd:ary electron energy spectra for ionisation of O.
 %
 % Calling:
@@ -34,10 +34,40 @@ function Xs = O_e_2nd_dist(Es,E0in,Eionization,s_or_c)
 
 persistent Q E4Q Eionizations
 
+if nargin < 5
+  disp('Error with the O_e_2nd_dist function, lacks the AURORA root directory argument')
+end
+
 if isempty(Q)
   try
-    load CascadingSpecOionization.mat Q E4Q Eionizations
-  end
+  e_2nd_s_files = dir(fullfile(AURORA_root_directory,'E_cascadings','O'));
+    for i1 = 1:numel(e_2nd_s_files),
+      if ~ e_2nd_s_files(i1).isdir
+        try
+          load(fullfile(AURORA_root_directory,...
+                        'E_cascadings','O',...
+                        e_2nd_s_files(i1).name),...
+               'E4Q')
+          if isequal(E4Q,Es)
+            % then we have found a match, so load
+            fprintf('Loading cascading-matrices from file: %s\n',e_2nd_s_files(i1).name)
+            load(fullfile(AURORA_root_directory,...
+                         'E_cascadings','O',...
+                         e_2nd_s_files(i1).name),...
+                'E4Q',...
+                'Q',...
+                'Eionizations')
+            foundem = 1;
+            % And break the loop already
+            break
+          end
+        catch
+        end
+      end
+    end
+  catch
+  fprintf('Could not find file with matching energy grid\n')
+  fprintf('Starting to calculate the requested cascading-matrices\n')
 end
 
 E_parameters = [100, 200, 500, 1000 2000];
@@ -95,7 +125,16 @@ if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel
     end
     disp(['Done with level ',num2str(i3),' at: ',datestr(now,'HH:MM:SS')])
   end
-  save CascadingSpecOionization.mat Q E4Q Eionizations
+
+  % Save the results for future use
+  save_filename = sprintf('CascadingSpec0ionization_%s.mat',...
+  datestr(now,'yyyymmdd-HHMMSS'));
+  save(fullfile(AURORA_root_directory,...
+  'E_cascadings','O',...
+  save_filename),...
+  'Q',...
+  'E4Q',...
+  'Eionizations')
 end
 
 if nargin == 2 || strcmp(s_or_c,'s')
