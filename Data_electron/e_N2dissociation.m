@@ -14,7 +14,7 @@ Xs = exp([interp1(E,log(s),Ep(Ep<E(end)),'pchip') interp1(log(E),log(s),log(Ep(E
 I = find(~isfinite(Xs));
 Xs(I) = 0;
 
-warning('Arbitrary correction of diss-cross-section')
+% warning('Arbitrary correction of diss-cross-section')
 CF = 0.3+0.7./(1+exp((Ep-120)/20));
 Xs = Xs.*CF;
 
