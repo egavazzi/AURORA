@@ -1,0 +1,6 @@
+# ignore the results folders
+RunDir*/
+Figure*/
+
+# ignore temporary file matlab creates when a script is open in matlab
+*~
