@@ -25,7 +25,7 @@ cross_section = cross_section/1e4;
 % $$$ s = [2.6   6.4 10.4 14.3 16.8 18.1 18.9 19.3 19.8 18.6 17.4 15  13.1 11.2 10   9.3  8.4   7.9   7.4]*1e-21;%-17;
 % $$$ 
 % $$$ 
-% $$$ Xs = exp([interp1(E,log(s),Ep(Ep<E(end)),'pcip') interp1(log(E),log(s),log(Ep(Ep>=E(end))),'linear','extrap')] );
+% $$$ Xs = exp([interp1(E,log(s),Ep(Ep<E(end)),'pchip') interp1(log(E),log(s),log(Ep(Ep>=E(end))),'linear','extrap')] );
 % $$$ I = find(~isfinite(Xs));
 % $$$ Xs(I) = 0;
 % $$$ 

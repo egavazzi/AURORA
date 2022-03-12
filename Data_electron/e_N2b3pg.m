@@ -7,7 +7,7 @@ function Xs = e_N2b3pg(Ep)
 E = [7  8 9   10 12.5 15   17   20 30 50];
 s = [.2 2 4.5 25 32   22.5 18.5 13  8  3]*1e-22;%-18;
 
-Xs = exp([interp1(E,log(s),Ep(Ep<E(end)),'pcip') interp1(log(E),log(s),log(Ep(Ep>=E(end))),'linear','extrap')] );
+Xs = exp([interp1(E,log(s),Ep(Ep<E(end)),'pchip') interp1(log(E),log(s),log(Ep(Ep>=E(end))),'linear','extrap')] );
 I = find(~isfinite(Xs));
 Xs(I) = 0;
 

@@ -8,7 +8,7 @@ function cross_section = e_N2dion(Ep)
 % $$$ s = [0.16 0.97 2.5 3.9 4.6 5.0 5.2 5.4 5.5 5.5 5.2 4.8 4.6 4.4 3.9 3.4]*1e-21;%-17;
 % $$$ 
 % $$$ 
-% $$$ Xs = exp([interp1(E,log(s),Ep(Ep<E(end)),'pcip') interp1(log(E),log(s),log(Ep(Ep>=E(end))),'linear','extrap')] );
+% $$$ Xs = exp([interp1(E,log(s),Ep(Ep<E(end)),'pchip') interp1(log(E),log(s),log(Ep(Ep>=E(end))),'linear','extrap')] );
 % $$$ I = find(~isfinite(Xs));
 % $$$ Xs(I) = 0;
 % $$$ 

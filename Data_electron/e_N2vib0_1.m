@@ -4,7 +4,7 @@ function Xs = e_N2vib0_1(Ep)
 % e_N2vib0_1 - electron excitation cross section (m^2)
 % E electron energy (eV)
 
-%  Copyright © Bjorn Gustavsson 20110527, bjorn.gustavsson@uit.no
+%  Copyright ï¿½ Bjorn Gustavsson 20110527, bjorn.gustavsson@uit.no
 %  This is free software, licensed under GNU GPL version 2 or later
 
 E = [0.3 0.4 0.5 0.6 0.7 0.8 0.9 1];
@@ -14,7 +14,7 @@ s = [s [0.28 0.51 1.2  1.9 2.6  4.5 5.7  4.2 2.2  1.4 2.5  5.0 5.8  4.4 3.6  1.9
 E = [E  5   7.5 10  15   18   20   23   25   30   50   75];
 s = [s  [6.5 3.1  1.4 4.1  7.5 19.4 12.1  7.2  2.4  1.4  0.67]*1e-22];%-18
 
-Xs = exp([interp1(E,log(s),Ep(Ep<E(end)),'pcip') interp1(log(E),log(s),log(Ep(Ep>=E(end))),'linear','extrap')] );
+Xs = exp([interp1(E,log(s),Ep(Ep<E(end)),'pchip') interp1(log(E),log(s),log(Ep(Ep>=E(end))),'linear','extrap')] );
 I = find(~isfinite(Xs));
 Xs(I) = 0;
 
