@@ -42,7 +42,7 @@ for i2 = 1:numel(RunDirs)
       Ie_top_raw = Ie_ZTE(nZ:nZ:end,:,:);
       Ie_top = Ie_top_raw;
       BeamW = mu_scatterings{3};
-      for i3 = size(Ie_top,1):-1:1,
+      for i3 = size(Ie_top,3):-1:1,
         % to electrons per steradian from electrons  [m^-2s^-1]
         Ie_top(i3,:,:) = Ie_top(i3,:,:)/BeamW(i3)/2/pi;
       end
