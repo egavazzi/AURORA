@@ -1,7 +1,0 @@
-/* Created by mdot for Matlab */
-digraph m2html {
-
-  N2O2O_phase_function_plot [URL="N2O2O_phase_function_plot.html"];
-  etrp_scattering [URL="etrp_scattering.html"];
-  etrp_scattering2 [URL="etrp_scattering2.html"];
-}

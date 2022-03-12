@@ -1,7 +1,0 @@
-/* Created by mdot for Matlab */
-digraph m2html {
-  r_arc -> rot_around_v;
-
-  r_arc [URL="r_arc.html"];
-  rot_around_v [URL="rot_around_v.html"];
-}
