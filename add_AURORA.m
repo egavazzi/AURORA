@@ -25,6 +25,7 @@ addpath(fullfile(S1,'tools/cm_and_cb_utilities'),'-end')
 addpath(fullfile(S1,'tools/Factorize'),'-end')          
 addpath(fullfile(S1,'tools/Geometry'),'-end') 
 addpath(fullfile(S1,'utilities'),'-end') 
+addpath(fullfile(S1,'tools/IGRF'),'-end') 
 addpath(fullfile(S1,'sup-scripts'),'-end') 
 
 AURORA_root_directory = S1;

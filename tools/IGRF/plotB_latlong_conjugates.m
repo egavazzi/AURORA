@@ -21,7 +21,7 @@ else
 end
 
 if isempty(lat0)
-  lat_start = 67.586; % Geodetic latitudes in degrees.
+  lat_start = 69.586; % Geodetic latitudes in degrees.
 else
   lat_start = lat0;
 end
