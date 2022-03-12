@@ -393,35 +393,13 @@ S2ndN2 = N2_e_2nd_dist(E,E(end),N2_levels(end,1),'c',AURORA_root_directory);
 %% 10-stream mu-limits:
 dtheta = [0 10 20 30 20 10 10 20 30 20 10];
 theta_lims2do = 180-cumsum(dtheta);
-mu_lims = cos(theta_lims2do*pi/180);
-plot_everyone = 0;
 %% Calculate the beam-to-beam scattering and weigthings
 %  This can be done in the function Ie_Mstream_tz_2_aurora, as was done
 %  above where the mu_scatterings argument was set to a place-holder 1, or
 %  before as done here. This is necessary to get the proper weights for
 %  calculating the fluxes in different beams to more for example an
 %  isotropic flux
-n_dirs = 721;
-try
-  load e_s_bd theta_lims
-  if isequal(theta_lims,theta_lims2do)
-    load e_s_bd.mat Pmu2mup theta2beamW BeamW mu_lims theta_lims
-  else
-    disp('theta_lims in file e_s_bd.mat does not match theta_lims2do')
-    disp('starting calculations of angular electron scattering matrices')
-    [Pmu2mup,theta2beamW,BeamW] = e_scattering_beamdistribution(mu_lims,n_dirs);
-    mu_lims_done = mu_lims;
-    theta_lims = theta_lims2do;
-    save e_s_bd_180_170_150_120_100_90_80_60_30_10_0.mat Pmu2mup theta2beamW BeamW mu_lims_done mu_lims theta_lims
-    disp('Consider fixing the theta_lims mismatch, perhaps by copying')
-    disp('the file saved (e_s_bd_180_170_150_120_100_90_80_60_30_10_0.mat)')
-    disp('to e_s_bd.mat')
-  end
-catch
-  [Pmu2mup,theta2beamW,BeamW] = e_scattering_beamdistribution(mu_lims,n_dirs);
-  mu_lims_done = mu_lims;
-  save e_s_bd_180_170_150_120_100_90_80_60_30_10_0.mat Pmu2mup theta2beamW BeamW mu_lims_done mu_lims theta_lims
-end
+[Pmu2mup,theta2beamW,BeamW,mu_lims] = e_scattering_result_finder(theta_lims2do,AURORA_root_directory);
 mu_scatterings = {Pmu2mup,theta2beamW,BeamW};
 c_o_mu = mu_avg(mu_lims);
 % B_W is created for easify generation of functions for the
