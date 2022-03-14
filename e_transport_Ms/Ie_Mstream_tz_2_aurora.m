@@ -132,6 +132,16 @@ else
   mu_pars_out = {Pmu2mup,theta2beamW};
 end
 c_o_mu = mu_avg(max(-1,min(1,mu_lims)));
+
+
+% Here the normalization factor is calculated anew with theta2beamW
+% instead of using the already calculated BeamW. This is to ensure
+% conservation of the number of electrons during scattering as the
+% calculations are discretized in pitch angle, whereas BeamW was 
+% calculated in a more continuous way (integral of sin(theta)). 
+% This leads to two slightly different normalization factors, the one
+% calculated with theta2beamW being the one to use here if we don't want 
+% to lose some electrons.
 BeamWeights = sum(theta2beamW,2);
 BeamWeights(c_o_mu<0) = BeamWeights(c_o_mu<0)/sum(BeamWeights(c_o_mu<0));
 BeamWeights(c_o_mu>0) = BeamWeights(c_o_mu>0)/sum(BeamWeights(c_o_mu>0));
