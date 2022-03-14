@@ -1,6 +1,6 @@
-function [Ie_zt] = de_M_stream_CNzt(h_atm,t_in,mu,I_top_of_t,I0,v,QC_mu,A,B_b2b,Dz,lowerBvals)
-% de_M_stream_CNzt - multistream Crank-Nicholson electron transport
-% solver with central difference operator for spatial
+function [Ie_zt] = de_M_stream_CNztusD(h_atm,t_in,mu,I_top_of_t,I0,v,QC_mu,A,B_b2b,Dz,lowerBvals)
+% de_M_stream_CNztusD - multistream Crank-Nicholson electron transport
+% solver with up-stream differential operator for spatial
 % derivatives. This integrates the time-dependent electron
 % transport equation:
 % 
@@ -15,7 +15,7 @@ function [Ie_zt] = de_M_stream_CNzt(h_atm,t_in,mu,I_top_of_t,I0,v,QC_mu,A,B_b2b,
 % pitch-angle.
 % 
 % Calling:
-%  [Ie_zt] = de_M_stream_CNzt(h_atm,t,mu,I_top_of_t,I0,v,...
+%  [Ie_zt] = de_M_stream_CNztus(h_atm,t,mu,I_top_of_t,I0,v,...
 %                               QC_mu,A,B,Pmu2mup,Dz,...
 %                               lowerBvals)
 % Input:
@@ -50,6 +50,10 @@ function [Ie_zt] = de_M_stream_CNzt(h_atm,t_in,mu,I_top_of_t,I0,v,QC_mu,A,B_b2b,
 %   Ie_zt - ( altitude x stream ) x time variation of electron
 %           fluxes. 
 % 
+% TODO: Fastify this by building of the Mlhs and Mrhs with vectors
+%       of the indices and values and one call to sparse as is done
+%       in de_M_stream2HS_us.m
+% 
 % Example: 
 %   
 % See also Ie_Mstream_tz_2_aurora Etrp_flickering_PnL Etrp_Flickering_PnLp8keV_9stream
@@ -58,15 +62,15 @@ function [Ie_zt] = de_M_stream_CNzt(h_atm,t_in,mu,I_top_of_t,I0,v,QC_mu,A,B_b2b,
 %  This is free software, licensed under GNU GPL version 2 or later
 
 % Input nargin-ruler (Handy to use tool for counting input arguments):
-%                                       1    2  3          4  5 6     7 8     9 10 11         12
+%                                         1    2  3          4  5 6     7 8     9 10 11         12
 
 
 % The time-dependent Crank-Nicolson solution of the time-dependent
 % 2-stream electron-transport equations 
 % 
-%  1/v*D/Dt(Id) = D/Dz(Id) - A*Id +B*Iu + QCd
+%  D/Dt(Id) = D/Dz(Id) - A*Id +B*Iu + QCd
 %  
-%  1/v*D/Dt(Iu) = -D/Dz(Iu) - A*Iu +B*Id + QCu
+%  D/Dt(Iu) = -D/Dz(Iu) - A*Iu +B*Id + QCu
 % 
 % becomes: 
 % 
@@ -80,70 +84,101 @@ if nargin < 11 || isempty(lowerBvals)
 end
 
 dZ = h_atm(2)-h_atm(1);
+
 t = t_in;
 dt = t(2)-t(1);
-% Courant-Freidrich-Lewy number, should at least be small (<4)
+% Courant-Freidrichs-Lewy number, should at least be small (<4)
 C_CFL = v*dt/dZ;
 n_factors = 2.^[0:22];
 iFactor = 1;
-while (1 < C_CFL) && (iFactor < 22)
-  iFactor = iFactor+1;
+while (1 < C_CFL) && (iFactor < numel(n_factors))
   t = linspace(t_in(1),t_in(end),numel(t_in)*n_factors(iFactor)+1-n_factors(iFactor));
   dt = t(2)-t(1);
   C_CFL = v*dt/dZ;
+  iFactor = iFactor+1;
 end
 
-C_CFLfactor = n_factors(iFactor);
-
-%Ie_zt = zeros(numel(h_atm)*4,numel(t)); % *2 because [I_down;I_up]
+C_CFLfactor = n_factors(max(1,iFactor-1));
+%disp(n_factors(iFactor))
 if iscell(I0)
   Ie_zt = cell2mat(I0(:));
 else
   Ie_zt = I0(:);
 end
 
-%Ad = diag(A + min(0,(ne_dLdE - neL*2/(sum(DE)))/DE(1)));
-Ad = diag(A); % - min(0,(ne_dLdE - neL*2/(sum(DE)))/DE(1)));
+Ad = diag(A)/2 + diag(A([2:end,end]))/2; % Shift half-step up
+Au = diag(A)/2 + diag(A([1,1:end-1]))/2; % shift half-step down
 % Bd = diag(B);
 
 % Spatial differentiation diagonal matrix, for one stream
-DdZ = diag(-1./(diff(h_atm)*4),-1) + diag(1./(diff(h_atm)*4),1);
+% Here we tuck on a fictious height one tick below lowest height
+% just to make it possible to use the diff function.
+h4diff = [h_atm(1) - (h_atm(2)-h_atm(1));h_atm];
+
+% Up-stream differential operators
+DdZd = diag(-1./(diff(h4diff)*2),0) + diag(1./(diff(h4diff(1:end-1))*2),1);
+DdZu = diag(-1./(diff(h4diff(1:end-1))*2),-1) + diag(1./(diff(h4diff)*2),0);
+
 % Temportal differentiation diagonal matrix, for one stream
 Ddt = diag(1/(v*(t(2)-t(1)))*ones(size(h_atm)));
 
+% Diffusion operator, typically all zeroes.
+D2Zd = d2M(h_atm);
 
-D2Zd = Dz/2*( diag(1./(diff(h_atm)).^2,-1) + ...
-              diag(-2./(diff(h_atm([1,1:end]))).^2,0) + ...
-              diag(1./(diff(h_atm)).^2,1) );
-
-% Q_ee = repmat(neL,size(B_b2b,2),size(t,2)).*IeEpdE*2/(DE(2)*sum(DE));
+D2Zd(1,1) = 0; % Will allways be OK since first row will be set to
+               % zeroes with one one at the right diagonals to keep
+               % fixed lower-boundary-values.
 
 %% 2-stream version Crank-Nicolson matrices
-% These below work, (barring instabillity issues)
+% The matrices for the Crank-Nicolson scheme are simple enough for
+% a 2-stream system with only losses (due to inelastic collisions
+% degrading electrons out of beam and elastic back-scattering to
+% the other stream). These below work. 
 %
-% Mrhs_d = [ DdZ+Ddt-Ad/2+D2Zd, Bd/2];
-% Mrhs_u = [ Bd/2, -DdZ+Ddt-Ad/2+D2Zd];
+% Mrhs_d = [ DdZ+Ddt-Ad/2+D2Zd,          Bd/2     ];
+% Mrhs_u = [         Bd/2,      -DdZ+Ddt-Au/2+D2Zd];
 %
-% Mlhs_d = [-DdZ+Ddt+Ad/2-D2Zd, -Bd/2];
-% Mlhs_u = [-Bd/2,  DdZ+Ddt+Ad/2-D2Zd];
+% Mlhs_d = [-DdZ+Ddt+Ad/2-D2Zd,         Bd/2     ];
+% Mlhs_u = [        -Bd/2,      DdZ+Ddt+Au/2-D2Zd];
 
+% For the general case we have a larger number of streams with
+% elastic scattering between them, this makes the system larger
+% with a larger number of blocks with diagonals for the elastic
+% stream-to-stream scattering, but the pattern remains.
 Mlhs = [];
 Mrhs = [];
 for i2 = 1:size(B_b2b,2),
   MBlhs = [];
   MBrhs = [];
   for i3 = 1:size(B_b2b,2),
+    if mu(i2) < 0 % down-ward fluxes, shift half-step up
+      Bb2b = B_b2b(:,i2,i3)/2 + B_b2b([2:end,end],i2,i3)/2;
+    else          % up-ward fluxes, shift half-step down
+      Bb2b = B_b2b(:,i2,i3)/2 + B_b2b([1,1:end-1],i2,i3)/2;
+    end
     if i2 ~= i3
-      tmp_lhs = diag(-B_b2b(:,i2,i3)/2);
+      %tmp_lhs = diag(-B_b2b(:,i2,i3)/2);
+      tmp_lhs = diag(-Bb2b/2);
       tmp_lhs([1 end],:) = 0;
-      tmp_rhs = diag(B_b2b(:,i2,i3)/2);
+      %tmp_rhs = diag(B_b2b(:,i2,i3)/2);
+      tmp_rhs = diag(Bb2b/2);
       tmp_rhs([1 end],:) = 0;
       
-      MBlhs = [MBlhs,tmp_lhs]; % diag(-B_b2b(:,i2,i3)/2)];
-      MBrhs = [MBrhs,tmp_rhs]; % diag(B_b2b(:,i2,i3)/2)];
+      MBlhs = [MBlhs,tmp_lhs];
+      MBrhs = [MBrhs,tmp_rhs];
     else
-      tmp_lhs =  mu(i2)*DdZ+Ddt+Ad/2-D2Zd + diag(-B_b2b(:,i2,i3)/2);
-      tmp_rhs = -mu(i2)*DdZ+Ddt-Ad/2+D2Zd + diag(B_b2b(:,i2,i3)/2);
+      C_D = Dz(min(i2,numel(Dz)));
+      if mu(i2) < 0 % down-ward fluxes,
+        DdZ = DdZd;
+        Ac = Ad;
+      else % up-ward fluxes
+        DdZ = DdZu;
+        Ac = Au;
+      end
+%       tmp_lhs =  mu(i2)*DdZ+Ddt+Ad/2-D2Zd + diag(-B_b2b(:,i2,i3)/2);
+%       tmp_rhs = -mu(i2)*DdZ+Ddt-Ad/2+D2Zd + diag(B_b2b(:,i2,i3)/2);
+      tmp_lhs =  mu(i2)*DdZ+Ddt+Ac/2-C_D*D2Zd + diag(-Bb2b/2);
+      tmp_rhs = -mu(i2)*DdZ+Ddt-Ac/2+C_D*D2Zd + diag( Bb2b/2);
       tmp_lhs(1,:) = 0; % fixed values in all beams at
       tmp_lhs(1,1) = 1; % lowest altitude
       if mu(i2) < 0 % downward fluxes, fixed values at top
@@ -162,8 +197,8 @@ for i2 = 1:size(B_b2b,2),
   Mrhs = [Mrhs;sparse(MBrhs)];
 end
 
-% F = factorize(A) ;  % computes the factorization of A
-invMLHS = inverse(Mlhs);    % no flops, flags S as a factorized form of inv(A)
+% F = factorize(A) ;     % computes the factorization of A
+invMLHS = inverse(Mlhs); % no flops, flags S as a factorized form of inv(A)
 
 idx4QCbeams = sort([1:numel(h_atm):(numel(mu)*numel(h_atm)),...
     numel(h_atm):numel(h_atm):(numel(mu)*numel(h_atm))]);
@@ -187,21 +222,4 @@ for i_t = 2:(numel(t)),
     i_tin = i_tin+1;
     Ie_zt(:,i_tin) = Ie_zt_next;
   end
-
 end
-% $$$ 
-% $$$ for i_t = 2:(numel(t)),
-% $$$   
-% $$$   % QC_I_zmax are built with the pattern:
-% $$$   % [I_e_mu1_bc(zmin);QC_mu1(it+1/2);Ie_mu1_bc(zmax);...]
-% $$$   % pitch-angle-stream by pitch-angle-stream...
-% $$$ % $$$   QC_I_zmax = ( QC_mu(:,i_t)/2 + QC_mu(:,i_t+1)/2 + ...
-% $$$ % $$$                 Q_ee(:,i_t)/2  + Q_ee(:,i_t+1)/2 );
-% $$$   QC_I_zmax = ( QC_mu(:,i_t)/2 + QC_mu(:,i_t+1)/2 );
-% $$$   Ibv = (I_zmax_of_t(:,i_t)*[0,1])';
-% $$$   QC_I_zmax(idx4QCbeams) = Ibv(:);
-% $$$ 
-% $$$   % Crank-Nicolson step in time
-% $$$   Ie_zt(:,i_t+1) = invMLHS*([Mrhs]*Ie_zt(:,i_t) + QC_I_zmax);
-% $$$   
-% $$$ end
