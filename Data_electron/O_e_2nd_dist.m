@@ -68,6 +68,7 @@ if isempty(Q)
   catch
   fprintf('Could not find file with matching energy grid\n')
   fprintf('Starting to calculate the requested cascading-matrices\n')
+  end
 end
 
 E_parameters = [100, 200, 500, 1000 2000];
