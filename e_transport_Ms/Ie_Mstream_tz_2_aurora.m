@@ -392,12 +392,12 @@ for iE = length(E):-1:1,
         end
         % Calculate the spectra of the secondary electrons, using the
         % average energy of the electrons in the current energy bin:
-        second_e_spectra = feval(second_e_fcn,E,E(iE),dE_i(idE2,1),'s','AURORA_root_directory');
+        second_e_spectra = feval(second_e_fcn,E,E(iE),dE_i(idE2,1),'s',AURORA_root_directory);
         second_e_spectra = (second_e_spectra + second_e_spectra([2:end end]))/2.*gradE;
         % And the distribution of the ionising electrons (that have
         % to lose the corresponding amount of energy)
         % deg_sp = abs(feval(second_e_fcn,max(1,min(( E(iE) - dE_i(idE2,1) )/2,max(0,E_p_d))),E(iE),3));
-        deg_sp = second_e_fcn(E,E(iE),dE_i(idE2,1),'c','AURORA_root_directory');
+        deg_sp = second_e_fcn(E,E(iE),dE_i(idE2,1),'c',AURORA_root_directory);
         
         if sum(second_e_spectra) > 0
           % Multiply with the number of electrons created - double
