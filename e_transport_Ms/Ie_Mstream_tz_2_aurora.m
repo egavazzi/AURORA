@@ -1,4 +1,4 @@
-function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora(h,mag_ze,E,mu_lims,mu_pars,t,I0,Ie_primary,p_e_q,ne,Te,OPS,varargin)
+function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora(AURORA_root_directory,h,mag_ze,E,mu_lims,mu_pars,t,I0,Ie_primary,p_e_q,ne,Te,OPS,varargin)
 % Ie_Mstream_tz_2_aurora - time-dependent multi-stream electron transport
 % 
 % Calling: 
