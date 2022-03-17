@@ -45,7 +45,7 @@ end
 % All pitch-angle-scattering files with possible matching theta_lims:
 e_s_b_files = dir(fullfile(AURORA_root_directory,'E_scatterings'));
 foundem = 0;
-char(e_s_b_files(:).name)
+char(e_s_b_files(:).name);
 
 for i1 = 1:numel(e_s_b_files),
   if ~ e_s_b_files(i1).isdir
