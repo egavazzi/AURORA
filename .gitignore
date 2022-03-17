@@ -4,3 +4,9 @@ Figure*/
 
 # ignore temporary file matlab creates when a script is open in matlab
 *~
+
+
+
+# ignore these files because they get modified all the time
+setup4etrptd10streams.m
+Loop_finalRun_GaussianOnset.m
