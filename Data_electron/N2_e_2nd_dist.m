@@ -30,7 +30,7 @@ if nargin < 5
 end
 
 % trying to find a cascading spectra file with matching energy grid Es 
-if isempty(Q)
+if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel(E4Q))))
   try
     e_2nd_s_files = dir(fullfile(AURORA_root_directory,'E_cascadings','N2'));
     for i1 = 1:numel(e_2nd_s_files),

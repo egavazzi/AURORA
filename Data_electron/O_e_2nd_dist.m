@@ -38,7 +38,7 @@ if nargin < 5
   disp('Error with the O_e_2nd_dist function, lacks the AURORA root directory argument')
 end
 
-if isempty(Q)
+if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel(E4Q))))
   try
   e_2nd_s_files = dir(fullfile(AURORA_root_directory,'E_cascadings','O'));
     for i1 = 1:numel(e_2nd_s_files),
