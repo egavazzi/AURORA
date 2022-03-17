@@ -60,6 +60,9 @@ for i2 = 1:numel(RunDirs)
   end
 end
 
+cd(results_dir)
+cd(RunDirs{i2})
+
 
 %   Copyright � 2019 Bjorn Gustavsson, <bjorn.gustavsson@irf.se>
 %   This is free software, licensed under GNU GPL version 2 or later
