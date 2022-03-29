@@ -2,6 +2,9 @@
 RunDir*/
 Figure*/
 
+# ignore the cascading files
+E_cascadings/*/* 
+
 # ignore temporary file matlab creates when a script is open in matlab
 *~
 
