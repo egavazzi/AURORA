@@ -138,7 +138,9 @@ if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel
   'Eionizations')
 end
 
-if nargin == 2 || strcmp(s_or_c,'s')
+% disp('STTTOOOOOOOP, I should not be called !!')
+
+if strcmp(s_or_c,'s')
   % Differential cross-section
   Xs = B./( 1 + (Es/A).^(5/3) ).*(Es < (Ep-13.618)/2 ); % Should
                                                         % be 5/3
