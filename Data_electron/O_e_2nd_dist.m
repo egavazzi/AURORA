@@ -38,7 +38,7 @@ if nargin < 5
   disp('Error with the O_e_2nd_dist function, lacks the AURORA root directory argument')
 end
 
-if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel(E4Q))))
+if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel(E4Q)))) || size(Es,2) > size(E4Q,2)
   try
   e_2nd_s_files = dir(fullfile(AURORA_root_directory,'E_cascadings','O'));
     for i1 = 1:numel(e_2nd_s_files),
@@ -48,7 +48,8 @@ if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel
                         'E_cascadings','O',...
                         e_2nd_s_files(i1).name),...
                'E4Q')
-          if isequal(E4Q,Es)
+%           if isequal(E4Q,Es)
+            if all(E4Q(1:min(numel(Es),numel(E4Q)))==Es)
             % then we have found a match, so load
             fprintf('Loading cascading-matrices from file: %s\n',e_2nd_s_files(i1).name)
             load(fullfile(AURORA_root_directory,...
@@ -92,7 +93,7 @@ Eionizations = [13.618
                 28.5];
 A = A*1.25;
 
-if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel(E4Q))))
+if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel(E4Q)))) || size(Es,2) > size(E4Q,2)
   E4Q = Es;
   Q = zeros(numel(Es),numel(Es),numel(Eionization)); 
   dE = diff(Es);dE = dE([1:end,end]);

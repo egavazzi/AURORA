@@ -30,7 +30,7 @@ if nargin < 5
 end
 
 % trying to find a cascading spectra file with matching energy grid Es 
-if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel(E4Q))))
+if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel(E4Q)))) || size(Es,2) > size(E4Q,2)
   try
     e_2nd_s_files = dir(fullfile(AURORA_root_directory,'E_cascadings','N2'));
     for i1 = 1:numel(e_2nd_s_files),
@@ -40,7 +40,8 @@ if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel
                         'E_cascadings','N2',...
                         e_2nd_s_files(i1).name),...
                'E4Q')
-          if isequal(E4Q,Es)
+%           if isequal(E4Q,Es)
+            if all(E4Q(1:min(numel(Es),numel(E4Q)))==Es)
             % then we have found a match, so load
             fprintf('Loading cascading-matrices from file: %s\n',e_2nd_s_files(i1).name)
             load(fullfile(AURORA_root_directory,...
@@ -65,7 +66,7 @@ end
 
 %% Precalculation of degrading spectra
 E_hat = 11.4;
-if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel(E4Q))))
+if isempty(Q) || ~all(E4Q(1:min(numel(Es),numel(E4Q)))==Es(1:min(numel(Es),numel(E4Q)))) || size(Es,2) > size(E4Q,2)
   % ~all(E4Q(1:numel(Es))==Es)
   Eionizations = [15.581
                   16.73
