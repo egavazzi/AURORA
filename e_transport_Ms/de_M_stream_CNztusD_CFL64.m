@@ -189,10 +189,10 @@ for i2 = 1:size(B_b2b,2),
       end
 %       tmp_lhs =  mu(i2)*DdZ+Ddt+Ad/2-D2Zd + diag(-B_b2b(:,i2,i3)/2);
 %       tmp_rhs = -mu(i2)*DdZ+Ddt-Ad/2+D2Zd + diag(B_b2b(:,i2,i3)/2);
-%       tmp_lhs =  mu(i2)*DdZ+Ddt+Ac/2-C_D*D2Zd + diag(-Bb2b/2);
-      tmp_lhs =  mu(i2)*DdZ+Ddt+Ac/2 + diag(-Bb2b/2);
-%       tmp_rhs = -mu(i2)*DdZ+Ddt-Ac/2+C_D*D2Zd + diag( Bb2b/2);
-      tmp_rhs = -mu(i2)*DdZ+Ddt-Ac/2 + diag( Bb2b/2);
+      tmp_lhs =  mu(i2)*DdZ+Ddt+Ac/2-C_D*D2Zd + diag(-Bb2b/2);
+%       tmp_lhs =  mu(i2)*DdZ+Ddt+Ac/2 + diag(-Bb2b/2);
+      tmp_rhs = -mu(i2)*DdZ+Ddt-Ac/2+C_D*D2Zd + diag( Bb2b/2);
+%       tmp_rhs = -mu(i2)*DdZ+Ddt-Ac/2 + diag( Bb2b/2);
 
       tmp_lhs(1,:) = 0; % fixed values in all beams at
       tmp_lhs(1,1) = 1; % lowest altitude
