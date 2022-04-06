@@ -1,4 +1,4 @@
-function [Ie_zt] = de_M_stream_CNztusD(h_atm,t_in,mu,I_top_of_t,I0,v,QC_mu,A,B_b2b,Dz,lowerBvals)
+function [Ie_zt] = de_M_stream_CNztusD_CFL64(h_atm,t_in,mu,I_top_of_t,I0,v,QC_mu,A,B_b2b,Dz,lowerBvals)
 % de_M_stream_CNztusD - multistream Crank-Nicholson electron transport
 % solver with up-stream differential operator for spatial
 % derivatives. This integrates the time-dependent electron
@@ -58,7 +58,7 @@ function [Ie_zt] = de_M_stream_CNztusD(h_atm,t_in,mu,I_top_of_t,I0,v,QC_mu,A,B_b
 %   
 % See also Ie_Mstream_tz_2_aurora Etrp_flickering_PnL Etrp_Flickering_PnLp8keV_9stream
 
-%  Copyright © Bjorn Gustavsson 20180603, bjorn.gustavsson@uit.no
+%  Copyright Â© Bjorn Gustavsson 20180603, bjorn.gustavsson@uit.no
 %  This is free software, licensed under GNU GPL version 2 or later
 
 % Input nargin-ruler (Handy to use tool for counting input arguments):
@@ -87,11 +87,16 @@ dZ = h_atm(2)-h_atm(1);
 
 t = t_in;
 dt = t(2)-t(1);
-% Courant-Freidrichs-Lewy number, should at least be small (<4)
+% Courant-Freidrichs-Lewy number, should at least be small (<4).
+
+% Actually, the CFL number can be pushed to bigger values as we use an
+% implicit scheme. For Gaussian inputs in energy (not flickering), it seems
+% that the CFL can be set to at least 64 without any effects on the
+% results, while reducing computational time by A LOT.
 C_CFL = v*dt/dZ;
 n_factors = 2.^[0:22];
 iFactor = 1;
-while (1 < C_CFL) && (iFactor < numel(n_factors))
+while (64 < C_CFL) && (iFactor < numel(n_factors))
   t = linspace(t_in(1),t_in(end),numel(t_in)*n_factors(iFactor)+1-n_factors(iFactor));
   dt = t(2)-t(1);
   C_CFL = v*dt/dZ;
@@ -99,25 +104,30 @@ while (1 < C_CFL) && (iFactor < numel(n_factors))
 end
 
 C_CFLfactor = n_factors(max(1,iFactor-1));
-%disp(n_factors(iFactor))
+
 if iscell(I0)
   Ie_zt = cell2mat(I0(:));
 else
   Ie_zt = I0(:);
 end
 
-Ad = diag(A)/2 + diag(A([2:end,end]))/2; % Shift half-step up
-Au = diag(A)/2 + diag(A([1,1:end-1]))/2; % shift half-step down
+% Ad = diag(A)/2 + diag(A([2:end,end]))/2; % Shift half-step up
+Ad = diag(A);
+% Au = diag(A)/2 + diag(A([1,1:end-1]))/2; % shift half-step down
+Au = diag(A);
 % Bd = diag(B);
 
 % Spatial differentiation diagonal matrix, for one stream
 % Here we tuck on a fictious height one tick below lowest height
 % just to make it possible to use the diff function.
-h4diff = [h_atm(1) - (h_atm(2)-h_atm(1));h_atm];
+h4diffu = [h_atm(1) - (h_atm(2)-h_atm(1));h_atm];
+h4diffd = [h_atm;h_atm(end) + (h_atm(end)-h_atm(end-1))];
 
 % Up-stream differential operators
-DdZd = diag(-1./(diff(h4diff)*2),0) + diag(1./(diff(h4diff(1:end-1))*2),1);
-DdZu = diag(-1./(diff(h4diff(1:end-1))*2),-1) + diag(1./(diff(h4diff)*2),0);
+DdZd = diag(-1./(diff(h4diffd(1:end))*2),0) + diag(1./(diff(h4diffd(1:end-1))*2),1);
+DdZu = diag(-1./(diff(h4diffu(2:end))*2),-1) + diag(1./(diff(h4diffu(1:end))*2),0);
+
+% DdZu = diag(1./(diff(h4diff(1:end-1))*4),-1) + diag(-1./(diff(h4diff(1:end-1)))*4),1);
 
 % Temportal differentiation diagonal matrix, for one stream
 Ddt = diag(1/(v*(t(2)-t(1)))*ones(size(h_atm)));
@@ -152,9 +162,11 @@ for i2 = 1:size(B_b2b,2),
   MBrhs = [];
   for i3 = 1:size(B_b2b,2),
     if mu(i2) < 0 % down-ward fluxes, shift half-step up
-      Bb2b = B_b2b(:,i2,i3)/2 + B_b2b([2:end,end],i2,i3)/2;
+%       Bb2b = B_b2b(:,i2,i3)/2 + B_b2b([2:end,end],i2,i3)/2;
+      Bb2b = B_b2b(:,i2,i3);
     else          % up-ward fluxes, shift half-step down
-      Bb2b = B_b2b(:,i2,i3)/2 + B_b2b([1,1:end-1],i2,i3)/2;
+%       Bb2b = B_b2b(:,i2,i3)/2 + B_b2b([1,1:end-1],i2,i3)/2;
+      Bb2b = B_b2b(:,i2,i3);
     end
     if i2 ~= i3
       %tmp_lhs = diag(-B_b2b(:,i2,i3)/2);
@@ -177,8 +189,11 @@ for i2 = 1:size(B_b2b,2),
       end
 %       tmp_lhs =  mu(i2)*DdZ+Ddt+Ad/2-D2Zd + diag(-B_b2b(:,i2,i3)/2);
 %       tmp_rhs = -mu(i2)*DdZ+Ddt-Ad/2+D2Zd + diag(B_b2b(:,i2,i3)/2);
-      tmp_lhs =  mu(i2)*DdZ+Ddt+Ac/2-C_D*D2Zd + diag(-Bb2b/2);
-      tmp_rhs = -mu(i2)*DdZ+Ddt-Ac/2+C_D*D2Zd + diag( Bb2b/2);
+%       tmp_lhs =  mu(i2)*DdZ+Ddt+Ac/2-C_D*D2Zd + diag(-Bb2b/2);
+      tmp_lhs =  mu(i2)*DdZ+Ddt+Ac/2 + diag(-Bb2b/2);
+%       tmp_rhs = -mu(i2)*DdZ+Ddt-Ac/2+C_D*D2Zd + diag( Bb2b/2);
+      tmp_rhs = -mu(i2)*DdZ+Ddt-Ac/2 + diag( Bb2b/2);
+
       tmp_lhs(1,:) = 0; % fixed values in all beams at
       tmp_lhs(1,1) = 1; % lowest altitude
       if mu(i2) < 0 % downward fluxes, fixed values at top
@@ -215,6 +230,7 @@ for i_t = 2:(numel(t)),
   
   % Crank-Nicolson step in time
   Ie_zt_next = invMLHS*([Mrhs]*Ie_zt_prev + QC_I_zmax);
+%   Ie_zt_next = invMLHS*([Mrhs]*Ie_zt_prev) + QC_I_zmax;
   Ie_zt_prev = Ie_zt_next;
   
   % if C_CFLfactor == 1 || rem(i_t,n_factors(iFactor))==1
