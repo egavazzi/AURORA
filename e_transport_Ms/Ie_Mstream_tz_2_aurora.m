@@ -190,51 +190,31 @@ for iE = length(E):-1:1,
     curr_phfc_i = curr_phfc_i.*sin(theta');
     curr_phfc_i = curr_phfc_i/sum(curr_phfc_i);
     A2B = beams2beams(curr_phfc_i,Pmu2mup,theta2beamW);
+    
+    % add the elastic back scattering to the total
+    tot_sc = tot_sc + n_i*xs_i(1,iE);
     for i_1 = size(B2B,1):-1:1,
       for i_2 = size(B2B,2):-1:1
         elsc_b2b(:,i_1,i_2) = elsc_b2b(:,i_1,i_2) + n_i*(xs_i(1,iE)*B2B(i_1,i_2));
       end
     end
-    % add the elastic back scattering to the total
-    tot_sc = tot_sc + n_i*xs_i(1,iE);
-    % add the inelastic collisions to the total
-    for j2 = 2:size(xs_i,1)-1,
-      
-      % The second factor corrects for the case where the energy loss
-      % dE_i(j2,1) is smaller than the width in energy in the energy bin
-      tot_sc = tot_sc + n_i*(xs_i(j2,iE)); %.*min(1,dE_i(j2,1)./gradE(iE)));
+    
+    % add the inelastic collisions and ionisations to the total
+    for j2 = 2:size(xs_i,1),
+      tot_sc = tot_sc + n_i*(xs_i(j2,iE));
       for i_1 = size(B2B,1):-1:1,
         for i_2 = size(B2B,2):-1:1
+          % The second factor corrects for the case where the energy loss
+          % dE_i(j2,1) is smaller than the width in energy in the energy
+          % bin.
+          % That is when gradE(iE) > dE_i(j2,1) only the fraction
+          % dE_i(j2,1)/gradE is lost from the energy bin [E(iE) E(iE)+gradE(iE)]
           elsc_b2b(:,i_1,i_2) = ( elsc_b2b(:,i_1,i_2) + ...
                                   n_i*(xs_i(j2,iE)*A2B(i_1,i_2)).*max(0,1-dE_i(j2,1)./gradE(iE)));
         end
       end
-      % That is when gradE(iE) > dE_i(j2,1) only the fraction
-      % dE_i(j2,1)/gradE is lost from the energy bin [E(iE) E(iE)+gradE(iE)]
-      
     end
-    % Add the ionisation to the total scattering. This requires
-    % special treatment since in addition to the ionisation potential
-    % primary electrons lose energy to the secondary electrons
-    j2 = size(xs_i,1);
-    % So we calculate the secondary electron spectra
-    % second_e_spectra = feval(second_e_fcn,E,E(iE));
-    % second_e_spectra = (second_e_spectra + second_e_spectra([2:end end]))/2.*gradE;
-    % And the average energy lost to them
-    % dE_s = cumsum(second_e_spectra.*E)./cumsum(second_e_spectra);
-    % This makes the fraction of electrons lost from the energy bin
-    % [E(iE) E(iE)+gradE(iE)]
-    % tot_sc = tot_sc + n_i*(xs_i(j2,iE).*min(1,(dE_i(j2,1)+dE_s(iE))./gradE(iE)));
-    %% This is a QD-fix since this is not the correct
-    %  phase-function for the ionising collisions, but this will
-    %  have to do for now.
-    tot_sc = tot_sc + n_i*(xs_i(j2,iE)); %.*min(1,dE_i(j2,1)./gradE(iE)));
-    for i_1 = size(B2B,1):-1:1,
-      for i_2 = size(B2B,2):-1:1
-        elsc_b2b(:,i_1,i_2) = ( elsc_b2b(:,i_1,i_2) + ...
-                                n_i*(xs_i(j2,iE)*A2B(i_1,i_2)).*max(0,1-dE_i(j2,1)./gradE(iE)));
-      end
-    end
+    
   end
   
   % Add the loss due to electron-electron collisions:
@@ -267,7 +247,7 @@ for iE = length(E):-1:1,
   % function, with up-stream differences for the spatial gradients
   % D_e = min(1e-3,DaFcn(E(iE)));
   
-  [Ie_zt] = de_M_stream_CNztusD(h/cos(mag_ze),t,c_o_mu,...
+  [Ie_zt] = de_M_stream_CNztusD_nomiddle_backward_corrected_CFL(h/cos(mag_ze),t,c_o_mu,...
                                 Ie_p,...
                                 I0_beams,...
                                 v_of_E(E(iE)),...
@@ -324,6 +304,7 @@ for iE = length(E):-1:1,
         break;
         % then we're off to ionisation's
       end
+        
       % The flux of electrons degraded from energy bin [E(iE) E(iE)+gradE(iE)]
       Ie_degraded = (xs_i(idE,iE).*min(1,dE_i(idE,1)./gradE(iE)))*A_b2b*Ie_zt;
       % to any lower energy bin by excitation of the idE-th state
@@ -360,12 +341,10 @@ for iE = length(E):-1:1,
                                        partition_fract(i_u) );
         end
       end
-      
     end
+    
     % What remains is the ionisation
-    %idE = length(dE_i);
     for idE2 = idE:size(dE_i,1),
-      
       E_p_d = -( E - ( E(iE)+gradE(iE) - dE_i(idE2,1) ) );
       % Then take care of the ionisation
       i_upper = find( E + gradE > E(iE)-dE_i(idE2,1) & ...
@@ -426,12 +405,6 @@ for iE = length(E):-1:1,
             break
           end
         end
-        %         for iti = numel(t):-1:1,
-        %           deg_Ie(:,iti,:) = squeeze(deg_Ie(:,iti,:)) + dE_i(idE2,2)*Ionization(:,iti)*e_ionized_distribution;
-        %         end
-        %        for izi = size(Ionization,1):-1:1,
-        %          deg_Ie(izi,:,:) = squeeze(deg_Ie(izi,:,:)) + dE_i(idE2,2)*Ionization(izi,:)'*e_ionized_distribution;
-        %        end
       end
     end
     
