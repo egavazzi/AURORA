@@ -141,7 +141,7 @@ end
 
 if strcmp(s_or_c,'s')
   % Differential cross-section
-  Xs = B./( 1 + (Es/A).^(5/3) ).*(Es < (Ep-13.618)/2 ); % Should
+  Xs = B./( 1 + (Es/A).^(5/3) ).*(Es < (Ep-Eionization)/2 ); % Should
                                                         % be 5/3
                                                         % not (6/3)
   
