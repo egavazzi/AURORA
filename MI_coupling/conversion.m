@@ -5,13 +5,14 @@
 
 %% Import data
 inputb6;
-load fzvzmu3000000.mat
+load fzvzmu0080000.mat
+% load fzvzmu6000000.mat
 load Bfield.mat
 %% Calculate flux (/eV/ster) for specie 1 (magnetospheric e-)
 tic
 index_specie = 1;
 m = particle(index_specie).mass;
-zz = 531;      % index for the altitude at top of ionosphere
+zz = 300;      % index for the altitude at top of ionosphere
 B = B(end);   % magnetic field at top of ionosphere
 
 % Extraction of the (vz,mu_mag)-grid
@@ -28,14 +29,14 @@ fzvzmu_in = fzvzmustruct(index_specie).f(particle(index_specie).vz >= 0,:,zz);  
 HMR_VZ = 20;   % HOW MUCH DO YOU WANT TO REFINE VZ
 HMR_MU = 20;   % HOW MUCH DO YOU WANT TO REFINE MU
 % Refine vz-grid
-F = griddedInterpolant(1:251,vz_grid);
-vz_grid_finer = F(1:(1/HMR_VZ):251);
+F = griddedInterpolant(1:101,vz_grid);
+vz_grid_finer = F(1:(1/HMR_VZ):101);
 dvz_finer = (1/HMR_VZ) * dvz ;
 % vz_middle_bin_finer = vz_middle_bin;
 vz_middle_bin_finer = vz_grid_finer(2:end) - 0.5 * dvz_finer;
 % Refine mu_mag-grid
-G = griddedInterpolant(1:51,mu_mag_grid);
-mu_mag_grid_finer = G(1:(1/HMR_MU):51);
+G = griddedInterpolant(1:101,mu_mag_grid);
+mu_mag_grid_finer = G(1:(1/HMR_MU):101);
 dmu_mag_finer = (1/HMR_MU) .* dmu_mag;
 dmu_mag_finer = repelem(dmu_mag_finer,HMR_MU);
 % mu_mag_middle_bin_finer = mu_mag_middle_bin;
@@ -111,7 +112,7 @@ F = F(1:end-1,1:end-1);
 tic
 index_specie = 3;
 m = particle(index_specie).mass;
-zz = 531;      % index for the altitude at top of ionosphere
+zz = 300;      % index for the altitude at top of ionosphere
 B = B(end);   % magnetic field at top of ionosphere
 
 % Extraction of the (vz,mu_mag)-grid
@@ -125,17 +126,17 @@ dmu_mag = particle(index_specie).dmu;
 fzvzmu_in = fzvzmustruct(index_specie).f(particle(index_specie).vz <= 0,:,zz);  % taking only downward going e-
 
 % Extrapolate f over a finer (vz,mu_mag) grid;
-HMR_VZ = 20;   % HOW MUCH DO YOU WANT TO REFINE VZ
-HMR_MU = 20;   % HOW MUCH DO YOU WANT TO REFINE MU
+HMR_VZ = 10;   % HOW MUCH DO YOU WANT TO REFINE VZ
+HMR_MU = 10;   % HOW MUCH DO YOU WANT TO REFINE MU
 % Refine vz-grid
-F = griddedInterpolant(1:51,vz_grid);
-vz_grid_finer = F(1:(1/HMR_VZ):51);
+F = griddedInterpolant(1:101,vz_grid);
+vz_grid_finer = F(1:(1/HMR_VZ):101);
 dvz_finer = (1/HMR_VZ) * dvz ;
 % vz_middle_bin_finer = vz_middle_bin;
 vz_middle_bin_finer = vz_grid_finer(2:end) - 0.5 * dvz_finer;
 % Refine mu_mag-grid
-G = griddedInterpolant(1:21,mu_mag_grid);
-mu_mag_grid_finer = G(1:(1/HMR_MU):21);
+G = griddedInterpolant(1:101,mu_mag_grid);
+mu_mag_grid_finer = G(1:(1/HMR_MU):101);
 dmu_mag_finer = (1/HMR_MU) .* dmu_mag;
 dmu_mag_finer = repelem(dmu_mag_finer,HMR_MU);
 % mu_mag_middle_bin_finer = mu_mag_middle_bin;
@@ -205,9 +206,9 @@ ss = size(pp);
 pp = [[pp zeros(ss(1),1)];zeros(1,ss(2)+1)];
 Eplot = E_grid;
 muplot = acosd(mu_pitch_grid(1:end));
-h = polarPcolor(Eplot,(muplot),pp);
-% h = pcolor(Eplot,(muplot),pp.');
+h = polarPcolor(Eplot,(muplot),pp,'Ncircles',10);
 
+% h = pcolor(Eplot,(muplot),pp.');
 % set(h,'EdgeColor','none');
 % set(gca,'XScale','log');
 % xlabel('E (eV)')
@@ -216,7 +217,8 @@ h = polarPcolor(Eplot,(muplot),pp);
 % ylim([0 90])
 % cb = colorbar;
 % cb.Title.String = "log_{10}Ie (#e/m2/s/eV/ster)";
-% caxis([-10 1])
+
+caxis([-10 1])
 
 %% Convert in the other way
 tic
@@ -278,25 +280,24 @@ toc
 DIFF = log10(abs(fzvzmu_in .* (log10(fzvzmu_in) > -10) - f .* (log10(f) > -10)) ./ (fzvzmu_in .* (log10(fzvzmu_in) > -10)));
 % DIFF = - (log10(fzvzmu_in) .* (log10(fzvzmu_in) > -10) - log10(f).* (log10(f) > -10));
 
-ii = 1;
-zz = 531;
-% zz = 560;
+ii = 3;
+zz = 300;
 
 figure
 c1 = jet(64);c2 = jet(256);c3 = jet(1024);
 c = [c1(1:8,:);c2(32:64,:);c3(257:1024,:)];
 colormap(c)
-pp = log10(fzvzmustruct((ii)).f(:,:,zz));
+% pp = log10(fzvzmustruct((ii)).f(:,:,zz));
 % pp=log10(f(:,:));
-% pp=(DIFF(:,:));
+pp=(DIFF(:,:));
 
 ss = size(pp);
 pp = [[pp zeros(ss(1),1)] ; zeros(1,ss(2)+1)];
 vzplot = particle(ii).vzcorn;
 muplot = particle(ii).mucorn;
 
-% h = pcolor(muplot,vzplot(251:end),pp);
-h = pcolor(muplot,vzplot(251:end),pp(251:end,:));
+h = pcolor(muplot,vzplot(101:end),pp);
+% h = pcolor(muplot,vzplot(101:end),pp(101:end,:));
 % h = pcolor(muplot,vzplot,pp);
 
 axis([min(particle(ii).mucorn) ...
@@ -310,9 +311,42 @@ cax = caxis;
 caxis([-10 cax(2)]) 
 xlabel('\mu_{mag}')
 ylabel('v_z')
+title(['z = ',num2str(z(zz),3)])
 
-xlim([0 6e-11])
-ylim([0 1e8])
+% xlim([0 2e-13])   %ionospheric
+% ylim([-2e7 2e7])  %ionospheric
+
+xlim([0 9e-11]) %magnetospheric
+ylim([0 1e8])   %magnetospheric
+
+%% Plot f(vz,mu_mag) at the ionospheric boundary (BC !)
+% Need that the fR0000000s03.ketchup.dat file has been copied in the
+% folder, and that the extract_BC.m script has been used to convert it
+% (the .dat file) into a .mat file.
+load fBC_right.mat
+ 
+figure
+c1 = jet(64);c2 = jet(256);c3 = jet(1024);
+c = [c1(1:8,:);c2(32:64,:);c3(257:1024,:)];
+colormap(c)
+pp = log10(fBC(3).f);
+
+ss = size(pp);
+pp = [[pp zeros(ss(1),1)] ; zeros(1,ss(2)+1)];
+vzplot = particle(3).vzcorn;
+muplot = particle(3).mucorn;
+h = pcolor(muplot,vzplot,pp);
+set(h,'EdgeColor','none');
+cb = colorbar;
+cb.Title.String = "log_{10}(f(v_z,\mu_{mag})";
+cax = caxis;
+caxis([-10 cax(2)]) 
+xlabel('\mu_{mag}')
+ylabel('v_z')
+title(['z = ionospheric BC'])
+
+xlim([0 2e-13])   %ionospheric
+ylim([-2e7 2e7])  %ionospheric
 %% Contour plot of pitch angles
 mu_pitch = [];
 for ii = 1:length(vz_grid)
