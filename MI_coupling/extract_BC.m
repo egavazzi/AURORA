@@ -1,0 +1,335 @@
+% EXTRACTS THE DISTRIBUTION FUNCTION OF IONOSPHERIC
+% ELECTRONS AT THE IONOSPHERIC BOUNDARY (BOUNDARY CONDITION).
+
+ccc=pwd;
+[a0,a1]=system('uname -n'); [a0,a2]=system('ps |grep -i matlab');
+dummy=[a1 a2 datestr(now)];
+dummy=dummy(double(dummy)~=10); dummy=dummy(double(dummy)~=32);
+
+if ~exist('absolutelynomessages')
+  absolutelynomessages=logical(0);
+end
+
+% ------- input data ------- %
+% The easiest way to get the general parameters
+inputb6;
+
+% If the fields_per_file parameter wasn't defined in the input file,
+% default to 1 field per file.
+if ~exist('fields_per_file')
+  fields_per_file = 1;
+end
+
+% Now read the species specific data
+particle=struct();
+fid=fopen('inputb6.m');
+for ii=1:Nspecies
+  theline=fgetl(fid);
+  if length(theline)<5,
+    theline=[theline '     '];
+  end
+  while ~(strcmp(theline(1:5),'%SPEC') | strcmp(theline(1:5),'%spec'))
+    theline=fgetl(fid);
+    if length(theline)<5,
+      theline=[theline '     '];
+    end
+  end
+  while ~(strcmp(theline(1:4),'%END') | strcmp(theline(1:4),'%end'))
+    eval(theline)
+    theline=fgetl(fid);
+    if length(theline)<4,
+      theline=[theline '    '];
+    end
+  end
+  particle(ii).Nvz=Nvz;
+  particle(ii).vzmin=vzmin;
+  particle(ii).vzmax=vzmax;
+  particle(ii).Nmu=Nmu;
+  particle(ii).mumin=mumin;
+  particle(ii).mumax=mumax;
+  particle(ii).muexp=muexp;
+  particle(ii).mass=mass;
+  particle(ii).charge=charge;
+  particle(ii).n0=n0;
+  particle(ii).vz0=vz0;
+  particle(ii).kTz=kTz;
+  particle(ii).kTp=kTp;
+  particle(ii).n0L=n0L;
+  particle(ii).vz0L=vz0L;
+  particle(ii).kTzL=kTzL;
+  particle(ii).kTpL=kTpL;
+  particle(ii).n0R=n0R;
+  particle(ii).vz0R=vz0R;
+  particle(ii).kTzR=kTzR;
+  particle(ii).kTpR=kTpR;
+end
+fclose(fid);
+
+% % Find the number of processors used from the job.bat file, if there is one. 
+% if exist([pwd '/job.bat'])
+%   fid=fopen('job.bat');
+%   theline=fgetl(fid);
+%   while isempty(strfind(theline,'Nprocs')) & ...
+%         (isempty(strfind(theline,'PBS')) | ...
+%          isempty(strfind(theline,'-l')) | ...
+%          isempty(strfind(theline,'nodes')) )
+%     theline=fgetl(fid);
+%     if ~ischar(theline), break, end
+%   end
+%   fclose(fid);
+%   if ~isempty(strfind(theline,'Nprocs'))
+%     eval([theline(strfind(theline,'Nprocs'):end) ';'])
+%     Nprocsref=Nprocs;
+%     clear Nprocs
+%   elseif ~isempty(strfind(theline,'nodes'))
+%     eval([theline(strfind(theline,'nodes'):end) ';'])
+%     Nprocs=nodes;
+%     Nprocsref=Nprocs;
+%     clear Nprocs
+%   else
+%     Nprocsref=NaN;
+%   end
+% else
+%   Nprocsref=NaN;
+% end
+
+% construct xi-vectors
+% dxi=1/Nz;
+% xicorn=dxi*[0:Nz];
+% xi=0.5*(xicorn(1:end-1) + xicorn(2:end));
+% % compute transformation, i.e. z-vectors and g'
+% aa=load(transffilename);
+% UHPpole  = aa(:,1) + 1i*aa(:,2);
+% UHPresid = aa(:,3) + 1i*aa(:,4);
+% [z,gp] = ketchup_b2transform(UHPpole,UHPresid,xi,zmin,zmax);
+% zcorn = ketchup_b2transform(UHPpole,UHPresid,xicorn,zmin,zmax);
+% dz    = diff(zcorn);
+
+for ii=1:Nspecies
+  particle(ii).dvz=(particle(ii).vzmax-particle(ii).vzmin)/particle(ii).Nvz;
+  particle(ii).vzcorn=particle(ii).vz0 + ...
+      particle(ii).vzmin + particle(ii).dvz*[0:particle(ii).Nvz];
+  particle(ii).vz = ...
+      0.5*(particle(ii).vzcorn(1:end-1)+particle(ii).vzcorn(2:end));
+
+  vmu=[1:particle(ii).Nmu];
+  particle(ii).mu = particle(ii).mumin + ...
+      0.5*((vmu.^particle(ii).muexp+(vmu-1).^particle(ii).muexp) / ...
+           particle(ii).Nmu^particle(ii).muexp) * ...
+      (particle(ii).mumax-particle(ii).mumin);
+  particle(ii).dmu = ((vmu.^particle(ii).muexp - ...
+                       (vmu-1).^particle(ii).muexp) / ...
+                      particle(ii).Nmu^particle(ii).muexp) * ...
+      (particle(ii).mumax-particle(ii).mumin);
+  particle(ii).mucorn = particle(ii).mu-0.5*particle(ii).dmu; 
+  particle(ii).mucorn = [particle(ii).mucorn particle(ii).mu(end) + ...
+                      0.5*particle(ii).dmu(end)];
+end
+
+% cd outp
+
+% % --- g --- %
+% % Prevent two processes from performing simultaneous conversions
+% if exist([pwd '/datfiles/lock.g'])
+%   if ~absolutelynomessages
+%     disp('Another process is already working on this directory.')
+%     disp('If this is not the case, remove the file')
+%     disp([pwd '/datfiles/lock.g'])
+%   end
+% else
+%   all_is_fine=logical(0);
+%   try
+%     dlmwrite('datfiles/lock.g',dummy,'');
+%     fid=fopen('datfiles/lock.g','r');
+%     lock=textscan(fid,'%s');
+%     fclose(fid);
+%     if strcmp(dummy,lock{1})
+%       all_is_fine=logical(1);
+%     end
+%   catch
+%     all_is_fine=logical(0);
+%   end
+% 
+%   if all_is_fine
+%     % The action is put inside this try block. The purpose of this is that if
+%     % an error happens after the writing of the lock file, this lock file
+%     % shall be removed so that future attempts are not blocked.
+%     try
+% 
+%       if exist([pwd '/datfiles/g/g.ketchup.dat'])
+%         % Load transformed vectors as generated by ketchup for comparison with
+%         % those computed here.
+%         % To prevent attempts to process files that are being written we
+%         % first wait ten seconds.
+%         pause(10)
+%         ginput = load('datfiles/g/g.ketchup.dat');
+%         zcmp = ginput(:,1).';
+%         gpcmp = ginput(:,2).';
+%         % Check if the transformation is the same.
+%         reldevz = (zcmp-z)./z;
+%         reldevgp = (gpcmp-gp)./gp;
+%         if max(abs(reldevz))>1e-6 |  max(abs(reldevgp))>1e-6
+%           error(['Transformation missmatch! ' ...
+%                  'max(abs(reldevz))=' num2str(max(abs(reldevz))) ...
+%                  ', max(abs(reldevgp))=' num2str(max(abs(reldevgp)))])
+%         end
+%         % Save all transformed vectors, both locally computed and of ketchup
+%         % origin. 
+%         save -v7.3 g.mat zcmp gpcmp z gp zcorn dz
+%         delete('datfiles/g/g.ketchup.dat')
+%       else
+%         pause(0.5)
+%       end
+%       delete('datfiles/lock.g')
+%     catch
+%       felfelfel=lasterror;
+%       disp(felfelfel.message)
+%       delete('datfiles/lock.g')
+%     end % end try
+%   end
+% end % end if exist('datfiles/lock.g')
+
+
+
+
+
+% --- distribution function f(z,vz,mu) --- %
+% one file per timestep, containing a structured array of all species,
+% with a three-dimensional array for f(z,vz,mu) in each.
+
+% Prevent two processes from performing simultaneous conversions
+if exist([pwd 'lock.fBC'])
+  if ~absolutelynomessages
+    disp('Another process is already working on this directory.')
+    disp('If this is not the case, remove the file')
+    disp([pwd 'lock.fBC'])
+  end
+else
+  all_is_fine=logical(0);
+  try
+    dlmwrite('lock.fBC',dummy,'')
+    fid=fopen('lock.fBC','r');
+    lock=textscan(fid,'%s');
+    fclose(fid);
+    if strcmp(dummy,lock{1})
+      all_is_fine=logical(1);
+    end
+  catch
+    all_is_fine=logical(0);
+  end
+
+  if all_is_fine
+    try
+      dd=dir('./');
+      fBC=struct();
+%       for ii=1:Nspecies
+%         fBC(ii).timestep=0;
+%       end
+
+      % pick out the files containing species 1 and process 0. 
+      % Then start the loop.
+%       for speciesnumber=3:-1:1
+%         if ~isnan(particle(speciesnumber).mass) & ...
+%               ~isinf(particle(speciesnumber).mass)
+%             speciesnumber
+%           break
+%         end
+%       end
+      speciesnumber = 3;
+      
+%       startfiles=[];Nprocs=0;
+      for ii=3:length(dd)
+        if length(dd(ii).name)>=10
+          if strcmp(dd(ii).name(1:2),'fR')
+            if strcmp(dd(ii).name(11:12),num2str(speciesnumber,'%0.2d')) & ...
+                  strcmp(dd(ii).name(13:end),'.ketchup.dat')
+                disp('test')
+%               procid = str2num(dd(ii).name(18:21));
+%               Nprocs = max(Nprocs,procid);
+%               if strcmp(dd(ii).name(17:21),'p0000')
+%                 startfiles = [startfiles ii];
+%               end
+            jj = ii;
+            end
+          end
+        end
+      end
+%       Nprocs = Nprocs + 1; % Numbers from 0 to Nprocs-1
+
+      % To prevent attempts to process files that are being written we wait
+      % twenty seconds if there are less than two time steps to process.
+%       if length(startfiles)<2 & length(startfiles)>0 & ~(Nprocs<Nprocsref)
+%         pause(20)
+%       end
+
+%       if length(startfiles)>0 & ~(Nprocs<Nprocsref)
+%         for ii = startfiles
+          % If not all files of the largest non-infinite mass species
+          % number exist, that is an error
+%           infilesexistnot = logical(zeros(1,Nprocs));
+%           for jj = 0:Nprocs-1
+%             infilesexistnot(jj+1) = ...
+%                 ~exist(['datfiles/fzvzmu/' dd(ii).name(1:14) ...
+%                         num2str(speciesnumber,'%0.2d') ...
+%                         'p' num2str(jj,'%0.4d') '.ketchup.dat']);
+%           end        
+%           if sum(infilesexistnot)>0
+%             error(['fzvzmu: infilesexistnot=',num2str(infilesexistnot)])
+%           end
+        
+%           thistimestep=str2num(dd(ii).name(7:13));
+          for thisspecies = 3;%1:Nspecies
+            if ~isnan(particle(thisspecies).mass) & ...
+                  ~isinf(particle(thisspecies).mass)
+%               fBC(thisspecies).timestep=thistimestep;
+              fBC(thisspecies).f = ...
+                  zeros(particle(thisspecies).Nvz,particle(thisspecies).Nmu);
+%               ivzoffset=[];fcounter=1;
+%               for jj = 0:Nprocs-1
+                infile = ['./' dd(jj).name(1:10) ...
+                          num2str(thisspecies,'%0.2d') ...
+                          '.ketchup.dat'];
+                fid=fopen(infile,'r');
+                if fid<0
+                  error(['Error reading file ' infile])
+                end
+
+                for kk = 1
+%                   instruct = textscan(fid,'%*s%*s%f',1);
+%                   if isempty(instruct{1}), break, end
+%                   ivzoffset=[ivzoffset instruct{1}];
+                  instruct = textscan(fid,'%f');
+                  fBC(thisspecies).f(:,:) = ...
+                      reshape(instruct{1}, [particle(thisspecies).Nmu ...
+                                      particle(thisspecies).Nvz]).';
+%                 end
+      
+                fclose(fid);
+              end
+%               fBC(thisspecies).ivzoffset = ivzoffset;
+            end
+          end
+          disp('test')
+          outfile = ['fBC_right.mat'];
+          save(outfile,'-v7.3','fBC')%,'thistimestep','particle', ...
+%                'Nz','dz','zcorn','z','dt','Niter','dump_period_fields', ...
+%                'dump_period_distr','dump_start','shift_test_period', ...
+%                'zmin','zmax','Nspecies','voltage')
+
+% $$$       system(['rm ' infile(1:30) '??p*.ketchup.dat']);
+%           delete([infile(1:30) '*p*.ketchup.dat']);
+
+          if ~absolutelynomessages
+            disp(['ionospheric BC for specie 3 done!'])
+          end
+%         end
+%       end
+      clear fBC
+      delete('./lock.fBC')
+    catch
+      felfelfel=lasterror;
+      disp(felfelfel.message)
+      delete('./lock.fBC')
+    end % end try
+  end
+end % end if exist('datfiles/lock.fzvzmu')
