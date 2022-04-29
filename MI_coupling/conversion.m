@@ -5,8 +5,8 @@
 
 %% Import data
 inputb6;
-load fzvzmu0080000.mat
-% load fzvzmu6000000.mat
+% load fzvzmu0080000.mat
+load fzvzmu6000000.mat
 load Bfield.mat
 %% Calculate flux (/eV/ster) for specie 1 (magnetospheric e-)
 tic
@@ -46,7 +46,7 @@ fzvzmu_in_finer = repelem(fzvzmu_in,HMR_VZ,HMR_MU);
 
 % Make E-grid
 dEfcn = @(X,DEinitial,DEfinal,C,X0) DEinitial+(1+tanh(C*(X-X0)))/2*DEfinal;     % from setup4etrpd10streams.m
-E_grid = cumsum(dEfcn(0:2000,0.15,11.5,0.05,80))+1.9;
+E_grid = cumsum(dEfcn(0:1800,0.15,11.5,0.05,80))+1.9;
 E_grid = E_grid;
 dE = diff(E_grid);
 E_middle_bin = E_grid(1:(end-1)) + 0.5 * dE;
@@ -86,28 +86,15 @@ for ii = 1:length(vz_middle_bin_finer)
     Ie_1(index_energy,index_pitch) = Ie_1(index_energy,index_pitch) + ...
                                 v(ii,jj) * fzvzmu_in_finer(ii,jj) * ...
                                 ... 1 * fzvzmu_in_finer(ii,jj) * ...
-                                dvz_finer * dmu_mag_finer(jj);% / ...
+                                dvz_finer * dmu_mag_finer(jj) ./ ...
+                                dE(index_energy);
                                 %(BeamW(index_pitch) ./ sum(BeamW));
                                 %(1 * dE(index_energy) * BeamW(index_pitch));
   end
 end
-
 Ie_total_1 = sum(((v .* fzvzmu_in_finer) * dmu_mag_finer.') * dvz_finer)     % [#e/m2/s]
-E_total_1 = sum(E_middle_bin*Ie_1)                                           % [eV/m2/s]
+E_total_1 = sum(E_middle_bin * (Ie_1 .* dE))                                 % [eV/m2/s]
 toc
-
-%%
-% [X,Y] = meshgrid(mu_mag_middle_bin,vz_middle_bin);
-% [X2,Y2] = meshgrid(mu_mag_middle_bin_finer,vz_middle_bin_finer);
-[X,Y] = meshgrid(mu_mag_grid,vz_grid);
-[X2,Y2] = meshgrid(mu_mag_grid_finer,vz_grid_finer);
-
-pp = fzvzmu_in;
-ss=size(pp);
-pp=[[pp zeros(ss(1),1)];zeros(1,ss(2)+1)];
-
-F = interp2(X,Y,pp,X2,Y2);
-F = F(1:end-1,1:end-1);
 %% Calculate flux (/eV/ster) for specie 3 (ionospheric e-)
 tic
 index_specie = 3;
@@ -146,7 +133,7 @@ fzvzmu_in_finer = repelem(fzvzmu_in,HMR_VZ,HMR_MU);
 
 % Make E-grid
 dEfcn = @(X,DEinitial,DEfinal,C,X0) DEinitial+(1+tanh(C*(X-X0)))/2*DEfinal;     % from setup4etrpd10streams.m
-E_grid = cumsum(dEfcn(0:2000,0.15,11.5,0.05,80))+1.9;
+E_grid = cumsum(dEfcn(0:1800,0.15,11.5,0.05,80))+1.9;
 E_grid = E_grid;
 dE = diff(E_grid);
 E_middle_bin = E_grid(1:(end-1)) + 0.5 * dE;
@@ -183,14 +170,14 @@ for ii = 1:length(vz_middle_bin_finer)
     Ie_3(index_energy,index_pitch) = Ie_3(index_energy,index_pitch) + ...
                                 v(ii,jj) * fzvzmu_in_finer(ii,jj) * ...
                                 ... 1 * fzvzmu_in_finer(ii,jj) * ...
-                                dvz_finer * dmu_mag_finer(jj);% / ...
+                                dvz_finer * dmu_mag_finer(jj) / ...
+                                dE(index_energy);
                                 %(BeamW(index_pitch) ./ sum(BeamW));
                                 %(1 * dE(index_energy) * BeamW(index_pitch));
   end
 end
-
 Ie_total_3 = sum(((v .* fzvzmu_in_finer) * dmu_mag_finer.') * dvz_finer)     % [#e/m2/s]
-E_total_3 = sum(E_middle_bin*Ie_3)                                           % [eV/m2/s]
+E_total_3 = sum(E_middle_bin * (Ie_3 .* dE))                                 % [eV/m2/s]
 toc
 %% plot Ie
 Ie_plot = Ie_1;
@@ -219,6 +206,14 @@ h = polarPcolor(Eplot,(muplot),pp,'Ncircles',10);
 % cb.Title.String = "log_{10}Ie (#e/m2/s/eV/ster)";
 
 caxis([-10 1])
+%% Write Ie_total coming at top of the ionosphere in a file to be used by AURORA
+for i_mu = 1:18   % downward fluxes
+  Ie_total{i_mu} = Ie_1(:,i_mu) + Ie_3(:,i_mu);
+end
+for i_mu = 19:36  % upward fluxes
+  Ie_total{i_mu} = zeros(size(E_grid));
+end
+save('incoming_flux.mat','-v7.3','Ie_total')
 
 %% Convert in the other way
 tic
@@ -226,7 +221,7 @@ tic
 HMR_E = 1;   % HOW MUCH DO YOU WANT TO REFINE E
 HMR_MU = 10;   % HOW MUCH DO YOU WANT TO REFINE MU
 % Refine E-grid
-F = griddedInterpolant(1:2001,E_grid);
+F = griddedInterpolant(1:1801,E_grid);
 E_grid_finer = F(1:(1/HMR_E):2001);
 dE_finer = (1/HMR_E) .* dE;
 dE_finer = repelem(dE_finer,HMR_E);
@@ -268,14 +263,13 @@ for ii = 1:length(E_middle_bin_finer)
                                ... v(ii,jj) * ...
                                v(index_vz,index_mu_mag) * ...  
                                Ie_1_finer(ii,jj) ./ ...
-                               ... * dE_finer(ii) * BeamW_finer(jj) ./ ...
-                               (dvz * dmu_mag(index_mu_mag));
+                               (dvz * dmu_mag(index_mu_mag)) * ...
+                               dE_finer(ii);
+                               %dE_finer(ii) * BeamW_finer(jj) ./ ...
   end
 end
-
 Ie_total = sum((v .* f * dmu_mag.') * dvz)
 toc
-
 %% Plot f(vz,mu_mag)
 DIFF = log10(abs(fzvzmu_in .* (log10(fzvzmu_in) > -10) - f .* (log10(f) > -10)) ./ (fzvzmu_in .* (log10(fzvzmu_in) > -10)));
 % DIFF = - (log10(fzvzmu_in) .* (log10(fzvzmu_in) > -10) - log10(f).* (log10(f) > -10));
@@ -287,6 +281,7 @@ figure
 c1 = jet(64);c2 = jet(256);c3 = jet(1024);
 c = [c1(1:8,:);c2(32:64,:);c3(257:1024,:)];
 colormap(c)
+
 % pp = log10(fzvzmustruct((ii)).f(:,:,zz));
 % pp=log10(f(:,:));
 pp=(DIFF(:,:));
