@@ -46,7 +46,7 @@ fzvzmu_in_finer = repelem(fzvzmu_in,HMR_VZ,HMR_MU);
 
 % Make E-grid
 dEfcn = @(X,DEinitial,DEfinal,C,X0) DEinitial+(1+tanh(C*(X-X0)))/2*DEfinal;     % from setup4etrpd10streams.m
-E_grid = cumsum(dEfcn(0:1800,0.15,11.5,0.05,80))+1.9;
+E_grid = cumsum(dEfcn(0:1600,0.15,11.5,0.05,80))+1.9;
 E_grid = E_grid;
 dE = diff(E_grid);
 E_middle_bin = E_grid(1:(end-1)) + 0.5 * dE;
@@ -93,7 +93,7 @@ for ii = 1:length(vz_middle_bin_finer)
   end
 end
 Ie_total_1 = sum(((v .* fzvzmu_in_finer) * dmu_mag_finer.') * dvz_finer)     % [#e/m2/s]
-E_total_1 = sum(E_middle_bin * (Ie_1 .* dE))                                 % [eV/m2/s]
+E_total_1 = sum(E_middle_bin * (Ie_1 .* dE.'))                               % [eV/m2/s]
 toc
 %% Calculate flux (/eV/ster) for specie 3 (ionospheric e-)
 tic
@@ -113,8 +113,8 @@ dmu_mag = particle(index_specie).dmu;
 fzvzmu_in = fzvzmustruct(index_specie).f(particle(index_specie).vz <= 0,:,zz);  % taking only downward going e-
 
 % Extrapolate f over a finer (vz,mu_mag) grid;
-HMR_VZ = 10;   % HOW MUCH DO YOU WANT TO REFINE VZ
-HMR_MU = 10;   % HOW MUCH DO YOU WANT TO REFINE MU
+HMR_VZ = 20;   % HOW MUCH DO YOU WANT TO REFINE VZ
+HMR_MU = 20;   % HOW MUCH DO YOU WANT TO REFINE MU
 % Refine vz-grid
 F = griddedInterpolant(1:101,vz_grid);
 vz_grid_finer = F(1:(1/HMR_VZ):101);
@@ -133,7 +133,7 @@ fzvzmu_in_finer = repelem(fzvzmu_in,HMR_VZ,HMR_MU);
 
 % Make E-grid
 dEfcn = @(X,DEinitial,DEfinal,C,X0) DEinitial+(1+tanh(C*(X-X0)))/2*DEfinal;     % from setup4etrpd10streams.m
-E_grid = cumsum(dEfcn(0:1800,0.15,11.5,0.05,80))+1.9;
+E_grid = cumsum(dEfcn(0:1600,0.15,11.5,0.05,80))+1.9;
 E_grid = E_grid;
 dE = diff(E_grid);
 E_middle_bin = E_grid(1:(end-1)) + 0.5 * dE;
@@ -177,7 +177,7 @@ for ii = 1:length(vz_middle_bin_finer)
   end
 end
 Ie_total_3 = sum(((v .* fzvzmu_in_finer) * dmu_mag_finer.') * dvz_finer)     % [#e/m2/s]
-E_total_3 = sum(E_middle_bin * (Ie_3 .* dE))                                 % [eV/m2/s]
+E_total_3 = sum(E_middle_bin * (Ie_3 .* dE.'))                                 % [eV/m2/s]
 toc
 %% plot Ie
 Ie_plot = Ie_1;
@@ -207,6 +207,7 @@ h = polarPcolor(Eplot,(muplot),pp,'Ncircles',10);
 
 caxis([-10 1])
 %% Write Ie_total coming at top of the ionosphere in a file to be used by AURORA
+clear Ie_total;
 for i_mu = 1:18   % downward fluxes
   Ie_total{i_mu} = Ie_1(:,i_mu) + Ie_3(:,i_mu);
 end
@@ -269,6 +270,7 @@ for ii = 1:length(E_middle_bin_finer)
   end
 end
 Ie_total = sum((v .* f * dmu_mag.') * dvz)
+
 toc
 %% Plot f(vz,mu_mag)
 DIFF = log10(abs(fzvzmu_in .* (log10(fzvzmu_in) > -10) - f .* (log10(f) > -10)) ./ (fzvzmu_in .* (log10(fzvzmu_in) > -10)));
@@ -318,18 +320,19 @@ ylim([0 1e8])   %magnetospheric
 % Need that the fR0000000s03.ketchup.dat file has been copied in the
 % folder, and that the extract_BC.m script has been used to convert it
 % (the .dat file) into a .mat file.
-load fBC_right.mat
+load fBC_right_s03.mat
+ii = 3;
  
 figure
 c1 = jet(64);c2 = jet(256);c3 = jet(1024);
 c = [c1(1:8,:);c2(32:64,:);c3(257:1024,:)];
 colormap(c)
-pp = log10(fBC(3).f);
+pp = log10(fBC(ii).f);
 
 ss = size(pp);
 pp = [[pp zeros(ss(1),1)] ; zeros(1,ss(2)+1)];
-vzplot = particle(3).vzcorn;
-muplot = particle(3).mucorn;
+vzplot = particle(ii).vzcorn;
+muplot = particle(ii).mucorn;
 h = pcolor(muplot,vzplot,pp);
 set(h,'EdgeColor','none');
 cb = colorbar;
