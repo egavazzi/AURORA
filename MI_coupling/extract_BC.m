@@ -222,108 +222,49 @@ else
     try
       dd=dir('./');
       fBC=struct();
-%       for ii=1:Nspecies
-%         fBC(ii).timestep=0;
-%       end
 
-      % pick out the files containing species 1 and process 0. 
-      % Then start the loop.
-%       for speciesnumber=3:-1:1
-%         if ~isnan(particle(speciesnumber).mass) & ...
-%               ~isinf(particle(speciesnumber).mass)
-%             speciesnumber
-%           break
-%         end
-%       end
-      speciesnumber = 3;
       
-%       startfiles=[];Nprocs=0;
+      speciesnumber = 1;
+      
+      
       for ii=3:length(dd)
         if length(dd(ii).name)>=10
           if strcmp(dd(ii).name(1:2),'fR')
             if strcmp(dd(ii).name(11:12),num2str(speciesnumber,'%0.2d')) & ...
                   strcmp(dd(ii).name(13:end),'.ketchup.dat')
-                disp('test')
-%               procid = str2num(dd(ii).name(18:21));
-%               Nprocs = max(Nprocs,procid);
-%               if strcmp(dd(ii).name(17:21),'p0000')
-%                 startfiles = [startfiles ii];
-%               end
-            jj = ii;
+              jj = ii;
             end
           end
         end
       end
-%       Nprocs = Nprocs + 1; % Numbers from 0 to Nprocs-1
+      if ~isnan(particle(speciesnumber).mass) & ...
+                      ~isinf(particle(speciesnumber).mass)
 
-      % To prevent attempts to process files that are being written we wait
-      % twenty seconds if there are less than two time steps to process.
-%       if length(startfiles)<2 & length(startfiles)>0 & ~(Nprocs<Nprocsref)
-%         pause(20)
-%       end
+        fBC(speciesnumber).f = ...
+              zeros(particle(speciesnumber).Nvz,particle(speciesnumber).Nmu);
+        infile = ['./' dd(jj).name(1:10) ...
+                        num2str(speciesnumber,'%0.2d') ...
+                        '.ketchup.dat'];
+        fid=fopen(infile,'r');
+        if fid<0
+          error(['Error reading file ' infile])
+        end
 
-%       if length(startfiles)>0 & ~(Nprocs<Nprocsref)
-%         for ii = startfiles
-          % If not all files of the largest non-infinite mass species
-          % number exist, that is an error
-%           infilesexistnot = logical(zeros(1,Nprocs));
-%           for jj = 0:Nprocs-1
-%             infilesexistnot(jj+1) = ...
-%                 ~exist(['datfiles/fzvzmu/' dd(ii).name(1:14) ...
-%                         num2str(speciesnumber,'%0.2d') ...
-%                         'p' num2str(jj,'%0.4d') '.ketchup.dat']);
-%           end        
-%           if sum(infilesexistnot)>0
-%             error(['fzvzmu: infilesexistnot=',num2str(infilesexistnot)])
-%           end
-        
-%           thistimestep=str2num(dd(ii).name(7:13));
-          for thisspecies = 3;%1:Nspecies
-            if ~isnan(particle(thisspecies).mass) & ...
-                  ~isinf(particle(thisspecies).mass)
-%               fBC(thisspecies).timestep=thistimestep;
-              fBC(thisspecies).f = ...
-                  zeros(particle(thisspecies).Nvz,particle(thisspecies).Nmu);
-%               ivzoffset=[];fcounter=1;
-%               for jj = 0:Nprocs-1
-                infile = ['./' dd(jj).name(1:10) ...
-                          num2str(thisspecies,'%0.2d') ...
-                          '.ketchup.dat'];
-                fid=fopen(infile,'r');
-                if fid<0
-                  error(['Error reading file ' infile])
-                end
-
-                for kk = 1
-%                   instruct = textscan(fid,'%*s%*s%f',1);
-%                   if isempty(instruct{1}), break, end
-%                   ivzoffset=[ivzoffset instruct{1}];
-                  instruct = textscan(fid,'%f');
-                  fBC(thisspecies).f(:,:) = ...
-                      reshape(instruct{1}, [particle(thisspecies).Nmu ...
-                                      particle(thisspecies).Nvz]).';
-%                 end
+        for kk = 1
+          instruct = textscan(fid,'%f');
+          fBC(speciesnumber).f(:,:) = ...
+                      reshape(instruct{1}, [particle(speciesnumber).Nmu ...
+                      particle(speciesnumber).Nvz]).';
+          fclose(fid);
+        end
+      end
       
-                fclose(fid);
-              end
-%               fBC(thisspecies).ivzoffset = ivzoffset;
-            end
-          end
-          disp('test')
-          outfile = ['fBC_right.mat'];
-          save(outfile,'-v7.3','fBC')%,'thistimestep','particle', ...
-%                'Nz','dz','zcorn','z','dt','Niter','dump_period_fields', ...
-%                'dump_period_distr','dump_start','shift_test_period', ...
-%                'zmin','zmax','Nspecies','voltage')
+      outfile = ['fBC_right_s0',num2str(speciesnumber),'.mat'];
+      save(outfile,'-v7.3','fBC')
 
-% $$$       system(['rm ' infile(1:30) '??p*.ketchup.dat']);
-%           delete([infile(1:30) '*p*.ketchup.dat']);
-
-          if ~absolutelynomessages
-            disp(['ionospheric BC for specie 3 done!'])
-          end
-%         end
-%       end
+      if ~absolutelynomessages
+        disp(['ionospheric BC for species ',num2str(speciesnumber),' done!'])
+      end
       clear fBC
       delete('./lock.fBC')
     catch
