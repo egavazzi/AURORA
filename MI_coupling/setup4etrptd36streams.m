@@ -17,7 +17,7 @@ load msis20051008_3.dat
 
 h_atm = (74:1:610)'*1e3;h_atm = (100:1:610)'*1e3;
 dz = @(n) 150 + 150/200*(0:(n-1))' +1.2*exp(((0:(n-1))-150)/17)';
-z_atm = 100e3 + cumsum(dz(321)) - dz(1);
+z_atm = 100e3 + cumsum(dz(308)) - dz(1);
 numel(z_atm)/numel(h_atm);
 h_atm = z_atm(:); % make sure it's a column vector
 
@@ -130,7 +130,7 @@ end
 %
 % This energy-grid below work well.
 dEfcn = @(X,DEinitial,DEfinal,C,X0) DEinitial+(1+tanh(C*(X-X0)))/2*DEfinal;
-E = cumsum(dEfcn(0:937,0.15,11.5,0.05,80))+1.9;
+E = cumsum(dEfcn(0:1600,0.15,11.5,0.05,80))+1.9;
 E = E(1:stepE:end);
 dE = diff(E);dE = [dE,dE(end)];
 if plot_figs
