@@ -76,6 +76,6 @@ for i1 = 1:n_loop,
                                   
   I0 = squeeze(Ie_ztE(:,end,:));
   savefile = fullfile(savedir,sprintf('IeFlickering-%02d.mat',i1));
-  save(savefile,'Ie_ztE','E','t_run','mu_lims','h_atm','Ie_oftGB','I0','mu_scatterings','-v7.3')
+  save(savefile,'Ie_ztE','E','t_run','mu_lims','h_atm','I0','mu_scatterings','-v7.3')
   t_run = t_run(end) + 2*(t_run-t_run(1));
 end
