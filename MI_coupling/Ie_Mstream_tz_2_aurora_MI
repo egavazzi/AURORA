@@ -28,7 +28,7 @@ function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora_MI(AURORA_root_directory,
     %            thin side)
     %  t       - time array (s), double array [1 x n_t]
     %  I0      - electron flux profile at the start, i.e. initial
-    %            condition (#e/m^2/s/dE), double array [(nZ x n_beams) x 1]
+    %            condition (#e/m^2/s), double array [(nZ x n_beams) x 1]
     %            with the streams stacked in order from most parallel
     %            to B downward to most paralell to B upwards.
     %  p_e_q   - internal source of energetic electrons
@@ -227,7 +227,7 @@ function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora_MI(AURORA_root_directory,
      
       load incoming_flux.mat Ie_total % load the incoming flux
 
-      Ie_p = Ie_total{:}(iE) * ones(1,length(t)); %(#e/s/m^2/dE)
+      Ie_p = Ie_total{:}(iE) * ones(1,length(t)); %(#e/s/m^2)
 
 
       DE = gradE([iE,min(numel(gradE),iE+1)]);

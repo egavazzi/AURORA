@@ -8,7 +8,7 @@ inputb6;
 % load fzvzmu0080000.mat
 load fzvzmu6000000.mat
 load Bfield.mat
-%% Calculate flux (/eV/ster) for specie 1 (magnetospheric e-)
+%% Calculate flux ([#e/m2/s]) for specie 1 (magnetospheric e-)
 tic
 index_specie = 1;
 m = particle(index_specie).mass;
@@ -74,17 +74,15 @@ for ii = 1:length(vz_middle_bin_finer)
     mu_pitch = - cos(atan(sqrt(2*B/m * mu_mag_middle_bin_finer(jj)) / vz_middle_bin_finer (ii)));
     [~,index_pitch] = min(abs(mu_pitch_middle_bin - mu_pitch));
     [~,index_energy] = min(abs(E_middle_bin - E));
-    % convert distribution function and compute flux (/eV/ster)
+    % convert distribution function and compute flux
     Ie_1(index_energy,index_pitch) = Ie_1(index_energy,index_pitch) + ...
                                 v(ii,jj) * fzvzmu_in_finer(ii,jj) * ...
-                                dvz_finer * dmu_mag_finer(jj) ./ ...
-                                dE(index_energy);
-  end
+                                dvz_finer * dmu_mag_finer(jj);
 end
-Ie_total_1 = sum(((v .* fzvzmu_in_finer) * dmu_mag_finer.') * dvz_finer)     % [#e/m2/s]
-E_total_1 = sum(E_middle_bin * (Ie_1 .* dE.'))                               % [eV/m2/s]
+Ie_total_1 = sum(((v .* fzvzmu_in_finer) * dmu_mag_finer.') * dvz_finer)    % [#e/m2/s]
+E_total_1 = sum(E_middle_bin * (Ie_1 ))                                     % [eV/m2/s]
 toc
-%% Calculate flux (/eV/ster) for specie 3 (ionospheric e-)
+%% Calculate flux ([#e/m2/s]) for specie 3 (ionospheric e-)
 tic
 index_specie = 3;
 m = particle(index_specie).mass;
@@ -153,15 +151,14 @@ for ii = 1:length(vz_middle_bin_finer)
     % convert distribution function and compute flux (/eV/ster)
     Ie_3(index_energy,index_pitch) = Ie_3(index_energy,index_pitch) + ...
                                 v(ii,jj) * fzvzmu_in_finer(ii,jj) * ...
-                                dvz_finer * dmu_mag_finer(jj) / ...
-                                dE(index_energy);
+                                dvz_finer * dmu_mag_finer(jj);
   end
 end
-Ie_total_3 = sum(((v .* fzvzmu_in_finer) * dmu_mag_finer.') * dvz_finer)     % [#e/m2/s]
-E_total_3 = sum(E_middle_bin * (Ie_3 .* dE.'))                               % [eV/m2/s]
+Ie_total_3 = sum(((v .* fzvzmu_in_finer) * dmu_mag_finer.') * dvz_finer)    % [#e/m2/s]
+E_total_3 = sum(E_middle_bin * (Ie_3))                                      % [eV/m2/s]
 toc
 %% In which bins is the bulk of the energy flux
-E1 = E_middle_bin.' .* (Ie_1 .* dE.');
+E1 = E_middle_bin.' .* Ie_1;
 R = sum(sum(E1(log10(E1)>1)))./sum(sum(E1)) % log10(E)>1 gives around 100% of the energy. Means we can reduce size of E-grid.
 
 %% plot Ie
@@ -201,15 +198,6 @@ for i_mu = 19:36  % upward fluxes
   Ie_total{i_mu} = zeros(size(E_grid));
 end
 save('incoming_flux.mat','-v7.3','Ie_total')
-
-
-%%
-%%
-%%
-%%
-%%
-load I_top.mat
-E_grid = E;
 
 %% Convert in the other way
 tic
