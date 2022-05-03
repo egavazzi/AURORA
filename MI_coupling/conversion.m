@@ -199,19 +199,42 @@ for i_mu = 19:36  % upward fluxes
 end
 save('incoming_flux.mat','-v7.3','Ie_total')
 
+
+
+
+
+
+
+
+%% ----------------------------------------------------------------------
+%% ----------------------------------------------------------------------
+
+
+
+
+
+
+
+%% Extract Ie_top_raw
+load Ie_top_raw
+E_grid = E;
+Ie_3 = Ie_top_raw(19:end,2:end,:) % from time t = 0.05 to 0.35,
+                                  % from angle 90° to 0° (18 streams)
+f_out = zeros(size(Ie_3,2),200,100);
+
 %% Convert in the other way
 tic
 % Extrapolate Ie over a finer (E,mu_pitch) grid;
 HMR_E = 1;   % HOW MUCH DO YOU WANT TO REFINE E
 HMR_MU = 10;   % HOW MUCH DO YOU WANT TO REFINE MU
 % Refine E-grid
-F = griddedInterpolant(1:1601,E_grid);
-E_grid_finer = F(1:(1/HMR_E):1601);
+F = griddedInterpolant(1:1001,E_grid);
+E_grid_finer = F(1:(1/HMR_E):1001);
 dE_finer = (1/HMR_E) .* dE;
 dE_finer = repelem(dE_finer,HMR_E); % or dE_finer = diff(E_grid_finer);dE_finer = [dE_finer,dE_finer(end)];
 E_middle_bin_finer = E_grid_finer;
 % Refine mu_pitch-grid
-theta_lims2do = 0:5:90;
+theta_lims2do = 90:-5:0;
 G = griddedInterpolant(1:length(theta_lims2do),theta_lims2do);  
 theta_lims2do_finer = G(1:(1/HMR_MU):length(theta_lims2do));
 mu_grid_finer = cos(theta_lims2do_finer*pi/180);
@@ -221,34 +244,39 @@ for iMu = (numel(mu_grid_finer)-1):-1:1
 end
 mu_pitch_middle_bin_finer = mu_avg(mu_grid_finer);
 
-% Refine I
-Ie_1_finer = Ie_1./ (BeamW ./ sum(BeamW));
-Ie_1_finer = repelem(Ie_1_finer./(HMR_E),HMR_E,HMR_MU);
-Ie_1_finer = Ie_1_finer .* (BeamW_finer ./ sum(BeamW_finer));
+%Loop over timesteps
+for i_t = 1:size(Ie_3,2)
+  % Refine I
+  Ie_3_finer = Ie_3(:,i_t,:)./ (BeamW ./ sum(BeamW));
+  Ie_3_finer = repelem(Ie_3_finer./(HMR_E),HMR_E,HMR_MU);
+  Ie_3_finer = Ie_3_finer .* (BeamW_finer ./ sum(BeamW_finer));
 
+  f = zeros(numel(vz_middle_bin),numel(mu_mag_middle_bin));
 
-f = zeros(numel(vz_middle_bin),numel(mu_mag_middle_bin));
-
-v = zeros(numel(vz_middle_bin),numel(mu_mag_middle_bin));
-for ii = 1:length(E_middle_bin_finer)
-  for jj = 1:length(mu_pitch_middle_bin_finer)
-    % get coordinate point in (vz,mu_mag)-grid
-    vz = sqrt(2 * E_middle_bin_finer(ii) * 1.6e-19 / m) * mu_pitch_middle_bin_finer(jj);
-    mu_mag = E_middle_bin_finer(ii) * 1.6e-19 ./ B * (1 - mu_pitch_middle_bin_finer(jj).^2);
-    [~,index_vz] = min(abs(vz_middle_bin - vz));
-    [~,index_mu_mag] = min(abs(mu_mag_middle_bin - mu_mag));
-    v(index_vz,index_mu_mag) = sqrt(vz_middle_bin(index_vz).^2 + 2*B/m .* mu_mag_middle_bin(index_mu_mag));
-    % convert flux and compute distribution function
-    f(index_vz,index_mu_mag) = f(index_vz,index_mu_mag) + 1 ./ ...
-                               v(index_vz,index_mu_mag) * ...  
-                               Ie_1_finer(ii,jj) ./ ...
-                               (dvz * dmu_mag(index_mu_mag)) * ...
-                               dE_finer(ii);
+  v = zeros(numel(vz_middle_bin),numel(mu_mag_middle_bin));
+  for ii = 1:length(mu_pitch_middle_bin_finer)
+    for jj = 1:length(E_middle_bin_finer)
+      % get coordinate point in (vz,mu_mag)-grid
+      vz = sqrt(2 * E_middle_bin_finer(ii) * 1.6e-19 / m) * mu_pitch_middle_bin_finer(jj);
+      mu_mag = E_middle_bin_finer(ii) * 1.6e-19 ./ B * (1 - mu_pitch_middle_bin_finer(jj).^2);
+      [~,index_vz] = min(abs(vz_middle_bin - vz));
+      [~,index_mu_mag] = min(abs(mu_mag_middle_bin - mu_mag));
+      v(index_vz,index_mu_mag) = sqrt(vz_middle_bin(index_vz).^2 + 2*B/m .* mu_mag_middle_bin(index_mu_mag));
+      % convert flux and compute distribution function
+      f(index_vz,index_mu_mag) = f(index_vz,index_mu_mag) + 1 ./ ...
+                                v(index_vz,index_mu_mag) * ...  
+                                Ie_3_finer(ii,jj) ./ ...
+                                (dvz * dmu_mag(index_mu_mag));
+    end
   end
-end
-Ie_total = sum((v .* f * dmu_mag.') * dvz)
 
+%  Ie_total = sum((v .* f * dmu_mag.') * dvz)
+f_out(i_t,:,:) = f;
+disp(['Conversion ',num2str(i_t),'/',num2str(size(Ie,2),' done!'))
+end
+save('outgoing_flux.mat','-v7.3','f_out')
 toc
+
 %% Plot f(vz,mu_mag)
 % DIFF = log10(abs(fzvzmu_in .* (log10(fzvzmu_in) > -10) - f .* (log10(f) > -10)) ./ (fzvzmu_in .* (log10(fzvzmu_in) > -10)));
 % DIFF = - (log10(fzvzmu_in) .* (log10(fzvzmu_in) > -10) - log10(f).* (log10(f) > -10));
