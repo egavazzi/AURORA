@@ -1,7 +1,7 @@
 %% Set-up script for Examples in time-dependent electron transport
 
 %% Figure-generation
-plot_figs = 1;
+plot_figs = 0;
 print_figs = 0;
 if print_figs
   mkdir('Figures')

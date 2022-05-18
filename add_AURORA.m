@@ -27,6 +27,7 @@ addpath(fullfile(S1,'tools/Geometry'),'-end')
 addpath(fullfile(S1,'utilities'),'-end') 
 addpath(fullfile(S1,'tools/IGRF'),'-end') 
 addpath(fullfile(S1,'sup-scripts'),'-end') 
+addpath(fullfile(S1,'MI_coupling'),'-end')
 
 AURORA_root_directory = S1;
 %% Not to clutter workspace

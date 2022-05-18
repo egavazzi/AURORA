@@ -18,7 +18,11 @@ z_atm = 100e3 + cumsum(dz(321)) - dz(1);
 %%
 load J.mat
 figure
-plot(t,[J_up;J_down])
+plot(t,[J_up;J_down],'linewidth',2)
+%%
+load J.mat
+hold on
+plot(t,J_up)
 %% Some CFL plots
 
 nbr_subplot = 3;
@@ -75,6 +79,9 @@ for iIe = 1:4
   
   end
 end
+
+%%
+
 
 
 %% Correct the error in Ie_top
