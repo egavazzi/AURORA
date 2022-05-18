@@ -1,4 +1,4 @@
-function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora_MI(AURORA_root_directory,h,mag_ze,E,mu_lims,mu_pars,t,I0,p_e_q,ne,Te,OPS,varargin)
+function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora_MI(AURORA_root_directory,n_loop,h,mag_ze,E,mu_lims,mu_pars,t,I0,p_e_q,ne,Te,OPS,varargin)
     % Ie_Mstream_tz_2_aurora - time-dependent multi-stream electron transport
     % 
     % Calling: 
@@ -28,7 +28,7 @@ function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora_MI(AURORA_root_directory,
     %            thin side)
     %  t       - time array (s), double array [1 x n_t]
     %  I0      - electron flux profile at the start, i.e. initial
-    %            condition (#e/m^2/s), double array [(nZ x n_beams) x 1]
+    %            condition (#e/m^2/s/dE), double array [(nZ x n_beams) x 1]
     %            with the streams stacked in order from most parallel
     %            to B downward to most paralell to B upwards.
     %  p_e_q   - internal source of energetic electrons
@@ -222,14 +222,39 @@ function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora_MI(AURORA_root_directory,
         end
         p_e_Q((1:numel(h))+(i_mu-1)*numel(h)) = p_e_q(:,iE)*W;
       end
-
-
-     
-      load incoming_flux.mat Ie_total % load the incoming flux
-
-      Ie_p = Ie_total{:}(iE) * ones(1,length(t)); %(#e/s/m^2)
-
-
+      
+      
+      
+      load Ie_incoming.mat Ie_total % load the incoming flux
+%       for i_mu = 1:(length(mu_lims)-1)
+%         Ie_p{i_mu} = Ie_total{i_mu}(iE) * ones(1,length(t)); %(#e/s/m^2)
+%       end
+      if n_loop == 1
+        for i_mu = 1:(length(mu_lims)-1)
+          for i_k = 1:5
+            i_kk = (i_k - 1)*10 + (1:10);
+            Ie_p{i_mu}(:,i_kk) = Ie_total{i_mu}(iE,i_k); %(#e/s/m^2)
+            Ie_p{i_mu}(:,51) = Ie_total{i_mu}(iE,6);
+          end
+        end
+      elseif n_loop == 2
+        for i_mu = 1:(length(mu_lims)-1)
+          for i_k = 1:10
+            i_kk = (i_k - 1)*5 + (1:5);
+            Ie_p{i_mu}(:,i_kk) = Ie_total{i_mu}(iE,5+i_k); %(#e/s/m^2)
+            Ie_p{i_mu}(:,51) = Ie_total{i_mu}(iE,16);
+          end
+        end
+      elseif n_loop == 3
+        for i_mu = 1:(length(mu_lims)-1)
+          for i_k = 1:20
+            i_kk = (i_k - 1)*2 + (1:2);
+            Ie_p{i_mu}(:,i_kk) = Ie_total{i_mu}(iE,15+i_k); %(#e/s/m^2)
+            Ie_p{i_mu}(:,41) = Ie_total{i_mu}(iE,36);
+          end
+        end
+      end
+      
       DE = gradE([iE,min(numel(gradE),iE+1)]);
       % This is the call to the standard Crank-Nicholson
       % PDE-integrating function, with  central differences for the
@@ -415,13 +440,6 @@ function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora_MI(AURORA_root_directory,
         end
       catch
       end
-      % waitbar((length(E)-iE)/length(E),wbh);
-      
+%       waitbar((length(E)-iE)/length(E),wbh,sprintf('%d',iE));
     end
-    
-    % try
-    %   close(wbh)
-    % catch
-    % end
-    
-    
+% close(wbh)
