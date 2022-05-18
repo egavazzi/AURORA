@@ -22,19 +22,19 @@ end
 % electron-transport equations is repeated 6 times, for each step
 % the time-period is extended by a factor of 2, continuing from the
 % last time-step. This takes the solution to 3.15 s after the start.
-t = 0:0.005:0.05;
+t = 0:1e-3:0.05;
 
 if ~exist('setup_completed','var') ||  setup_completed ~= 1
   % then we run the setup where neutral atmosphere, cross-sections
   % secondary-electron-spectra, phase-functions, scattering
   % matrices etc are calculated.
-  setup4etrptd36streams % setup4etrptdms
+  setup4etrptd18streams % setup4etrptdms
 end
 
 %% Here we set the parameters
 %                n_t,   Dir-name
 %                       char
-par_list4G_10 = {  3,   'MIC-36streams-0.35s--1'};
+par_list4G_10 = {  3,   'MIC-18streams-0.35s-4'};
 
 %% Let's go!
 I00 = zeros(numel(h_atm)*(numel(mu_lims)-1),numel(E));
@@ -52,9 +52,7 @@ savedir  = par_list4G_10{2}
 curr_par = par_list4G_10(:);
 
 h_over_zmax = 0;
-iEmax = length(E);
-% iEmax = find(    cumsum(exp(-(E-E0dE(1)).^2/E0dE(2)^2)) < ...
-%              0.9999*sum(exp(-(E-E0dE(1)).^2/E0dE(2)^2)),1,'last')
+iEmax = 701;
 
 I0 = 0*squeeze(I00(:,1:iEmax));
 [SUCCESS,MESSAGE,MESSAGEID] = mkdir(savedir);
@@ -63,10 +61,13 @@ save(fullfile(savedir,'curr_par.mat'),'curr_par')
 t_run = t;
 
 for i1 = 1:n_loop,
+  if i1 == 3
+    t_run = 0.15:0.005:0.35;
+  end
   fprintf('%d: %s\n',i1,datestr(now,'HH:MM:SS'))
   p_e_q = zeros(length(h_atm),length(E(1:iEmax)));
 
-  [Ie_ztE] = Ie_Mstream_tz_2_aurora_MI(AURORA_root_directory,h_atm,mag_ze,E(1:iEmax),mu_lims,mu_scatterings,...
+  [Ie_ztE] = Ie_Mstream_tz_2_aurora_MI(AURORA_root_directory,i1,h_atm,mag_ze,E(1:iEmax),mu_lims,mu_scatterings,...
                                     t_run,...
                                     I0,p_e_q,ne,Te,...
                                     [],...
