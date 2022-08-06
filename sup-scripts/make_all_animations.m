@@ -27,7 +27,7 @@ end
 
 %% This sub-plot layout might need to be modified to adapt to layouts
 % more suitable to other pitch-angle-stream configurations:
-spp = [2*ones(10,1),5*ones(10,1),[1:5,(10:-1:6)]'];
+spp = [2*ones(8,1),4*ones(8,1),[1:4,(8:-1:5)]'];
 
 %% These figure-sizes might need to be modified to adapt to other
 %pitch-angle-stream configurations too.
@@ -60,12 +60,48 @@ for i2 = 1:numel(RunDirs)
         % loading the electron-transport results
         [t,h_atm,E,mu_lims,IeZTE,mu_scatterings] = Ie_ztE_loader({dDir(iRF).name});
         dE = diff(E);dE(end+1) = dE(end);
-        BeamW = 2*pi*mu_scatterings{3};
-        for i1 = numel(BeamW):-1:1,
-          theta_str{i1} = sprintf('%3.1f - %3.1f',...
-                                  180-180/pi*acos(mu_lims(i1)),...
-                                  180-180/pi*acos(mu_lims(i1+1)));
+        BeamW = 2*pi*mu_scatterings{3}; % because sum of mu_scattering should be = 4pi
+        
+        theta_lims_2_plot = [180 160 130 110 90 70 50 20 0];
+        % make a string for the plot titles, based on the given array
+        % theta_lims_2_plot
+        mu_lims_plot = cosd(theta_lims_2_plot);
+        for i1 = numel(mu_lims_plot)-1:-1:1
+          if mu_lims_plot(i1) < 0
+            theta_str{i1} = sprintf('%3.1f - %3.1f DOWN',...
+                          180-180/pi*acos(mu_lims_plot(i1)),...
+                          180-180/pi*acos(mu_lims_plot(i1+1)));
+          else
+            theta_str{i1} = sprintf('%3.1f - %3.1f UP',...
+                          180/pi*acos(mu_lims_plot(i1+1)),...
+                          180/pi*acos(mu_lims_plot(i1)));
+          end
         end
+        
+        % Sum the fluxes from the streams that are contained in between the
+        % theta_lims_2_plot values.
+        % Exemple: if we want to plot the total flux of electrons with
+        % pitch-angles between 20° and 40°, it will sum the fluxes from the
+        % streams between 20°-30° and 30°-40°, if these streams exist.
+        IeZTE_2_plot = zeros(numel(h_atm)*(numel(theta_lims_2_plot)-1),size(IeZTE,2),size(IeZTE,3));
+        try
+          for i1 = 1:numel(mu_lims_plot)-1
+            % find the index of the streams to sum
+            index1 = find(abs(mu_lims - mu_lims_plot(i1)) < 0.001);
+            index2 = find(abs(mu_lims - mu_lims_plot(i1+1)) < 0.001);
+            % and sum them
+            for i2 = index1:(index2-1)
+              hindex = (1:numel(h_atm))+(i1-1)*numel(h_atm);
+              hindex_2_sum = (1:numel(h_atm))+(i2-1)*numel(h_atm);
+              IeZTE_2_plot(hindex,:,:) =  IeZTE_2_plot(hindex,:,:) + IeZTE(hindex_2_sum,:,:)./BeamW(i2);
+%               disp(num2str(i2))
+            end
+%             disp('--')
+          end
+        catch
+          disp(['Error : the pitch-angle to plot ', num2str(theta_lims_2_plot(i)),...
+             '° does not match any of the stream limits used in the simulation'])
+        end                   
         
         try
           % Producing the first animation with subplots for energy
@@ -75,8 +111,9 @@ for i2 = 1:numel(RunDirs)
             fprintf('Making animation: \n',filename)
             colormap(jet)
             set(gcf,'position',fig_sz)
+            set(gcf,'WindowState','maximized');
             animate_IeztE_3DEzoft(t,h_atm,E(1:size(IeZTE,3)),...
-                                  IeZTE,...
+                                  IeZTE_2_plot,...
                                   dE(1:size(IeZTE,3)),BeamW,...
                                   [-5 0]+max(cxmax(min(end,iRF),:)),spp, theta_str,filename);
           end
