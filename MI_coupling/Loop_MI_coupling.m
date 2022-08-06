@@ -2,20 +2,6 @@
 % This script calculates the ionospheric electron-fluxes for a given
 % input file containing fluxes coming down.
 
-%% Scicence-grade run.
-% Set this parameter to zero for a faster run to check that the
-% script runs properly, with such poor energy-resolution that the
-% results are physically useless.
-Science_grade_not_demo = 1;
-
-if Science_grade_not_demo
-  n_dirs = 1 + 180*4
-  stepE = 1
-else % Then demo with coarser energy-grid
-  n_dirs = 1 + 180*4;
-  stepE = 30;
-end
-
 %% Time intervall
 % The time-intervall per integration-period is deliberaltely
 % short. For each set of parametres the integration of the
@@ -34,7 +20,7 @@ end
 %% Here we set the parameters
 %                n_t,   Dir-name
 %                       char
-par_list4G_10 = {  3,   'MIC-18streams-0.35s-4'};
+par_list4G_10 = {  3,   'MIC-18streams-0.35s-1'};
 
 %% Let's go!
 I00 = zeros(numel(h_atm)*(numel(mu_lims)-1),numel(E));
@@ -52,9 +38,10 @@ savedir  = par_list4G_10{2}
 curr_par = par_list4G_10(:);
 
 h_over_zmax = 0;
-iEmax = 701;
+E_max = 7231; % (eV) maximum energy to consider
 
-I0 = 0*squeeze(I00(:,1:iEmax));
+[~,iE_max] = min(abs(E-E_max)); 
+I0 = 0*squeeze(I00(:,1:iE_max));
 [SUCCESS,MESSAGE,MESSAGEID] = mkdir(savedir);
 save(fullfile(savedir,'neutral_atm.mat'),'Te','h_atm','nN2','nO','nO2','ne')
 save(fullfile(savedir,'curr_par.mat'),'curr_par')
@@ -65,15 +52,15 @@ for i1 = 1:n_loop,
     t_run = 0.15:0.005:0.35;
   end
   fprintf('%d: %s\n',i1,datestr(now,'HH:MM:SS'))
-  p_e_q = zeros(length(h_atm),length(E(1:iEmax)));
+  p_e_q = zeros(length(h_atm),length(E(1:iE_max)));
 
-  [Ie_ztE] = Ie_Mstream_tz_2_aurora_MI(AURORA_root_directory,i1,h_atm,mag_ze,E(1:iEmax),mu_lims,mu_scatterings,...
+  [Ie_ztE] = Ie_Mstream_tz_2_aurora_MI(AURORA_root_directory,i1,h_atm,mag_ze,E(1:iE_max),mu_lims,mu_scatterings,...
                                     t_run,...
                                     I0,p_e_q,ne,Te,...
                                     [],...
-                                    nO,O_levels,XsO(:,1:iEmax),@O_e_2nd_dist,@phase_fcn_O,...
-                                    nN2,N2_levels,XsN2(:,1:iEmax),@N2_e_2nd_dist,@phase_fcn_N2,...
-                                    nO2,O2_levels,XsO2(:,1:iEmax),@O2_e_2nd_dist,@phase_fcn_O2);
+                                    nO,O_levels,XsO(:,1:iE_max),@O_e_2nd_dist,@phase_fcn_O,...
+                                    nN2,N2_levels,XsN2(:,1:iE_max),@N2_e_2nd_dist,@phase_fcn_N2,...
+                                    nO2,O2_levels,XsO2(:,1:iE_max),@O2_e_2nd_dist,@phase_fcn_O2);
                                   
   I0 = squeeze(Ie_ztE(:,end,:));
   savefile = fullfile(savedir,sprintf('IeFlickering-%02d.mat',i1));
