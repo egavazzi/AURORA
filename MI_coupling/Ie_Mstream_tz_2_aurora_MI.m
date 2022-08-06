@@ -226,34 +226,42 @@ function [Ie_ztE,mu_pars_out] = Ie_Mstream_tz_2_aurora_MI(AURORA_root_directory,
       
       
       load Ie_incoming.mat Ie_total % load the incoming flux
-%       for i_mu = 1:(length(mu_lims)-1)
-%         Ie_p{i_mu} = Ie_total{i_mu}(iE) * ones(1,length(t)); %(#e/s/m^2)
-%       end
-      if n_loop == 1
+      
+      % for the first run
+      if size(Ie_total{1},2) == 1
         for i_mu = 1:(length(mu_lims)-1)
-          for i_k = 1:5
-            i_kk = (i_k - 1)*10 + (1:10);
-            Ie_p{i_mu}(:,i_kk) = Ie_total{i_mu}(iE,i_k); %(#e/s/m^2)
-            Ie_p{i_mu}(:,51) = Ie_total{i_mu}(iE,6);
-          end
+        Ie_p{i_mu} = Ie_total{i_mu}(iE) * ones(1,length(t)); %(#e/s/m^2)
         end
-      elseif n_loop == 2
-        for i_mu = 1:(length(mu_lims)-1)
-          for i_k = 1:10
-            i_kk = (i_k - 1)*5 + (1:5);
-            Ie_p{i_mu}(:,i_kk) = Ie_total{i_mu}(iE,5+i_k); %(#e/s/m^2)
-            Ie_p{i_mu}(:,51) = Ie_total{i_mu}(iE,16);
+      % for the following runs
+      else
+        if n_loop == 1
+          for i_mu = 1:(length(mu_lims)-1)
+            for i_k = 1:5
+              i_kk = (i_k - 1)*10 + (1:10);
+              Ie_p{i_mu}(:,i_kk) = Ie_total{i_mu}(iE,i_k); %(#e/s/m^2)
+              Ie_p{i_mu}(:,51) = Ie_total{i_mu}(iE,6);
+            end
           end
-        end
-      elseif n_loop == 3
-        for i_mu = 1:(length(mu_lims)-1)
-          for i_k = 1:20
-            i_kk = (i_k - 1)*2 + (1:2);
-            Ie_p{i_mu}(:,i_kk) = Ie_total{i_mu}(iE,15+i_k); %(#e/s/m^2)
-            Ie_p{i_mu}(:,41) = Ie_total{i_mu}(iE,36);
+        elseif n_loop == 2
+          for i_mu = 1:(length(mu_lims)-1)
+            for i_k = 1:10
+              i_kk = (i_k - 1)*5 + (1:5);
+              Ie_p{i_mu}(:,i_kk) = Ie_total{i_mu}(iE,5+i_k); %(#e/s/m^2)
+              Ie_p{i_mu}(:,51) = Ie_total{i_mu}(iE,16);
+            end
+          end
+        elseif n_loop == 3
+          for i_mu = 1:(length(mu_lims)-1)
+            for i_k = 1:20
+              i_kk = (i_k - 1)*2 + (1:2);
+              Ie_p{i_mu}(:,i_kk) = Ie_total{i_mu}(iE,15+i_k); %(#e/s/m^2)
+              Ie_p{i_mu}(:,41) = Ie_total{i_mu}(iE,36);
+            end
           end
         end
       end
+      
+      
       
       DE = gradE([iE,min(numel(gradE),iE+1)]);
       % This is the call to the standard Crank-Nicholson
