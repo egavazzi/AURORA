@@ -1,13 +1,11 @@
 % plot_fig = [0 0 0 0 1];
-plot_fig = [0 0 0 0 1];
+plot_fig = [1 1 1 1 1];
 
 load Ie_top.mat
-if 1%plot_fig(1)
+if plot_fig(1)
   load IeFlickering-01.mat
 %   theta_lims = acos(mu_lims)*180/pi;
-
 end
-
 E_max = size(Ie_top,3);
 %%
 load msis20051008_3.dat
@@ -15,28 +13,21 @@ load msis20051008_3.dat
 h_atm = (74:1:610)'*1e3;h_atm = (100:1:610)'*1e3;
 dz = @(n) 150 + 150/200*(0:(n-1))' +1.2*exp(((0:(n-1))-150)/17)';
 z_atm = 100e3 + cumsum(dz(321)) - dz(1);
-%%
-load J.mat
-figure
-plot(t,[J_up;J_down],'linewidth',2)
-%%
-load J.mat
-hold on
-plot(t,J_up)
+
 %% Some CFL plots
 
 nbr_subplot = 3;
 
 figure
-for iIe = 1:4
+for iIe = 1:3
   
   filename = {['IeFlickering-0',num2str(iIe),'.mat']};
   load(filename{:})
   E_max = size(Ie_ztE,3);
-   
+   %%
   for i1 = 1:nbr_subplot  
-    i11 = round(i1*size(Ie_ztE,2)/nbr_subplot); 
-
+    i11 = 101;round(i1*size(Ie_ztE,2)/nbr_subplot);
+  figure
     I_up = 0;
     I_down = 0;
     E_up = 0;
@@ -66,60 +57,86 @@ for iIe = 1:4
       E_down(iZ+1) = E_at_one_z_down;
     end
     
-  subplot(2,6,(iIe-1)*nbr_subplot+i1)
-%   plot(E_up,z_atm([end:-1:1])/1e3)
-  semilogx(I_up,z_atm([end:-1:1])/1e3)
-  hold on
-%   plot(E_down,z_atm([end:-1:1])/1e3)
-  semilogx(I_down,z_atm([end:-1:1])/1e3)
-%   xlim([1e15 1e18]);
-  xlim([1e12 1e15]);
-  title(['t =', num2str(t_run(i11)),' s'])
-  hold off
-  
+    
+    semilogx(I_up,z_atm([end:-1:1])/1e3,'linewidth',2)
+    hold on
+    semilogx(I_down,z_atm([end:-1:1])/1e3,'linewidth',2)
+%   subplot(1,6,(iIe-1)*nbr_subplot+i1)
+% %   plot(E_up,z_atm([end:-1:1])/1e3)
+%   semilogx(I_up,z_atm([end:-1:1])/1e3)
+%   hold on
+% %   plot(E_down,z_atm([end:-1:1])/1e3)
+%   semilogx(I_down,z_atm([end:-1:1])/1e3)
+% %   xlim([1e15 1e18]);
+%   xlim([1e5 1e7]);
+%   title(['t =', num2str(t_run(i11)),' s'])
+%   hold off
+  %%
   end
 end
 
-%%
-
-
-
-%% Correct the error in Ie_top
-% Ie_top has been converted in electron/ster/eV/m^2/s in make_all_Ie_top.m
-% script. But the conversion in per eV has been done with the wrong indices
-% (only last 10 energy bins have been scaled)
-for i3 = size(Ie_top,1):-1:1,
-  % converting back the last 10 energy bins to initial values (i.e. not per
-  % eV)
-  Ie_top(:,:,i3) = Ie_top(:,:,i3)*dE(i3);
-end
-for i3 = size(Ie_top,3):-1:1,
-  % and now doing it properly!
-  Ie_top(:,:,i3) = Ie_top(:,:,i3)/dE(i3);
-end
 %% Fig 1
 % Make a subplot of the e- fluxes for the different upward streams. Plotted
 % as a heatmap over time and energy
-Ie_plot = Ie_top_raw;
+clear Ie_plot;
+Ie_plot(1,:,:) = Ie_top_raw(1,:,:) + Ie_top_raw(2,:,:);
+Ie_plot(2,:,:) = Ie_top_raw(3,:,:) + Ie_top_raw(4,:,:) + Ie_top_raw(5,:,:);
+Ie_plot(3,:,:) = Ie_top_raw(6,:,:) + Ie_top_raw(7,:,:);
+Ie_plot(4,:,:) = Ie_top_raw(8,:,:) + Ie_top_raw(9,:,:);
+
+Ie_plot(8,:,:) = Ie_top_raw(17,:,:) + Ie_top_raw(18,:,:);
+Ie_plot(7,:,:) = Ie_top_raw(14,:,:) + Ie_top_raw(15,:,:) + Ie_top_raw(16,:,:);
+Ie_plot(6,:,:) = Ie_top_raw(12,:,:) + Ie_top_raw(13,:,:);
+Ie_plot(5,:,:) = Ie_top_raw(10,:,:) + Ie_top_raw(11,:,:);
+
+theta_lims = [180 160 130 110 90 70 40 20 0];
+theta_lims = 180-theta_lims;
+
+
+% Ie_plot = Ie_top_raw;
+% theta_lims = 180:-10:0;
 
 if plot_fig(1)
-  figure(1)
-  tiledlayout(2,5)
-  for i_UP = size(Ie_top,1):-1:1  %size(Ie_top,1)/2+1
-    nexttile
-    pcolor(t,E(1:E_max),log10(max(0,real(squeeze(Ie_plot(i_UP,:,:))))).')
-    shading flat
-    xlabel('time (s)')
-    ylabel('energy (eV)')
-    title([num2str(theta_lims(i_UP+1)),' - ',num2str(theta_lims(i_UP)), '°'])
-    caxis([3 14])
-    colormap(jet)
-    set(gca,'YScale','log');
-  end
-  cb = colorbar;
-  cb.Layout.Tile = 'east';
-  cb.Label.String = 'log10(#/m2/s/eV/ster)';
+  figure()
+%   tile = tiledlayout(2,4,'TileSpacing','compact')
+for i_UP = size(Ie_plot,1):-1:size(Ie_plot,1)/2+1
+  AAAA = [0 0 0 0 8 7 6 5];
+  i_plot = AAAA(i_UP);
+  subplot(2,4,i_plot)
+  pcolor(t,E(1:E_max),log10(max(0,real(squeeze(Ie_plot(i_UP,:,:))))).')
+  title([num2str(180-theta_lims(i_UP+1)),' - ',num2str(180-theta_lims(i_UP)), '° UP'])
+  shading flat
+  caxis([-15 2])
+  set(gca,'YScale','log')
 end
+for i_DOWN = size(Ie_plot,1)/2:-1:1
+%     ax(i_UP) = nexttile
+%   i_plot = 9 - i_DOWN; 
+  subplot(2,4,i_DOWN)
+  pcolor(t,E(1:E_max),log10(max(0,real(squeeze(Ie_plot(i_DOWN,:,:))))).')
+  shading flat
+%     xlabel('time (s)')
+%     ylabel('energy (eV)')
+  title([num2str(theta_lims(i_DOWN)),' - ',num2str(theta_lims(i_DOWN+1)), '° DOWN'])
+%     caxis([3 14])
+  colormap(jet)
+  caxis([-15 2])
+  set(gca,'YScale','log');
+
+
+end
+% cb = colorbar;
+% cb.Layout.Tile = 'east';
+% cb.Label.String = 'log10(#/m2/s/eV/ster)';
+end
+%%
+figure(7)
+for i=1
+  subplot(2,4,i)
+  ylabel('E (eV)','FontSize',14)
+%   set(gca,'XTickLabel',10);
+end
+
 %% Fig 2
 % Plot the total upward e- flux (sum over the different upward streams)
 % at a specific time (time can be chosen below as t_to_plot)
@@ -142,6 +159,26 @@ if plot_fig(2)
   ylabel('Flux (#/s/m²/eV/ster)')
   title(['Upward electron flux @ t = ',num2str(t(index_t)),'s'])
 end
+
+%% Fig ?
+% Same as above but one energy, plotted over time
+E_to_plot = 5000; % (eV)
+Ie_plot = Ie_top_raw;
+
+Ie_plot_UP = 0;
+%loop over upward streams
+for i_UP = size(Ie_plot,1):-1:size(Ie_plot,1)/2+1
+  Ie_plot_UP = Ie_plot_UP + Ie_plot(i_UP,:,:);
+end
+Ie_plot_UP = squeeze(Ie_plot_UP);
+[~,index_E] = min(abs(E-E_to_plot));
+
+figure(1)
+  semilogy(t,squeeze(Ie_plot_UP(:,index_E)));
+  xlabel('t (s)')
+  ylabel('Flux (#/s/m²/eV/ster)')
+  title(['Upward electron flux @ E = ',num2str(E(index_E)),'eV'])
+
 %% Fig 3
 % Plot the total upward e- flux (sum over the different upward streams)
 % integrated over time, as a function of E.
@@ -168,13 +205,13 @@ end
 % Compute the total upward e- flux and total downward e- flux, integrate
 % them over time, and plot the ratio of the former (up) over the latter
 % (down)
-% c_o_mu = mu_avg(mu_lims);
-c_o_mu = ones(1,10);
+c_o_mu = mu_avg(mu_lims);
+% c_o_mu = ones(1,18);
 % Ie_plot = Ie_ztE(321:321:3210,:,:) .* abs(c_o_mu).';
 Ie_plot = Ie_top_raw .* abs(c_o_mu).';
 
 % dt = diff(t); dt = [dt dt(end)];
-dt = ones(1,11);
+dt = ones(1,151);
 % dt = dt(1:6) 
 
 Ie_plot_UP = 0;
@@ -200,10 +237,11 @@ if plot_fig(4)
   plot(E(1:E_max),Ie_plot_UP./Ie_plot_DOWN)
   xlabel('E (eV)')
   title('Ratio of upward over downward flux of e^-')
+  ylim([0 100])
 end
-% AND DISP TOTAL ENERGY FLUX RATIO
 
-Ie_at_one_z = Ie_ztE(321:321:3210,:,:) .* abs(c_o_mu).';
+% AND DISP TOTAL ENERGY FLUX RATIO
+Ie_at_one_z = Ie_ztE(308:308:5544,:,:) .* abs(c_o_mu).';
 E_flux_up = 0
 E_flux_down = 0
   for i1 = size(Ie_at_one_z,2)
@@ -228,9 +266,10 @@ disp(['Energy back = ', num2str(Energy_flux_UP/Energy_flux_DOWN*100), '%']);
 % Plot the total upward flux integrated over energies, as a function of t
 % if ~exist('Ie_plot_UP','var') 
 
-% c_o_mu = mu_avg(mu_lims);
-c_o_mu = ones(1,10);
-Ie_plot = Ie_top_raw .* abs(c_o_mu).';
+c_o_mu = mu_avg(mu_lims);
+% c_o_mu = ones(1,18);
+dt = diff(t); dt = [dt dt(end)];
+Ie_plot = DIFF .* abs(c_o_mu).';
 
 
 Ie_plot_UP = 0;
@@ -247,52 +286,77 @@ end
 Ie_plot_DOWN = squeeze(Ie_plot_DOWN);
 
 if plot_fig(5)
-  figure(5)
+  figure()
 
-  subplot(3,2,1)
-  plot(t,sum(Ie_plot_UP,2))
+  subplot(2,2,1)
+  plot(t,sum(Ie_plot_UP,2),'linewidth',2)
   ylabel('Ie^{UP} (#e/m2/s)')
-  title('Flux e^- UP')
+  title('e^- flux UP')
+  xticklabels('')
 
-  subplot(3,2,2)
-  plot(t,Ie_plot_UP*E(1:E_max).')
+  subplot(2,2,2)
+  plot(t,Ie_plot_UP*E(1:E_max).','linewidth',2)
   ylabel('Ie^{UP} (eV/m2/s)')
-  title('Flux energy UP')
+  title('energy flux UP')
+  xticklabels('')
 
-  subplot(3,2,3)
-  plot(t,sum(Ie_plot_DOWN,2),'r')
+
+  subplot(2,2,3)
+  plot(t,sum(Ie_plot_DOWN,2),'linewidth',2)
   ylabel('Ie^{DOWN} (#e/m2/s)')
-  title('Flux e^- DOWN')
-
-  subplot(3,2,4)
-  plot(t,Ie_plot_DOWN*E(1:E_max).','r')
+  title('e^- flux DOWN')
+  xlabel('t (s)')
+%   xticklabels('')
+  
+  subplot(2,2,4)
+  plot(t,Ie_plot_DOWN*E(1:E_max).','linewidth',2)
   ylabel('Ie^{DOWN} (eV/m2/s)')
-  title('Flux energy DOWN')
-
-  subplot(3,2,5)
-  plot(t,sum(Ie_plot_UP,2))
-  hold on
-  plot(t,sum(Ie_plot_DOWN,2))
-  hold off
+  title('energy flux DOWN')
   xlabel('t (s)')
-  ylabel('Ie (#e/m2/s)')
-  title('Flux e^-')
-  legend('UP', 'DOWN','location','northwest')
+%   xticklabels('')
 
-  subplot(3,2,6)
-  plot(t,Ie_plot_UP*E(1:E_max).')
-  hold on
-  plot(t,Ie_plot_DOWN*E(1:E_max).')
-  hold off
-  xlabel('t (s)')
-  ylabel('Ie (eV/m2/s)')
-  title('Flux energy')
-  legend('UP', 'DOWN','location','northwest')
+%   subplot(3,2,5)
+%   plot(t,sum(Ie_plot_UP,2),'c','linewidth',2)
+%   hold on
+%   plot(t,sum(Ie_plot_DOWN,2),'linewidth',2,'color','#f80')
+%   hold off
+%   xlabel('t (s)')
+%   ylabel('Ie (#e/m2/s)')
+%   title('Flux e^-')
+%   legend('UP', 'DOWN','location','northwest')
+% 
+%   subplot(3,2,6)
+%   plot(t,Ie_plot_UP*E(1:E_max).','c','linewidth',2)
+%   hold on
+%   plot(t,Ie_plot_DOWN*E(1:E_max).','linewidth',2,'color','#f80')
+%   hold off
+%   xlabel('t (s)')
+%   ylabel('Ie (eV/m2/s)')
+%   title('Flux energy')
+%   legend('UP', 'DOWN','location','northwest')
+
+  for i = 1:4
+    subplot(2,2,i)
+    grid on
+    hold on
+    xlim([0 0.35])
+    xticks([0:0.05:0.35])
+  end
 end
 
+%%
+  for i = 1
+    subplot(2,2,i)
+    children = get(gca,'children')
+    delete(children(1))
+  end
+%%
+for i =1:4
+  subplot(2,2,i)
+  set(gca,'FontSize',14)
+end
 
-
-
+%%
 figure(6)
 plot(t,cumsum(Ie_plot_UP * E(1:E_max).' .* dt.'),'linewidth',2)
 hold on
@@ -304,7 +368,7 @@ title('Total of the energy passing through the top of the ionosphere')
 legend('UP', 'DOWN','location','northwest')
 %% Fig 7
 % some test
-if plot_fig(7)
+if 1%plot_fig(7)
 
   Ie_plot = Ie_top_raw;
   Ie_plot_DOWN = 0;
