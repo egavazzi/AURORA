@@ -131,7 +131,7 @@ end
 % This energy-grid below work well.
 dEfcn = @(X,DEinitial,DEfinal,C,X0) DEinitial+(1+tanh(C*(X-X0)))/2*DEfinal;
 E = cumsum(dEfcn(0:1000,0.15,11.5,0.05,80))+1.9;
-E = E(1:stepE:end);
+% E = E(1:stepE:end);
 dE = diff(E);dE = [dE,dE(end)];
 if plot_figs
   figure
