@@ -16,7 +16,7 @@ if ~exist('results_dir','var') || isempty(results_dir)
   return
 end
 
-%% Run-directories:
+%% Run-directories
 if ~exist('RunDirs','var') || isempty(RunDirs)
   disp('Please enter one or several "RunDirs"')
   return
@@ -90,9 +90,9 @@ for i2 = 1:numel(RunDirs)
             index1 = find(abs(mu_lims - mu_lims_plot(i1)) < 0.001);
             index2 = find(abs(mu_lims - mu_lims_plot(i1+1)) < 0.001);
             % and sum them
-            for i2 = index1:(index2-1)
+            for i3 = index1:(index2-1)
               hindex = (1:numel(h_atm))+(i1-1)*numel(h_atm);
-              hindex_2_sum = (1:numel(h_atm))+(i2-1)*numel(h_atm);
+              hindex_2_sum = (1:numel(h_atm))+(i3-1)*numel(h_atm);
               IeZTE_2_plot(hindex,:,:) =  IeZTE_2_plot(hindex,:,:) + IeZTE(hindex_2_sum,:,:)./BeamW(i2);
 %               disp(num2str(i2))
             end
