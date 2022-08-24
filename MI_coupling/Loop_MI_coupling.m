@@ -9,18 +9,19 @@
 % the time-period is extended by a factor of 2, continuing from the
 % last time-step. This takes the solution to 3.15 s after the start.
 t = 0:1e-3:0.05;
-
-if ~exist('setup_completed','var') ||  setup_completed ~= 1
+% t = 0:2e-3:0.10;
+% 
+% if ~exist('setup_completed','var') ||  setup_completed ~= 1
   % then we run the setup where neutral atmosphere, cross-sections
   % secondary-electron-spectra, phase-functions, scattering
   % matrices etc are calculated.
-  setup4etrptd18streams % setup4etrptdms
-end
+  setup4etrptd18streams
+% end
 
 %% Here we set the parameters
 %                n_t,   Dir-name
 %                       char
-par_list4G_10 = {  3,   'MIC-18streams-0.35s-1'};
+% par_list4G_10 = {  3,   'MIC-18streams-0.35s-1'};
 
 %% Let's go!
 I00 = zeros(numel(h_atm)*(numel(mu_lims)-1),numel(E));
@@ -48,9 +49,6 @@ save(fullfile(savedir,'curr_par.mat'),'curr_par')
 t_run = t;
 
 for i1 = 1:n_loop,
-  if i1 == 3
-    t_run = 0.15:0.005:0.35;
-  end
   fprintf('%d: %s\n',i1,datestr(now,'HH:MM:SS'))
   p_e_q = zeros(length(h_atm),length(E(1:iE_max)));
 
@@ -65,5 +63,5 @@ for i1 = 1:n_loop,
   I0 = squeeze(Ie_ztE(:,end,:));
   savefile = fullfile(savedir,sprintf('IeFlickering-%02d.mat',i1));
   save(savefile,'Ie_ztE','E','t_run','mu_lims','h_atm','I0','mu_scatterings','-v7.3')
-  t_run = t_run(end) + 2*(t_run-t_run(1));
+  t_run = t_run(end) + (t_run-t_run(1));
 end
