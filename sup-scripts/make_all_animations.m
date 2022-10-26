@@ -21,8 +21,14 @@ if ~exist('RunDirs','var') || isempty(RunDirs)
   disp('Please enter one or several "RunDirs"')
   return
 end
-if ~exist('movies2make')
-  movies2make = [1 1 1 1 1];
+% if ~exist('movies2make')
+  movies2make = [1 1 1 1 0];
+% end
+
+%% Check cxmax
+if ~exist('cxmax')
+  disp('Please enter a value for "cxmax"')
+  return
 end
 
 %% This sub-plot layout might need to be modified to adapt to layouts
@@ -60,7 +66,11 @@ for i2 = 1:numel(RunDirs)
         % loading the electron-transport results
         [t,h_atm,E,mu_lims,IeZTE,mu_scatterings] = Ie_ztE_loader({dDir(iRF).name});
         dE = diff(E);dE(end+1) = dE(end);
-        BeamW = 2*pi*mu_scatterings{3}; % because sum of mu_scattering should be = 4pi
+%         BeamW = 2*pi*mu_scatterings{3}; % because sum of mu_scattering should be = 4pi
+        BeamW = mu_scatterings{3}; % because sum of mu_scattering should be = 4pi
+        if abs(sum(BeamW) - 4*pi) > 0.01
+          disp("Warning: The sum of BeamW is not equal to 4pi")
+        end
         
         theta_lims_2_plot = [180 160 130 110 90 70 50 20 0];
         % make a string for the plot titles, based on the given array
@@ -101,17 +111,17 @@ for i2 = 1:numel(RunDirs)
         catch
           disp(['Error : the pitch-angle to plot ', num2str(theta_lims_2_plot(i)),...
              '° does not match any of the stream limits used in the simulation'])
-        end                   
+        end  
         
         try
           % Producing the first animation with subplots for energy
           % (x) - altitude (y) with time-variation 
           if movies2make(1)
             filename = fullfile(dDir(iRF).name,'IeztE_3DEzoft.avi');
-            fprintf('Making animation: \n',filename)
+            fprintf(['Making animation: ',filename, '\n'])
             colormap(jet)
             set(gcf,'position',fig_sz)
-            set(gcf,'WindowState','maximized');
+%             set(gcf,'WindowState','maximized');
             animate_IeztE_3DEzoft(t,h_atm,E(1:size(IeZTE,3)),...
                                   IeZTE_2_plot,...
                                   dE(1:size(IeZTE,3)),BeamW,...
@@ -123,16 +133,17 @@ for i2 = 1:numel(RunDirs)
           Faulties{iFaulties} = filename;
           iFaulties = iFaulties + 1;
         end
+        
         try
           % Producing the second animation with subplots for energy
           % (x) - altitude (y) with energy-variation 
           if movies2make(2)
             filename = fullfile(dDir(iRF).name,'IeztE_3DtzofE.avi');
-            fprintf('Making animation: \n',filename)
+            fprintf(['Making animation: ',filename, '\n'])
             colormap(jet)
             set(gcf,'position',fig_sz)
             animate_IeztE_3DtzofE(t,h_atm,E(1:size(IeZTE,3)),...
-                                  IeZTE,...
+                                  IeZTE_2_plot,...
                                   dE(1:size(IeZTE,3)),BeamW,...
                                   [-5 0]+max(cxmax(min(end,iRF),:)),spp, theta_str,filename);
           end
@@ -142,16 +153,17 @@ for i2 = 1:numel(RunDirs)
           Faulties{iFaulties} = filename;
           iFaulties = iFaulties + 1;
         end
+        
         try
           % Producing the third animation with subplots for time
           % (x) - Energy (y) with altitude-variation 
           if movies2make(3)
             filename = fullfile(dDir(iRF).name,'IeztE_3DtEofz.avi');
-            fprintf('Making animation: \n',filename)
+            fprintf(['Making animation: ',filename, '\n'])
             set(gcf,'position',fig_sz)
             colormap(jet)
             animate_IeztE_3DtEofz(t,h_atm,E(1:size(IeZTE,3)),...
-                                  IeZTE,...
+                                  IeZTE_2_plot,...
                                   dE(1:size(IeZTE,3)),BeamW,...
                                   [-5 0]+max(cxmax(min(end,iRF),:)),spp, theta_str,filename);
           end
@@ -161,12 +173,13 @@ for i2 = 1:numel(RunDirs)
           Faulties{iFaulties} = filename;
           iFaulties = iFaulties + 1;
         end
+        
         try
           % Producing the fourth animation with pitch-angle
           % distribution at four heights
           if movies2make(4) 
             filename = fullfile(dDir(iRF).name,'IeztE_pitchangledist.avi');
-            fprintf('Making animation: \n',filename)
+            fprintf(['Making animation: ',filename, '\n'])
             [dh,i115] = min(abs(h_atm/1e3-225));
             [dh,i175] = min(abs(h_atm/1e3-325));
             [dh,i300] = min(abs(h_atm/1e3-450));
@@ -187,19 +200,21 @@ for i2 = 1:numel(RunDirs)
           Faulties{iFaulties} = filename;
           iFaulties = iFaulties + 1;
         end
+        %%
         try
           % Producing the animation with fluxes as frunction of pitch-angle
           % and height at highest energy
           if movies2make(5)
             filename = fullfile(dDir(iRF).name,'IeztE_mu_z_at_E.avi');
             set(gcf,'position',figPHigh)
-            fprintf('Making animation: \n',filename)
+            fprintf(['Making animation: ',filename, '\n'])
             animate_IeztE_3DzmuatEoft(t,h_atm,E,...
                                       IeZTE,...
                                       dE,BeamW,...
                                       size(IeZTE,3),...
                                       [6.5 12.5]-4,...
-                                      {'0','10','30','60','80','90','100','120','150','170','180'},...
+                                      ... {'0','10','30','60','80','90','100','120','150','170','180'},...
+                                      {num2str(acosd(mu_lims(:)))}, ...
                                       filename);
           end
         catch

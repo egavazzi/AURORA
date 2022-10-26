@@ -33,7 +33,7 @@ function [t,h_atm,E,mu_lims,IeZTE,mu_scatterings] = Ie_ztE_loader(data_paths,ops
 %  mu_scatterings - cell-array with the stream-to-stream arrays,
 %             the pitch-angle-size/(2*pi)
 
-%   Copyright © 2018-2019 Bjorn Gustavsson, <bjorn.gustavsson@uit.no>
+%   Copyright ï¿½ 2018-2019 Bjorn Gustavsson, <bjorn.gustavsson@uit.no>
 %   This is free software, licensed under GNU GPL version 2 or later
 
 
@@ -126,4 +126,29 @@ elseif numel(data_paths) == 2 && ops.operator == '-'% Case with data from two di
   end
 else
   disp('I''m afraid I cannot do that.')
+end
+
+
+% if we load data produced by the Julia version of Aurora, the type/class
+% of mu_scatterings is going to be different. To remediate to this problem,
+% we convert mu_scatterings in the following block
+if isa(mu_scatterings, 'struct')
+  mu_scatterings_temp{1} = mu_scatterings.Pmu2mup;
+  mu_scatterings_temp{2} = mu_scatterings.BeamWeight_relative;
+  mu_scatterings_temp{3} = mu_scatterings.BeamWeight_discrete;
+  
+  mu_scatterings = mu_scatterings_temp;
+end
+% similar thing, dimensions of E are inversed between Julia and Matlab
+if size(E, 1) > size(E, 2)
+  E = E';
+end
+if size(t, 1) > size(t, 2)
+  t = t';
+end
+if size(mu_scatterings{3}, 1) > size(mu_scatterings{3}, 2)
+  mu_scatterings{3} = mu_scatterings{3}';
+end
+if size(mu_lims, 1) > size(mu_lims, 2)
+  mu_lims = mu_lims';
 end

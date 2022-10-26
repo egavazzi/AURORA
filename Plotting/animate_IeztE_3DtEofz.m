@@ -107,22 +107,25 @@ for i_z = numel(h_atm):-1:1,
         end
         if spp(i1,3) == ceil(spp(1,2)/2) % was i1 == 2
                                   % if i1 == 2
-          title(sprintf('%4.3f (km)',h_atm(i_z)/1e3))
-        else
-          % title(sprintf('pitch-angle ~ %s',theta_strs{i1}))
-          title(['\theta-B ~ ',theta_strs{i1}])
+          sgtitle(sprintf('%4.3f (km)',h_atm(i_z)/1e3))
+%         else
         end
+          % title(sprintf('pitch-angle ~ %s',theta_strs{i1}))
+        tstr = sprintf('\\theta_B ~ %s',theta_strs{i1});
+        title(tstr)
+%           title(['\theta-B ~ ',theta_strs{i1}])
+%         end
       else
         
       end
     end
-    [~,iS] = sort(spp(:,3)); 
-    for i1 = 1:size(spp,1),                             
-      subplot(spp(iS(i1),1),spp(iS(i1),2),spp(iS(i1),3))
-      dx = -0.02*mod(spp(iS(i1),3)-1,spp(iS(i1),2));
-      set(gca,'position',get(gca,'position')+[dx,0,0,0])
-    end
-    set(cblh,'position',get(cblh,'position')+[dx,0,0,0])
+%     [~,iS] = sort(spp(:,3)); 
+%     for i1 = 1:size(spp,1),                             
+%       subplot(spp(iS(i1),1),spp(iS(i1),2),spp(iS(i1),3))
+%       dx = -0.02*mod(spp(iS(i1),3)-1,spp(iS(i1),2));
+%       set(gca,'position',get(gca,'position')+[dx,0,0,0])
+%     end
+%     set(cblh,'position',get(cblh,'position')+[dx,0,0,0])
     drawnow
     if doMovie == 1 || doMovie == 2
       if doMovie == 1
