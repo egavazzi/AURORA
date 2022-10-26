@@ -102,15 +102,17 @@ for iE = numel(E):-1:1,
     if spp(i1,3) == ceil(spp(1,2)/2) % was i1 == 2
                               % if i1 == 2
       if E(iE) > 1e3
-        title(sprintf('%2.2f (keV)',E(iE)/1e3))
+        sgtitle(sprintf('%2.2f (keV)',E(iE)/1e3))
       else
-        title(sprintf('%2.2f (eV)',E(iE)))
+        sgtitle(sprintf('%2.2f (eV)',E(iE)))
       end
-    else
-      % title(sprintf('pitch-angle ~ %s',theta_strs{i1}))
-      %title(sprintf('\theta_B ~ %s',theta_strs{i1}))
-      title(['\theta-B ~ ',theta_strs{i1}])
+%     else
     end
+      % title(sprintf('pitch-angle ~ %s',theta_strs{i1}))
+      tstr = sprintf('\\theta_B ~ %s',theta_strs{i1});
+      title(tstr)
+%       title(['\theta-B ~ ',theta_strs{i1}])
+%     end
   end
   drawnow
   if doMovie == 1 || doMovie == 2
