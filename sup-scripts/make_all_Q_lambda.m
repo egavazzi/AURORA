@@ -54,6 +54,9 @@ for i2 = 1:numel(RunDirs)
       end
     end
   end
+  
+  cd(results_dir)
+  cd(RunDirs{i2}) 
 end
 
 
