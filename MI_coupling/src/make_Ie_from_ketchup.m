@@ -1,6 +1,9 @@
 function [Ie_DL,z_DL] = make_Ie_from_ketchup(path_to_vlasov_initial_file,path_to_vlasov_simulation_results,index_specie,zmax_to_extract,h_atm_iono,HMR_VZ,HMR_MU,iE_max,mu_lims)
-% this function extracts and convert data from ketchup (.mat files) into
-% fluxes of electrons Ie, over time and altitude.
+% This script extracts and converts the function distributions from ketchup into fluxes of
+% electrons Ie.
+% It looks through a directory with all the fzvzmu***.mat files from a simulation. Each file 
+% should correspond to one time step and contain the function distribution over all the space 
+% points of the simulation.
 
 %% Import data
 run(fullfile(path_to_vlasov_simulation_results,'inputb6.m'));
@@ -24,10 +27,14 @@ end
 
 
 m = particle(index_specie).mass;
-% Convert z into km ABOVE the ionosphere (so ignoring the two points in ketchup
-% that overlap with the ionospheric simulation)
-% z_DL = z(end) - z(end-1:-1:1) + h_atm_iono(end); z_DL = z_DL/1e3;
-z_DL = z(end) - z(end:-1:1) + h_atm_iono(end-1); z_DL = z_DL/1e3;
+
+% Convert z into km ABOVE the ionosphere 
+% ignoring the two points in ketchup that overlap with the ionospheric simulation)
+% z_DL = z(end) - z(end-1:-1:1) + h_atm_iono(end);
+% NOT ignoring the two points in ketchup that overlap with the ionospheric simulation)
+z_DL = z(end) - z(end:-1:1) + h_atm_iono(end-1); 
+z_DL = z_DL/1e3;
+
 % and find the index for max altitude to extract data from
 [~, i_zmax] = min(abs(z_DL - zmax_to_extract));
 z_DL = z_DL(1:i_zmax);
@@ -35,13 +42,11 @@ z_DL = z_DL(1:i_zmax);
 %% Loop over the altitudes to extract ([#e/m2/s])
 step = 1; steps = i_zmax;
 Ie_DL = zeros(i_zmax*(numel(mu_lims)-1), size(f_in_all,1), iE_max);
-for i_z = 1:steps
-  % Convert index to match matrices from ketchup. Note that we take Nz-i_z-1
-  % and not Nz-i_z+1 as we want to ignore the two first points overlaping
-  % with the ionospheric simulation.
-%   zz = Nz-i_z-1;
-  zz = Nz-i_z+1;
-
+for i_z = 1:5:steps
+  
+  % Convert index to match matrices from ketchup. 
+%   zz = Nz-i_z-1; % ignoring the two points overlaping with the ionospheric simulation.
+  zz = Nz-i_z+1; % NOT ignoring the two points overlaping with the ionospheric simulation.
 
   step = i_z;
   disp(['Converting f into I over altitudes (',num2str(step),'/',num2str(steps),')'])
@@ -115,5 +120,7 @@ for i_z = 1:steps
     for ii = 1:length(mu_pitch_middle_bin)
       Ie_DL(i_zmax*(ii-1) + i_z,i_t,:) = Ie_temp(:,ii);
     end
+    
   end
+  
 end

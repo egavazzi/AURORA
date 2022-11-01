@@ -19,8 +19,8 @@ load msis20051008_3.dat
 dz = @(n) 150 + 150/200*(0:(n-1))' +1.2*exp(((0:(n-1))-150)/17)';
 z_atm = 100e3 + cumsum(dz(308)) - dz(1);
 % Manual fix to match altitudes from AURORA and KETCHUP at boundary
-z_atm(end+1) = 408.4e3;
-z_atm(end+1) = 425.3e3;
+% z_atm(end+1) = 408.4e3;
+% z_atm(end+1) = 425.3e3;
 % end of manual fix
 h_atm = z_atm(:); % make sure it's a column vector
 
@@ -46,7 +46,7 @@ nO(end-5:end-3)  = (erf((1:-1:-1)'/2)+1)/2.*nO(end-5:end-3);
 nO2(end-5:end-3) = (erf((1:-1:-1)'/2)+1)/2.*nO2(end-5:end-3);
 nN2(end-5:end-3) = (erf((1:-1:-1)'/2)+1)/2.*nN2(end-5:end-3);
 
-% Plot the atmosphere
+%% Plot the atmosphere
 if plot_figs
   figure_atm = figure;
   subplot(1,2,1)
@@ -69,7 +69,7 @@ Iri20051008 = iri20051008(1:end,:);
 ne = interp1(Iri20051008(:,1),Iri20051008(:,2),h_atm/1e3,'pchip')*10;
 ne(h_atm<82e3) = 1;
 
-% Plot electron density profile
+%% Plot electron density profile
 if plot_figs
   figure(figure_atm)
   subplot(1,2,2)
@@ -136,6 +136,7 @@ dEfcn = @(X,DEinitial,DEfinal,C,X0) DEinitial+(1+tanh(C*(X-X0)))/2*DEfinal;
 E = cumsum(dEfcn(0:1000,0.15,11.5,0.05,80))+1.9;
 % E = E(1:stepE:end);
 dE = diff(E);dE = [dE,dE(end)];
+
 if plot_figs
   figure
   plot(E,dE,'r.-')
