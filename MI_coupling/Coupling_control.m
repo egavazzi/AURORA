@@ -32,8 +32,10 @@ if ~exist(path_to_vlasov_simulation_results)
   disp('Starting the conversion of data from .dat to .mat ...')
   ketchup_b6conv
   disp('... done!')
-  mkdir f_vlasov_raw;
-  movefile('outp/fzvzmu*.mat','f_vlasov_raw/');
+  mkdir fzvzmu_boundary;
+  movefile('outp/fzvzmuIB*.mat','fzvzmu_boundary/');
+  mkdir fzvzmu;
+  movefile('outp/fzvzmu*.mat','fzvzmu/');
   cd(current_folder)
 end
 
