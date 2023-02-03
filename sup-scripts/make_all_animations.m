@@ -22,7 +22,7 @@ if ~exist('RunDirs','var') || isempty(RunDirs)
   return
 end
 % if ~exist('movies2make')
-  movies2make = [1 1 1 1 0];
+  movies2make = [1 0 0 0 0];
 % end
 
 %% Check cxmax
@@ -61,15 +61,29 @@ for i2 = 1:numel(RunDirs)
   for iRF = 3:numel(dDir)
     cd(results_dir)
     cd(RunDirs{i2})
+%     if (dDir(iRF).name == '1.27e7-2s_1') 
     if dDir(iRF).isdir
       try
         % loading the electron-transport results
         [t,h_atm,E,mu_lims,IeZTE,mu_scatterings] = Ie_ztE_loader({dDir(iRF).name});
         dE = diff(E);dE(end+1) = dE(end);
-%         BeamW = 2*pi*mu_scatterings{3}; % because sum of mu_scattering should be = 4pi
-        BeamW = mu_scatterings{3}; % because sum of mu_scattering should be = 4pi
+        BeamW = 2*pi*mu_scatterings{3}; % because sum of mu_scattering should be = 4pi
+%         BeamW = mu_scatterings{3}; % because sum of mu_scattering should be = 4pi
         if abs(sum(BeamW) - 4*pi) > 0.01
-          disp("Warning: The sum of BeamW is not equal to 4pi")
+          disp(" ")
+          disp(" ")
+          disp(" ")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp(" ")
+          disp(" ")
+          disp(" ")
+          break
         end
         
         theta_lims_2_plot = [180 160 130 110 90 70 50 20 0];
