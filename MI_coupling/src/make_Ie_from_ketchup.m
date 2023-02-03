@@ -1,4 +1,6 @@
-function [Ie_DL,z_DL] = make_Ie_from_ketchup(path_to_vlasov_initial_file,path_to_vlasov_simulation_results,index_specie,zmax_to_extract,h_atm_iono,HMR_VZ,HMR_MU,iE_max,mu_lims)
+function [Ie_DL,z_DL] = make_Ie_from_ketchup(path_to_vlasov_initial_file, ...
+                                              path_to_vlasov_simulation_results, ...
+                                              index_specie, zmax_to_extract,h_atm_iono,HMR_VZ,HMR_MU,iE_max,mu_lims)
 % This script extracts and converts the function distributions from ketchup into fluxes of
 % electrons Ie.
 % It looks through a directory with all the fzvzmu***.mat files from a simulation. Each file 
@@ -42,7 +44,7 @@ z_DL = z_DL(1:i_zmax);
 %% Loop over the altitudes to extract ([#e/m2/s])
 step = 1; steps = i_zmax;
 Ie_DL = zeros(i_zmax*(numel(mu_lims)-1), size(f_in_all,1), iE_max);
-for i_z = 1:5:steps
+for i_z = 1:steps
   
   % Convert index to match matrices from ketchup. 
 %   zz = Nz-i_z-1; % ignoring the two points overlaping with the ionospheric simulation.
