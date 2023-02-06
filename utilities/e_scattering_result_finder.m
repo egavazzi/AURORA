@@ -33,7 +33,7 @@ function [Pmu2mup,theta2beamW,BeamW,mu_lims] = e_scattering_result_finder(theta_
 % 
 % SEE ALSO: e_scattering_beamdistribution
 
-%  Copyright © Bjorn Gustavsson 20191122, bjorn.gustavsson@uit.no
+%  Copyright ï¿½ Bjorn Gustavsson 20191122, bjorn.gustavsson@uit.no
 %  This is free software, licensed under GNU GPL version 2 or later
 
 
@@ -86,7 +86,7 @@ end
 if ~foundem
   % when there is no match we have to calculate the
   % scattering-matrices, there is no way around that...
-  fprintf('Could not find file with ptich-angle limits matching:\n')
+  fprintf('Could not find file with pitch-angle limits matching:\n')
   fprintf('%f\n',theta_lims2do)
   fprintf('Starting to calculate the requested phase-function-scattering-matrices\n')
   fprintf('this will take some time.\n')
