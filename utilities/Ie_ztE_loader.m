@@ -33,7 +33,7 @@ function [t,h_atm,E,mu_lims,IeZTE,mu_scatterings] = Ie_ztE_loader(data_paths,ops
 %  mu_scatterings - cell-array with the stream-to-stream arrays,
 %             the pitch-angle-size/(2*pi)
 
-%   Copyright © 2018-2019 Bjorn Gustavsson, <bjorn.gustavsson@uit.no>
+%   Copyright ï¿½ 2018-2019 Bjorn Gustavsson, <bjorn.gustavsson@uit.no>
 %   This is free software, licensed under GNU GPL version 2 or later
 
 
@@ -61,6 +61,7 @@ if numel(data_paths) == 1 % Simplest case with data from one directory
     res_files = dir(fullfile(data_paths{1},'IeFl*.mat'));
   end
   load(fullfile(data_paths{1},res_files(1).name))
+  [mu_scatterings, E, t_run, mu_lims] = convert_from_julia(mu_scatterings, E, t_run, mu_lims);
   IeZTE = Ie_ztE;
   t = t_run;
   for i1 = 2:length(res_files),
@@ -69,10 +70,12 @@ if numel(data_paths) == 1 % Simplest case with data from one directory
     end
     load(fullfile(data_paths{1},res_files(i1).name),...
         'E','Ie_ztE','h_atm','mu_lims','t_run')
+    [mu_scatterings, E, t_run, mu_lims] = convert_from_julia(mu_scatterings, E, t_run, mu_lims);
     IeZTE = cat(2,IeZTE,Ie_ztE(:,2:end,:));
     t = [t,t_run(2:end)];
   end
-elseif numel(data_paths) == 2 && ops.operator == '+'% Case with data from two directories and ops:'-'
+  
+elseif numel(data_paths) == 2 && ops.operator == '+'% Case with data from two directories and ops:'+'
   res_files1 = dir(fullfile(data_paths{1},'IeFl*.mat'));
   res_files2 = dir(fullfile(data_paths{2},'IeFl*.mat'));
   
@@ -98,6 +101,7 @@ elseif numel(data_paths) == 2 && ops.operator == '+'% Case with data from two di
     IeZTE = cat(2,IeZTE,Ie1(:,2:end,:)+Ie_ztE(:,2:end,:));
     t = [t,t_run(2:end)];
   end
+  
 elseif numel(data_paths) == 2 && ops.operator == '-'% Case with data from two directories and ops:'-'
   res_files1 = dir(fullfile(data_paths{1},'IeFl*.mat'));
   res_files2 = dir(fullfile(data_paths{2},'IeFl*.mat'));
@@ -124,6 +128,37 @@ elseif numel(data_paths) == 2 && ops.operator == '-'% Case with data from two di
     IeZTE = cat(2,IeZTE,Ie1(:,2:end,:)-Ie_ztE(:,2:end,:));
     t = [t,t_run(2:end)];
   end
+  
 else
   disp('I''m afraid I cannot do that.')
+end
+end
+
+
+
+
+function [mu_scatterings, E, t_run, mu_lims] = convert_from_julia(mu_scatterings, E, t_run, mu_lims)
+  % if we load data produced by the Julia version of Aurora, the type/class
+  % of mu_scatterings is going to be different. To remediate to this problem,
+  % we convert mu_scatterings in the following block
+  if isa(mu_scatterings, 'struct')
+    mu_scatterings_temp{1} = mu_scatterings.Pmu2mup;
+    mu_scatterings_temp{2} = mu_scatterings.BeamWeight_relative;
+    mu_scatterings_temp{3} = mu_scatterings.BeamWeight_discrete;
+
+    mu_scatterings = mu_scatterings_temp;
+  end
+  % similar thing, dimensions of E are inversed between Julia and Matlab
+  if size(E, 1) > size(E, 2)
+    E = E';
+  end
+  if size(t_run, 1) > size(t_run, 2)
+    t_run = t_run';
+  end
+  if size(mu_scatterings{3}, 1) > size(mu_scatterings{3}, 2)
+    mu_scatterings{3} = mu_scatterings{3}';
+  end
+  if size(mu_lims, 1) > size(mu_lims, 2)
+    mu_lims = mu_lims';
+  end
 end

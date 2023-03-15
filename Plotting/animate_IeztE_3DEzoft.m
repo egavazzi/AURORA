@@ -64,12 +64,20 @@ end
 
 for i_t = 1:numel(t),
   clf
-  for i1 = 1:size(spp,1),     
+  if ~isempty(cx_lims)
+    subplot(1,1,1)
+    caxis(cx_lims)
+    cblh = colorbar_labeled('log10(#e/m2/s/eV/ster)');
+  end
+  for i1 = 1:size(spp,1),
     
     subplot(spp(i1,1),spp(i1,2),spp(i1,3))
+%     pcolor(E,...
+%            h_atm/1e3,...
+%            log10(max(0,real(squeeze(Ie_ztE((1:numel(h_atm))+(i1-1)*numel(h_atm),i_t,:))./(ones(size(h_atm))*dE)/BeamSA(i1))))),
     pcolor(E,...
            h_atm/1e3,...
-           log10(max(0,real(squeeze(Ie_ztE((1:numel(h_atm))+(i1-1)*numel(h_atm),i_t,:))./(ones(size(h_atm))*dE)/BeamSA(i1))))),
+           log10(max(0,real(squeeze(Ie_ztE((1:numel(h_atm))+(i1-1)*numel(h_atm),i_t,:))./(ones(size(h_atm))*dE))))),
     shading flat
     if isempty(cx_lims)
       clims(i_t,i1,:) = caxis;
@@ -77,12 +85,8 @@ for i_t = 1:numel(t),
     else
       caxis(cx_lims)
     end
-    set(gca,'tickdir','out','xscale','log','xtick',[1,10,1000,10000,1e5])
-    if mod(spp(i1,3),spp(1,2))==0 % || i1 == size(spp,1)
-      colorbar_labeled('log10(#/m2/s/eV/ster)')
-    elseif isempty(cx_lims)
-      colorbar_labeled('')      
-    end
+    set(gca,'tickdir','out','xscale','log','xtick',[1,10,100,1000,10000,1e5])
+    
     if mod(spp(i1,3),spp(1,2))==1 %i1 == 1 || i1 == 4
       ylabel('height (km)')
     else
@@ -94,13 +98,14 @@ for i_t = 1:numel(t),
       set(gca,'xticklabel','')
     end
     if spp(i1,3) == ceil(spp(1,2)/2) % was i1 == 2
-      title(sprintf('%4.3f (s)',t(i_t)))
-    else
+      sgtitle(sprintf('%4.3f (s)',t(i_t)))
+%     else
+    end
       % title(sprintf('pitch-angle ~ %s',theta_strs{i1}))
       tstr = sprintf('\\theta_B ~ %s',theta_strs{i1});
       title(tstr)
       % title(['\theta-B ~ ',theta_strs{i1}])
-    end
+%     end
   end
   drawnow
   if doMovie == 1 || doMovie == 2

@@ -16,18 +16,24 @@ if ~exist('results_dir','var') || isempty(results_dir)
   return
 end
 
-%% Run-directories:
+%% Run-directories
 if ~exist('RunDirs','var') || isempty(RunDirs)
   disp('Please enter one or several "RunDirs"')
   return
 end
-if ~exist('movies2make')
-  movies2make = [1 1 1 1 1];
+% if ~exist('movies2make')
+  movies2make = [1 0 0 0 0];
+% end
+
+%% Check cxmax
+if ~exist('cxmax')
+  disp('Please enter a value for "cxmax"')
+  return
 end
 
 %% This sub-plot layout might need to be modified to adapt to layouts
 % more suitable to other pitch-angle-stream configurations:
-spp = [2*ones(10,1),5*ones(10,1),[1:5,(10:-1:6)]'];
+spp = [2*ones(8,1),4*ones(8,1),[1:4,(8:-1:5)]'];
 
 %% These figure-sizes might need to be modified to adapt to other
 %pitch-angle-stream configurations too.
@@ -55,28 +61,83 @@ for i2 = 1:numel(RunDirs)
   for iRF = 3:numel(dDir)
     cd(results_dir)
     cd(RunDirs{i2})
+%     if (dDir(iRF).name == '1.27e7-2s_1') 
     if dDir(iRF).isdir
       try
         % loading the electron-transport results
         [t,h_atm,E,mu_lims,IeZTE,mu_scatterings] = Ie_ztE_loader({dDir(iRF).name});
         dE = diff(E);dE(end+1) = dE(end);
-        BeamW = 2*pi*mu_scatterings{3};
-        for i1 = numel(BeamW):-1:1,
-          theta_str{i1} = sprintf('%3.1f - %3.1f',...
-                                  180-180/pi*acos(mu_lims(i1)),...
-                                  180-180/pi*acos(mu_lims(i1+1)));
+        BeamW = 2*pi*mu_scatterings{3}; % because sum of mu_scattering should be = 4pi
+%         BeamW = mu_scatterings{3}; % because sum of mu_scattering should be = 4pi
+        if abs(sum(BeamW) - 4*pi) > 0.01
+          disp(" ")
+          disp(" ")
+          disp(" ")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp("WARNING : The sum of BeamW is not equal to 4pi")
+          disp(" ")
+          disp(" ")
+          disp(" ")
+          break
         end
+        
+        theta_lims_2_plot = [180 160 130 110 90 70 50 20 0];
+        % make a string for the plot titles, based on the given array
+        % theta_lims_2_plot
+        mu_lims_plot = cosd(theta_lims_2_plot);
+        for i1 = numel(mu_lims_plot)-1:-1:1
+          if mu_lims_plot(i1) < 0
+            theta_str{i1} = sprintf('%3.1f - %3.1f DOWN',...
+                          180-180/pi*acos(mu_lims_plot(i1)),...
+                          180-180/pi*acos(mu_lims_plot(i1+1)));
+          else
+            theta_str{i1} = sprintf('%3.1f - %3.1f UP',...
+                          180/pi*acos(mu_lims_plot(i1+1)),...
+                          180/pi*acos(mu_lims_plot(i1)));
+          end
+        end
+        
+        % Sum the fluxes from the streams that are contained in between the
+        % theta_lims_2_plot values.
+        % Exemple: if we want to plot the total flux of electrons with
+        % pitch-angles between 20° and 40°, it will sum the fluxes from the
+        % streams between 20°-30° and 30°-40°, if these streams exist.
+        IeZTE_2_plot = zeros(numel(h_atm)*(numel(theta_lims_2_plot)-1),size(IeZTE,2),size(IeZTE,3));
+        try
+          for i1 = 1:numel(mu_lims_plot)-1
+            % find the index of the streams to sum
+            index1 = find(abs(mu_lims - mu_lims_plot(i1)) < 0.001);
+            index2 = find(abs(mu_lims - mu_lims_plot(i1+1)) < 0.001);
+            % and sum them
+            for i3 = index1:(index2-1)
+              hindex = (1:numel(h_atm))+(i1-1)*numel(h_atm);
+              hindex_2_sum = (1:numel(h_atm))+(i3-1)*numel(h_atm);
+              IeZTE_2_plot(hindex,:,:) =  IeZTE_2_plot(hindex,:,:) + IeZTE(hindex_2_sum,:,:)./BeamW(i2);
+%               disp(num2str(i2))
+            end
+%             disp('--')
+          end
+        catch
+          disp(['Error : the pitch-angle to plot ', num2str(theta_lims_2_plot(i)),...
+             '° does not match any of the stream limits used in the simulation'])
+        end  
         
         try
           % Producing the first animation with subplots for energy
           % (x) - altitude (y) with time-variation 
           if movies2make(1)
             filename = fullfile(dDir(iRF).name,'IeztE_3DEzoft.avi');
-            fprintf('Making animation: \n',filename)
+            fprintf(['Making animation: ',filename, '\n'])
             colormap(jet)
             set(gcf,'position',fig_sz)
+%             set(gcf,'WindowState','maximized');
             animate_IeztE_3DEzoft(t,h_atm,E(1:size(IeZTE,3)),...
-                                  IeZTE,...
+                                  IeZTE_2_plot,...
                                   dE(1:size(IeZTE,3)),BeamW,...
                                   [-5 0]+max(cxmax(min(end,iRF),:)),spp, theta_str,filename);
           end
@@ -86,16 +147,17 @@ for i2 = 1:numel(RunDirs)
           Faulties{iFaulties} = filename;
           iFaulties = iFaulties + 1;
         end
+        
         try
           % Producing the second animation with subplots for energy
           % (x) - altitude (y) with energy-variation 
           if movies2make(2)
             filename = fullfile(dDir(iRF).name,'IeztE_3DtzofE.avi');
-            fprintf('Making animation: \n',filename)
+            fprintf(['Making animation: ',filename, '\n'])
             colormap(jet)
             set(gcf,'position',fig_sz)
             animate_IeztE_3DtzofE(t,h_atm,E(1:size(IeZTE,3)),...
-                                  IeZTE,...
+                                  IeZTE_2_plot,...
                                   dE(1:size(IeZTE,3)),BeamW,...
                                   [-5 0]+max(cxmax(min(end,iRF),:)),spp, theta_str,filename);
           end
@@ -105,16 +167,17 @@ for i2 = 1:numel(RunDirs)
           Faulties{iFaulties} = filename;
           iFaulties = iFaulties + 1;
         end
+        
         try
           % Producing the third animation with subplots for time
           % (x) - Energy (y) with altitude-variation 
           if movies2make(3)
             filename = fullfile(dDir(iRF).name,'IeztE_3DtEofz.avi');
-            fprintf('Making animation: \n',filename)
+            fprintf(['Making animation: ',filename, '\n'])
             set(gcf,'position',fig_sz)
             colormap(jet)
             animate_IeztE_3DtEofz(t,h_atm,E(1:size(IeZTE,3)),...
-                                  IeZTE,...
+                                  IeZTE_2_plot,...
                                   dE(1:size(IeZTE,3)),BeamW,...
                                   [-5 0]+max(cxmax(min(end,iRF),:)),spp, theta_str,filename);
           end
@@ -124,12 +187,13 @@ for i2 = 1:numel(RunDirs)
           Faulties{iFaulties} = filename;
           iFaulties = iFaulties + 1;
         end
+        
         try
           % Producing the fourth animation with pitch-angle
           % distribution at four heights
           if movies2make(4) 
             filename = fullfile(dDir(iRF).name,'IeztE_pitchangledist.avi');
-            fprintf('Making animation: \n',filename)
+            fprintf(['Making animation: ',filename, '\n'])
             [dh,i115] = min(abs(h_atm/1e3-225));
             [dh,i175] = min(abs(h_atm/1e3-325));
             [dh,i300] = min(abs(h_atm/1e3-450));
@@ -150,19 +214,21 @@ for i2 = 1:numel(RunDirs)
           Faulties{iFaulties} = filename;
           iFaulties = iFaulties + 1;
         end
+        %%
         try
           % Producing the animation with fluxes as frunction of pitch-angle
           % and height at highest energy
           if movies2make(5)
             filename = fullfile(dDir(iRF).name,'IeztE_mu_z_at_E.avi');
             set(gcf,'position',figPHigh)
-            fprintf('Making animation: \n',filename)
+            fprintf(['Making animation: ',filename, '\n'])
             animate_IeztE_3DzmuatEoft(t,h_atm,E,...
                                       IeZTE,...
                                       dE,BeamW,...
                                       size(IeZTE,3),...
                                       [6.5 12.5]-4,...
-                                      {'0','10','30','60','80','90','100','120','150','170','180'},...
+                                      ... {'0','10','30','60','80','90','100','120','150','170','180'},...
+                                      {num2str(acosd(mu_lims(:)))}, ...
                                       filename);
           end
         catch

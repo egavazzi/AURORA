@@ -95,11 +95,14 @@ for i_t = 1:numel(t),
     end
     if i1 == ceil(spp(1,2)/2) % was i1 == 2
                               % if i1 == 2
-      title(sprintf('%4.3f (s)',t(i_t)))
-    else
-      % title(sprintf('pitch-angle ~ %s',theta_strs{i1}))
-      title(['\theta-B ~ ',theta_strs{i1}])
+      stitle(sprintf('%4.3f (s)',t(i_t)))
+%     else
     end
+      % title(sprintf('pitch-angle ~ %s',theta_strs{i1}))
+      tstr = sprintf('\\theta_B ~ %s',theta_strs{i1});
+      title(tstr)
+%       title(['\theta-B ~ ',theta_strs{i1}])
+%     end
   end
   drawnow
   if doMovie == 1 || doMovie == 2

@@ -15,10 +15,13 @@ end
 % for the date: 
 load msis20051008_3.dat
 
-h_atm = (74:1:610)'*1e3;h_atm = (100:1:610)'*1e3;
+% h_atm = (74:1:610)'*1e3;h_atm = (100:1:610)'*1e3;
 dz = @(n) 150 + 150/200*(0:(n-1))' +1.2*exp(((0:(n-1))-150)/17)';
 z_atm = 100e3 + cumsum(dz(308)) - dz(1);
-numel(z_atm)/numel(h_atm);
+% Manual fix to match altitudes from AURORA and KETCHUP at boundary
+% z_atm(end+1) = 408.4e3;
+% z_atm(end+1) = 425.3e3;
+% end of manual fix
 h_atm = z_atm(:); % make sure it's a column vector
 
 OPS.atmosphere = interp1(msis20051008_3(:,1),msis20051008_3,h_atm/1e3,'pchip');
@@ -43,8 +46,7 @@ nO(end-5:end-3)  = (erf((1:-1:-1)'/2)+1)/2.*nO(end-5:end-3);
 nO2(end-5:end-3) = (erf((1:-1:-1)'/2)+1)/2.*nO2(end-5:end-3);
 nN2(end-5:end-3) = (erf((1:-1:-1)'/2)+1)/2.*nN2(end-5:end-3);
 
-%%
-% Plot the atmosphere
+%% Plot the atmosphere
 if plot_figs
   figure_atm = figure;
   subplot(1,2,1)
@@ -66,6 +68,7 @@ load iri20051008.dat
 Iri20051008 = iri20051008(1:end,:);
 ne = interp1(Iri20051008(:,1),Iri20051008(:,2),h_atm/1e3,'pchip')*10;
 ne(h_atm<82e3) = 1;
+
 %% Plot electron density profile
 if plot_figs
   figure(figure_atm)
@@ -131,8 +134,9 @@ end
 % This energy-grid below work well.
 dEfcn = @(X,DEinitial,DEfinal,C,X0) DEinitial+(1+tanh(C*(X-X0)))/2*DEfinal;
 E = cumsum(dEfcn(0:1000,0.15,11.5,0.05,80))+1.9;
-E = E(1:stepE:end);
+% E = E(1:stepE:end);
 dE = diff(E);dE = [dE,dE(end)];
+
 if plot_figs
   figure
   plot(E,dE,'r.-')
@@ -391,7 +395,7 @@ S2ndN2 = N2_e_2nd_dist(E,E(end),N2_levels(end,1),'c',AURORA_root_directory);
 
 
 %% 10-stream mu-limits:
-theta_lims2do = 180:-5:0;
+theta_lims2do = 180:-10:0;
 %% Calculate the beam-to-beam scattering and weigthings
 %  This can be done in the function Ie_Mstream_tz_2_aurora, as was done
 %  above where the mu_scatterings argument was set to a place-holder 1, or
