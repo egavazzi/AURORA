@@ -40,7 +40,7 @@ function output = animate_IeztE_3DEzoft(t,h_atm,E,Ie_ztE,dE,BeamSA,cx_lims,spp, 
 % 
 % Example: See Etrp_example_7stream.m
 
-%   Copyright © 2018 Björn Gustavsson, <bjorn.gustavsson@uit.no>
+%   Copyright ï¿½ 2018 Bjï¿½rn Gustavsson, <bjorn.gustavsson@uit.no>
 %   This is free software, licensed under GNU GPL version 2 or later
 
 nZ = numel(h_atm);
@@ -72,12 +72,12 @@ for i_t = 1:numel(t),
   for i1 = 1:size(spp,1),
     
     subplot(spp(i1,1),spp(i1,2),spp(i1,3))
-%     pcolor(E,...
-%            h_atm/1e3,...
-%            log10(max(0,real(squeeze(Ie_ztE((1:numel(h_atm))+(i1-1)*numel(h_atm),i_t,:))./(ones(size(h_atm))*dE)/BeamSA(i1))))),
     pcolor(E,...
            h_atm/1e3,...
-           log10(max(0,real(squeeze(Ie_ztE((1:numel(h_atm))+(i1-1)*numel(h_atm),i_t,:))./(ones(size(h_atm))*dE))))),
+           log10(max(0,real(squeeze(Ie_ztE((1:numel(h_atm))+(i1-1)*numel(h_atm),i_t,:))./(ones(size(h_atm))*dE)/BeamSA(i1))))),
+%     pcolor(E,...
+%            h_atm/1e3,...
+%            log10(max(0,real(squeeze(Ie_ztE((1:numel(h_atm))+(i1-1)*numel(h_atm),i_t,:))./(ones(size(h_atm))*dE))))),
     shading flat
     if isempty(cx_lims)
       clims(i_t,i1,:) = caxis;

@@ -3,7 +3,10 @@ RunDir*/
 Figure*/
 
 # ignore the cascading files
-Cascading*.mat 
+Cascading*.mat
+
+# ignore the scattering files
+E_scatterings/
 
 # ignore temporary file matlab creates when a script is open in matlab
 *~
@@ -13,3 +16,11 @@ Cascading*.mat
 # ignore these files because they get modified all the time
 setup4etrptd10streams.m
 Loop_finalRun_GaussianOnset.m
+
+
+crap_debug/
+MI_coupling/1.27e7-0.5s_1
+MI_coupling/data_archives
+MI_coupling/TIME2PLAY
+e_transport_Ms/old_tests
+# MI_coupling/*.mat
