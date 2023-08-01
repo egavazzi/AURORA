@@ -37,7 +37,7 @@ function [Pmu2mup,theta2beamW,BeamW] = e_scattering_beamdistribution(mu_lims,n_d
 %   imagesc(0:180,1:(numel(mu_lims+1)),theta2beamW)
 %   
 
-%  Copyright © Bjorn Gustavsson 20180603, bjorn.gustavsson@uit.no
+%  Copyright ï¿½ Bjorn Gustavsson 20180603, bjorn.gustavsson@uit.no
 %  This is free software, licensed under GNU GPL version 2 or later
 
 
@@ -53,9 +53,9 @@ theta1 = linspace(0,pi,n_dirs); % scattering angle, i.e. the angle
                                 % without taking the direction
                                 % around that initial direction
                                 % into account
-theta0 = (0:(180/(n_dirs-1)):180)*pi/180;
-theta1 = (0:(180/(n_dirs-1)):180)*pi/180;
-% wbh = waitbar(1,'This step is a bit slow...');
+theta0 = mu_avg(0:(180/(n_dirs-1)):180)*pi/180;
+theta1 = mu_avg(0:(180/(n_dirs-1)):180)*pi/180;
+
 for i1 = numel(theta0):-1:1
   if i1 == numel(theta0) || mod(i1,10) == 0
     fprintf('starting with %d/(of %d) at: %s\n',i1,numel(theta0),datestr(now,'HH:MM:SS'))
@@ -73,19 +73,12 @@ for i1 = numel(theta0):-1:1
       % the unit vector after scattering:
       mu(iPhi) = es(3);
     end
-    
     % So the number of mu (cosine of pitch-angles) that are within
-    % the beam pitch-angle limits^* ...
-    % B(1,from_mu,to_mup)
+    % the beam pitch-angle limits ...
     for iMu = (numel(mu_lims)-1):-1:1
       B(i1,i2,iMu) = sum(mu_lims(iMu)<=mu&mu<mu_lims(iMu+1));
     end
-    %B(i1,i2,1) = sum(mu<mu_lims(1));
-    
   end
-% $$$   try
-% $$$     wbh = waitbar(i1/numel(theta0),wbh);
-% $$$   end
 end
 % ...can be converted to the fraction - which should be equal to
 % the probability P of going from theta to theta'
@@ -94,12 +87,6 @@ Pmu2mup(1,1,:) = Pmu2mup(2,1,:)/2+Pmu2mup(1,2,:)/2;
 Pmu2mup(end,end,:) = Pmu2mup(end-1,end,:)/2+Pmu2mup(end,end-1,:)/2; 
 % B(1,from_mu,to_mup)
 for iMu = (numel(mu_lims)-1):-1:1
-  % theta2beamW(iMu,:) = abs(sin(theta0)).*(mu_lims(iMu)<=cos(theta0)&cos(theta0)<mu_lims(iMu+1));
   theta2beamW(iMu,:) = abs(sin(theta0)).*(mu_lims(iMu)<cos(theta0)&cos(theta0)<=mu_lims(iMu+1));
   BeamW(iMu) = abs(integral(@(pa) sin(pa),acos(mu_lims(iMu)),acos(mu_lims(iMu+1))));
 end
-
-
-% $$$ try
-% $$$   close(wbh)
-% $$$ end
