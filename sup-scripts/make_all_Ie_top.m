@@ -18,23 +18,11 @@ end
 %% Loop away!
 for i2 = 1:numel(RunDirs)
   cd(results_dir)
-  %load e_s_bd.mat
   cd(RunDirs{i2})
-  try
-    load e_s_bd.mat
-  catch
-    disp(['directory: ',...
-          RunDirs{i2},...
-          ' lacks e_s_bd.mat, is it an old-style directory?'])
-  end
   dDir = dir;
-  for i1 = 3:numel(dDir)
-    cd(results_dir)
-    cd(RunDirs{i2})
-    if dDir(i1).isdir
-      cd(dDir(i1).name)
-      CD = pwd;
-      try
+  if dDir(1).isdir
+    CD = pwd;
+    try
       [t,h_atm,E,mu_lims,Ie_ZTE,mu_scatterings] = Ie_ztE_loader({'.'});
       dE = diff(E);
       dE = dE([1:end,end]);
@@ -53,9 +41,8 @@ for i2 = 1:numel(RunDirs)
       save('Ie_top.mat','Ie_top','Ie_top_raw','E','dE','BeamW','t')
       clear Ie_top Ie_top_raw
       fprintf(':::Processed OK: %s\n',CD)
-      catch
-        fprintf('Everythings not right in directory: %s\n',CD)
-      end
+    catch
+      fprintf('Everythings not right in directory: %s\n',CD)
     end
   end
 end
