@@ -53,8 +53,8 @@ theta1 = linspace(0,pi,n_dirs); % scattering angle, i.e. the angle
                                 % without taking the direction
                                 % around that initial direction
                                 % into account
-theta0 = mu_avg(0:(180/(n_dirs-1)):180)*pi/180;
-theta1 = mu_avg(0:(180/(n_dirs-1)):180)*pi/180;
+theta0 = real(mu_avg(0:(180/(n_dirs-1)):180))*pi/180;
+theta1 = (0:(180/(n_dirs-1)):180)*pi/180;
 
 for i1 = numel(theta0):-1:1
   if i1 == numel(theta0) || mod(i1,10) == 0
@@ -68,7 +68,7 @@ for i1 = numel(theta0):-1:1
     e1 = rot_around_v([0 1 0],theta1(i2))*e0;
     for iPhi = 1:(n_dirs-1)
       % Then we rotate that one around all clock-angles
-      es = rot_around_v(e0',180/(n_dirs-1)*iPhi*pi/180)*e1;
+      es = rot_around_v(e0',360/(n_dirs-1)*iPhi*pi/180)*e1;
       % then we save away the corresponding final pitch-angle of
       % the unit vector after scattering:
       mu(iPhi) = es(3);
@@ -76,7 +76,7 @@ for i1 = numel(theta0):-1:1
     % So the number of mu (cosine of pitch-angles) that are within
     % the beam pitch-angle limits ...
     for iMu = (numel(mu_lims)-1):-1:1
-      B(i1,i2,iMu) = sum(mu_lims(iMu)<=mu&mu<mu_lims(iMu+1));
+      B(i1,i2,iMu) = sum(mu_lims(iMu)<mu&mu<mu_lims(iMu+1));
     end
   end
 end
@@ -84,7 +84,17 @@ end
 % the probability P of going from theta to theta'
 Pmu2mup = B./repmat(sum(B,3),[1 1 size(B,3)]);
 Pmu2mup(1,1,:) = Pmu2mup(2,1,:)/2+Pmu2mup(1,2,:)/2; 
-Pmu2mup(end,end,:) = Pmu2mup(end-1,end,:)/2+Pmu2mup(end,end-1,:)/2; 
+Pmu2mup(end,end,:) = Pmu2mup(end-1,end,:)/2+Pmu2mup(end,end-1,:)/2;
+
+% testing Pmu2mup
+for i = 1:9
+  test_Pmu2mup(i) = sum(abs(squeeze(Pmu2mup(:, :, i)) - flipud(squeeze(Pmu2mup(:, :, end - (i-1))))), 'all') / sum(squeeze(Pmu2mup(:, :, i)), 'all')
+end
+if any(test_Pmu2mup ~= 0)
+  error("There is an issue with the calculation of Pmu2mup")
+end
+
+
 % B(1,from_mu,to_mup)
 for iMu = (numel(mu_lims)-1):-1:1
   theta2beamW(iMu,:) = abs(sin(theta0)).*(mu_lims(iMu)<cos(theta0)&cos(theta0)<=mu_lims(iMu+1));
