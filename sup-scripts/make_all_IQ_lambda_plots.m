@@ -18,7 +18,8 @@ end
 %% Optional setting of legend location:
 if ~exist('leg_location')
 %   leg_location = 'northwest';
-  leg_location = 'northeast';
+%   leg_location = 'northeast';
+  leg_location = 'eastoutside';
 end
 % For possible options see documentation for legend.
 
@@ -67,7 +68,7 @@ for i2 = 1:numel(RunDirs)
 		shading flat
 		ax = axis;
 		%         axis([ax(1:3) 300])
-		colorbar_labeled('photons/m^3/s')
+		colorbar_labeled('#exc/m^3/s')
 		subplot(3,2,5)
 		pcolor(t(1:size(Q4278,2)),h_atm/1e3,QO1D),
 		title('O1D')
@@ -75,7 +76,7 @@ for i2 = 1:numel(RunDirs)
 		xlabel('time (s)')
 		ax = axis;
 		%         axis([ax(1:3) 300])
-		colorbar_labeled('photons/m^3/s')
+		colorbar_labeled('"exc/m^3/s')
 		subplot(3,2,6)
 		pcolor(t(1:size(Q4278,2)),h_atm/1e3,QO1S),
 		title('O1S')
@@ -111,11 +112,11 @@ for i2 = 1:numel(RunDirs)
 										]);
 		xlabel('time (s)','fontsize',15)
 		%         ylabel('(%)','fontsize',15)
-		ylabel('photons/m^2∕s','fontsize',15)
+		ylabel('#exc/m^2∕s','fontsize',15)
 		%         title('Intensity Modulation','fontsize',15)
 		title('Intensity','fontsize',15)
 		ax = axis;
-    axis([ax(1:2) 1e0 ax(4)*1e1])
+    axis([ax(1:2) 1e4 ax(4)*1e1])
 % 		axis([ax(1:3) 105])
 		set(ph,'linewidth',2)
 		set(ph(1),'color','b')
@@ -124,7 +125,7 @@ for i2 = 1:numel(RunDirs)
 		set(ph(4),'color','k')
 		set(ph(5),'color',[1 0.2 0],'linestyle','--','linewidth',1)
 		set(ph(6),'color','g','linestyle','--','linewidth',1)
-
+    grid on
 		%         set(ph(7),'color',[0.5 0 0],'linestyle','-.','linewidth',1)
 		%         set(ph(8),'color',[0.5 0 0],'linestyle','--','linewidth',1)
 		% 
