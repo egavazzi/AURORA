@@ -1,4 +1,4 @@
-function make_all_Ie_at_z(altitude_to_extract)
+function make_all_Ie_at_z(altitude_to_extract, results_dir, RunDirs)
 %% Electron-flux-at-top-of-ionosphere-extraction
 % This script extracts the electron-fluxes at a given altitude for all
 % pitch-angle-streams.
